@@ -23,6 +23,12 @@ to build:
 - unit tests for Ork
 - examples using Ork
 
+For the Code::Blocks project you need to define the following global compiler
+variables:
+- glut (base) : either glut32 or freeglut 
+- glut (cflags) : either GLUT or FREEGLUT
+- glew : the path to the glew DLL, e.g. C:\Progra~1\glew\glew32.dll
+
 UNIT TESTS
 ------------------------------------------------------------------------------
 
