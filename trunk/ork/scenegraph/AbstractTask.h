@@ -27,17 +27,14 @@
 #include "ork/taskgraph/TaskFactory.h"
 #include "ork/scenegraph/SceneNode.h"
 
-using namespace ork::taskgraph;
-
 namespace ork
-{
-
-namespace scenegraph
 {
 
 /**
  * An abstract task for a Method. A method "task" is in fact a TaskFactory that
  * creates Task. Indeed a new Task is created at each method invocation.
+ *
+ * @ingroup scenegraph
  */
 class ORK_API AbstractTask : public TaskFactory
 {
@@ -90,11 +87,9 @@ protected:
          * @param context the scene graph into which the target SceneNode must
          *      be looked for.
          */
-        Ptr<SceneNode> getTarget(Ptr<SceneNode> context);
+        ptr<SceneNode> getTarget(ptr<SceneNode> context);
     };
 };
-
-}
 
 }
 

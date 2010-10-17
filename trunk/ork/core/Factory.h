@@ -33,9 +33,6 @@ using namespace std;
 namespace ork
 {
 
-namespace core
-{
-
 /**
  * A factory to create and destroy shared objects. Each object is constructed
  * from a key, and is destructed when it is no longer used. Clients of this
@@ -43,6 +40,7 @@ namespace core
  * must call #put when this object is no longer used. The object will be
  * destroyed automatically when all clients have called #put (if this object is
  * managed via smart pointers).
+ * @ingroup core
  */
 template <typename K, typename C>
 class Factory : public Object
@@ -128,8 +126,6 @@ void Factory<K, C>::put(K key)
             values.insert(make_pair(key, make_pair(value, uses)));
         }
     }
-}
-
 }
 
 }

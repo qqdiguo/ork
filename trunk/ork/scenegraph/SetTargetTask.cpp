@@ -27,33 +27,14 @@
 #include "ork/resource/ResourceTemplate.h"
 #include "ork/scenegraph/SceneManager.h"
 
-BufferId getBufferFromName(const char *v) {
-    if (strcmp(v, "NONE") == 0) {
-        return BufferId(0);
-    } else if (strcmp(v, "COLOR0") == 0) {
-        return COLOR0;
-    } else if (strcmp(v, "COLOR1") == 0) {
-        return COLOR1;
-    } else if (strcmp(v, "COLOR2") == 0) {
-        return COLOR2;
-    } else if (strcmp(v, "COLOR3") == 0) {
-        return COLOR3;
-    } else if (strcmp(v, "DEPTH") == 0) {
-        return DEPTH;
-    } else {
-        throw exception();
-    }
-}
-
 namespace ork
 {
 
-namespace scenegraph
-{
+BufferId getBufferFromName(const char *v);
 
-StaticPtr<FrameBuffer> SetTargetTask::FRAME_BUFFER;
+static_ptr<FrameBuffer> SetTargetTask::FRAME_BUFFER;
 
-StaticPtr<FrameBuffer> SetTargetTask::TARGET_BUFFER;
+static_ptr<FrameBuffer> SetTargetTask::TARGET_BUFFER;
 
 SetTargetTask::SetTargetTask() : AbstractTask("SetTargetTask")
 {
@@ -75,23 +56,23 @@ SetTargetTask::~SetTargetTask()
 {
 }
 
-Ptr<Task> SetTargetTask::getTask(Ptr<Object> context)
+ptr<Task> SetTargetTask::getTask(ptr<Object> context)
 {
-    vector< Ptr<Texture> > textures;
-    Ptr<SceneNode> n = context.cast<Method>()->getOwner();
+    vector< ptr<Texture> > textures;
+    ptr<SceneNode> n = context.cast<Method>()->getOwner();
     try {
         for (unsigned int i = 0; i < targets.size(); ++i) {
             Target *target = &(targets[i]);
             string name = target->texture.name;
-            Ptr<SceneNode> owner = target->texture.getTarget(n);
+            ptr<SceneNode> owner = target->texture.getTarget(n);
             if (owner != NULL) {
-//                Ptr<Uniform> u = NULL;
+//                ptr<Uniform> u = NULL;
                 string::size_type index = name.find(':');
-                Ptr<Texture> t = NULL;
+                ptr<Texture> t = NULL;
                 if (index == string::npos) {
                     t = owner->getValue(name).cast<ValueSampler>()->get();
                 } else {
-                    Ptr<Module> module = owner->getModule(name.substr(0, index));
+                    ptr<Module> module = owner->getModule(name.substr(0, index));
                     set<Program *> progs = module->getUsers();
                     t = (*progs.begin())->getUniformSampler(name.substr(index + 1))->get();
                 }
@@ -104,7 +85,7 @@ Ptr<Task> SetTargetTask::getTask(Ptr<Object> context)
             }
             if (autoResize) {
                 vec4<GLint> viewport = FrameBuffer::getDefault()->getViewport();
-                Ptr<Texture2D> t = textures[i].cast<Texture2D>();
+                ptr<Texture2D> t = textures[i].cast<Texture2D>();
                 assert(t != NULL);
                 if (t->getWidth() != viewport.z || t->getHeight() != viewport.w) {
                     t->setImage(viewport.z, viewport.w, t->getFormat(), FLOAT, CPUBuffer(NULL));
@@ -121,11 +102,11 @@ Ptr<Task> SetTargetTask::getTask(Ptr<Object> context)
     return new Impl(this, textures);
 }
 
-Ptr<FrameBuffer> SetTargetTask::getOffscreenBuffer()
+ptr<FrameBuffer> SetTargetTask::getOffscreenBuffer()
 {
     if (FRAME_BUFFER == NULL) {
         FRAME_BUFFER = new FrameBuffer();
-        Ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
+        ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
         SceneManager::setCurrentFrameBuffer(FRAME_BUFFER);
         FRAME_BUFFER->setReadBuffer(BufferId(0));
         FRAME_BUFFER->setDrawBuffer(BufferId(0));
@@ -134,10 +115,10 @@ Ptr<FrameBuffer> SetTargetTask::getOffscreenBuffer()
     return FRAME_BUFFER;
 }
 
-Ptr<FrameBuffer> SetTargetTask::getTargetBuffer()
+ptr<FrameBuffer> SetTargetTask::getTargetBuffer()
 {
     if (TARGET_BUFFER == NULL) {
-        Ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
+        ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
         TARGET_BUFFER = new FrameBuffer();
         SceneManager::setCurrentFrameBuffer(TARGET_BUFFER);
         TARGET_BUFFER->setReadBuffer(BufferId(0));
@@ -147,12 +128,12 @@ Ptr<FrameBuffer> SetTargetTask::getTargetBuffer()
     return TARGET_BUFFER;
 }
 
-void SetTargetTask::swap(Ptr<SetTargetTask> t)
+void SetTargetTask::swap(ptr<SetTargetTask> t)
 {
     std::swap(targets, t->targets);
 }
 
-SetTargetTask::Impl::Impl(Ptr<SetTargetTask> source, vector< Ptr<Texture> > textures) :
+SetTargetTask::Impl::Impl(ptr<SetTargetTask> source, vector< ptr<Texture> > textures) :
     Task("SetTarget", true, 0), source(source), textures(textures)
 {
 }
@@ -199,7 +180,7 @@ bool SetTargetTask::Impl::run()
         Logger::DEBUG_LOGGER->log("SCENEGRAPH", os.str());
     }
 
-    Ptr<FrameBuffer> fb = getTargetBuffer();
+    ptr<FrameBuffer> fb = getTargetBuffer();
     if (textures.size() == 0) {
         BufferId bufs[6] = {
             COLOR0,
@@ -210,7 +191,7 @@ bool SetTargetTask::Impl::run()
             DEPTH
         };
         for (int i = 0; i < 6; ++i) {
-            Ptr<Texture> t = fb->getTextureBuffer(bufs[i]);
+            ptr<Texture> t = fb->getTextureBuffer(bufs[i]);
             if (t != NULL) {
                 t->generateMipMap();
             }
@@ -222,33 +203,33 @@ bool SetTargetTask::Impl::run()
 
     for (unsigned int i = 0; i < textures.size(); ++i) {
         Target *target = &(source->targets[i]);
-        Ptr<Texture> texture = textures[i];
+        ptr<Texture> texture = textures[i];
         if (texture.cast<Texture2D>() != NULL) {
-            Ptr<Texture2D> t = texture.cast<Texture2D>();
+            ptr<Texture2D> t = texture.cast<Texture2D>();
             fb->setTextureBuffer(target->buffer, t, target->level);
             //a.setColorBuffer(target->buffer, t, target->level);
             w = t->getWidth();
             h = t->getHeight();
         } else if (texture.cast<Texture2DArray>() != NULL) {
-            Ptr<Texture2DArray> t = texture.cast<Texture2DArray>();
+            ptr<Texture2DArray> t = texture.cast<Texture2DArray>();
             fb->setTextureBuffer(target->buffer, t, target->level, target->layer);
             //a.setColorBuffer(target->buffer, t, target->level, target->layer);
             w = t->getWidth();
             h = t->getHeight();
         } else if (texture.cast<TextureCube>() != NULL) {
-            Ptr<TextureCube> t = texture.cast<TextureCube>();
+            ptr<TextureCube> t = texture.cast<TextureCube>();
             fb->setTextureBuffer(target->buffer, t, target->level, CubeFace(target->layer));
             //a.setColorBuffer(target->buffer, t, target->level, TextureCube::face(target->layer));
             w = t->getWidth();
             h = t->getHeight();
         } else if (texture.cast<Texture3D>() != NULL) {
-            Ptr<Texture3D> t = texture.cast<Texture3D>();
+            ptr<Texture3D> t = texture.cast<Texture3D>();
             fb->setTextureBuffer(target->buffer, t, target->level, target->layer);
             //a.setColorBuffer(target->buffer, t, target->level, target->layer);
             w = t->getWidth();
             h = t->getHeight();
         } else {
-            Ptr<Texture1D> t = texture.cast<Texture1D>();
+            ptr<Texture1D> t = texture.cast<Texture1D>();
             fb->setTextureBuffer(target->buffer, t, target->level);
             //a.setColorBuffer(target->buffer, t, target->level);
             w = t->getWidth();
@@ -265,7 +246,7 @@ bool SetTargetTask::Impl::run()
 class SetTargetTaskResource : public ResourceTemplate<40, SetTargetTask>
 {
 public:
-    SetTargetTaskResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    SetTargetTaskResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, SetTargetTask>(manager, name, desc)
     {
         vector<Target> targets;
@@ -318,7 +299,5 @@ extern const char setTarget[] = "setTarget";
 static ResourceFactory::Type<setTarget, SetTargetTaskResource> SetTargetTaskType;
 
 /// @endcond
-
-}
 
 }

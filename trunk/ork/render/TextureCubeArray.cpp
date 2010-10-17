@@ -32,18 +32,13 @@
 #include "ork/resource/ResourceTemplate.h"
 
 using namespace std;
-using namespace ork::resource;
-using namespace ork::render;
-
-void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t);
-
-void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params);
 
 namespace ork
 {
 
-namespace render
-{
+void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t);
+
+void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params);
 
 GLenum getTextureInternalFormat(TextureInternalFormat f);
 
@@ -107,7 +102,7 @@ int TextureCubeArray::getLayers()
     return l;
 }
 
-void TextureCubeArray::swap(Ptr<Texture> t)
+void TextureCubeArray::swap(ptr<Texture> t)
 {
     Texture::swap(t);
     std::swap(w, t.cast<TextureCubeArray>()->w);
@@ -120,7 +115,7 @@ void TextureCubeArray::swap(Ptr<Texture> t)
 class TextureCubeArrayResource : public ResourceTemplate<0, TextureCubeArray>
 {
 public:
-    TextureCubeArrayResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    TextureCubeArrayResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<0, TextureCubeArray>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -162,7 +157,5 @@ extern const char textureCubeArray[] = "textureCubeArray";
 static ResourceFactory::Type<textureCubeArray, TextureCubeArrayResource> TextureCubeArrayType;
 
 /// @endcond
-
-}
 
 }

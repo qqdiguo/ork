@@ -30,9 +30,6 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 BufferId getBufferFromName(const char *v) {
     if (strcmp(v, "NONE") == 0) {
         return BufferId(0);
@@ -63,7 +60,7 @@ public:
         this-> viewport = vp;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setViewport(viewport);
     }
@@ -81,7 +78,7 @@ public:
         this->far = f;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setDepthRange(near, far);
     }
@@ -100,7 +97,7 @@ public:
         this->clipDistances = d;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setClipDistances(clipDistances);
     }
@@ -117,7 +114,7 @@ public:
         this->color = c;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setClearColor(color);
     }
@@ -134,7 +131,7 @@ public:
         depth = clearDepth;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setClearDepth(depth);
     }
@@ -151,7 +148,7 @@ public:
         stencil = clearStencil;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setClearStencil(stencil);
     }
@@ -167,7 +164,7 @@ public:
     {
         size = pointSize;
     }
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setPointSize(size);
     }
@@ -184,7 +181,7 @@ public:
         size = tSize;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setPointFadeThresholdSize(size);
     }
@@ -201,7 +198,7 @@ public:
         origin = pointLowerLeftOrigin;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setPointLowerLeftOrigin(origin);
     }
@@ -218,7 +215,7 @@ public:
         width = lineWidth;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setLineWidth(width);
     }
@@ -235,7 +232,7 @@ public:
         smooth = lineSmooth;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setLineSmooth(smooth);
     }
@@ -252,7 +249,7 @@ public:
         this->frontFaceCW = frontFaceCW;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setFrontFaceCW(frontFaceCW);
     }
@@ -270,7 +267,7 @@ public:
         this->polygonBack = polygonBack;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setPolygonMode(polygonFront, polygonBack);
     }
@@ -288,7 +285,7 @@ public:
         this->polygonSmooth = polygonSmooth;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setPolygonSmooth(polygonSmooth);
     }
@@ -306,7 +303,7 @@ public:
         this->units = units;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setPolygonOffset(factor, units);
     }
@@ -326,7 +323,7 @@ public:
         this->polygonOffset = polygonOffset;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setPolygonOffset(pointOffset, lineOffset, polygonOffset);
     }
@@ -345,7 +342,7 @@ public:
         this->multiSample = multiSample;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setMultisample(multiSample);
     }
@@ -363,7 +360,7 @@ public:
         this->sampleAlphaToOne = sampleAlphaToOne;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setSampleAlpha(sampleAlphaToCoverage, sampleAlphaToOne);
     }
@@ -381,7 +378,7 @@ public:
         this->sampleCoverage = sampleCoverage;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setSampleCoverage(sampleCoverage);
     }
@@ -398,7 +395,7 @@ public:
         this->sampleMask = sampleMask;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setSampleMask(sampleMask);
     }
@@ -416,7 +413,7 @@ public:
         this->minSamples = minSamples;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setSampleShading(sampleShading, minSamples);
     }
@@ -429,19 +426,19 @@ private:
 class SetOcclusionTest: public SetStateTask::Runnable
 {
 public:
-    SetOcclusionTest(Ptr<Query> occlusionQuery, QueryMode occlusionMode)
+    SetOcclusionTest(ptr<Query> occlusionQuery, QueryMode occlusionMode)
     {
         this->occlusionQuery = occlusionQuery;
         this->occlusionMode = occlusionMode;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setOcclusionTest(occlusionQuery, occlusionMode);
     }
 
 private:
-    Ptr<Query> occlusionQuery;
+    ptr<Query> occlusionQuery;
     QueryMode occlusionMode;
 };
 
@@ -453,7 +450,7 @@ public:
         this->enableScissor = enableScissor;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setScissorTest(enableScissor);
     }
@@ -471,7 +468,7 @@ public:
         this->scissor = scissor;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setScissorTest(enableScissor, scissor);
     }
@@ -505,7 +502,7 @@ public:
         assert(bf == -1 || (bref != -1 && bfail != -1 && bdpfail != -1 && bdppass != -1));
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         if (ff == -1 && bf == -1) {
             fb->setStencilTest(enableStencil);
@@ -553,7 +550,7 @@ public:
         this->depth = depth;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         if (depth == -1) {
             fb->setDepthTest(enableDepth);
@@ -586,7 +583,7 @@ public:
         assert(eAlpha == -1 || (srcAlpha != -1 && dstAlpha != -1));
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         if (rgb == -1 && buffer == -1) {
             fb->setBlend(enableBlend);
@@ -629,7 +626,7 @@ public:
         this->color = color;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setBlendColor(color);
     }
@@ -646,7 +643,7 @@ public:
         this->enableDither = enableDither;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setDither(enableDither);
     }
@@ -664,7 +661,7 @@ public:
         this->logicOp = logicOp;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         if (logicOp == -1) {
             fb->setLogicOp(enableLogic);
@@ -691,7 +688,7 @@ public:
         this-> a = a;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         if (buffer != -1) {
             fb->setColorMask(buffer, r, g, b, a);
@@ -720,7 +717,7 @@ public:
         this->d = d;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setDepthMask(d);
     }
@@ -738,7 +735,7 @@ public:
         this->backMask = backMask;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->setStencilMask(frontMask, backMask);
     }
@@ -759,7 +756,7 @@ public:
         this->depth = depth;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         fb->clear(color, stencil, depth);
     }
@@ -781,7 +778,7 @@ public:
         this->db = db;
     }
 
-    virtual void run(Ptr<FrameBuffer> fb)
+    virtual void run(ptr<FrameBuffer> fb)
     {
         if (rb != -1) {
             fb->setReadBuffer(rb);
@@ -818,14 +815,14 @@ void SetStateTask::addRunnable(Runnable *r)
     runnables.push_back(r);
 }
 
-Ptr<Task> SetStateTask::getTask(Ptr<Object> context)
+ptr<Task> SetStateTask::getTask(ptr<Object> context)
 {
     return new Impl(this);
 }
 
 void SetStateTask::run()
 {
-    Ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
+    ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
     for (unsigned int i = 0; i < runnables.size(); ++i) {
         runnables[i]->run(fb);
     }
@@ -936,7 +933,7 @@ void SetStateTask::setSampleShading(bool sampleShading, GLfloat minSamples)
     addRunnable(new SetSampleShading(sampleShading, minSamples));
 }
 
-void SetStateTask::setOcclusionTest(Ptr<Query> occlusionQuery, QueryMode occlusionMode)
+void SetStateTask::setOcclusionTest(ptr<Query> occlusionQuery, QueryMode occlusionMode)
 {
     addRunnable(new SetOcclusionTest(occlusionQuery, occlusionMode));
 }
@@ -1011,12 +1008,12 @@ void SetStateTask::setBuffers(BufferId rb, BufferId db)
     addRunnable(new SetBuffers(rb, db));
 }
 
-void SetStateTask::swap(Ptr<SetStateTask> t)
+void SetStateTask::swap(ptr<SetStateTask> t)
 {
     std::swap(runnables, t->runnables);
 }
 
-SetStateTask::Impl::Impl(Ptr<SetStateTask> source) :
+SetStateTask::Impl::Impl(ptr<SetStateTask> source) :
     Task("SetState", true, 0), source(source)
 {
 }
@@ -1039,7 +1036,7 @@ bool SetStateTask::Impl::run()
 class SetStateTaskResource : public ResourceTemplate<40, SetStateTask>
 {
 public:
-    BlendEquation getBlendEquation(Ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
+    BlendEquation getBlendEquation(ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
     {
         try {
             if (strcmp(e->Attribute(name), "ADD") == 0) {
@@ -1065,7 +1062,7 @@ public:
         throw exception();
     }
 
-    BlendArgument getBlendArgument(Ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
+    BlendArgument getBlendArgument(ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
     {
         try {
             if (strcmp(e->Attribute(name), "ZERO") == 0) {
@@ -1118,7 +1115,7 @@ public:
         throw exception();
     }
 
-    Function getFunction(Ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
+    Function getFunction(ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
     {
         try {
             if (strcmp(e->Attribute(name), "NEVER") == 0) {
@@ -1153,7 +1150,7 @@ public:
         throw exception();
     }
 
-    StencilOperation getStencilOperation(Ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
+    StencilOperation getStencilOperation(ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
     {
         try {
             if (strcmp(e->Attribute(name), "KEEP") == 0) {
@@ -1188,7 +1185,7 @@ public:
         throw exception();
     }
 
-    LogicOperation getLogicOperation(Ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
+    LogicOperation getLogicOperation(ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
     {
         try {
             if (strcmp(e->Attribute(name), "CLEAR") == 0) {
@@ -1247,7 +1244,7 @@ public:
         throw exception();
     }
 
-    QueryType getQueryType(Ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
+    QueryType getQueryType(ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
     {
         try {
             if (strcmp(e->Attribute(name), "PRIMITIVES_GENERATED") == 0) {
@@ -1273,7 +1270,7 @@ public:
         throw exception();
     }
 
-    QueryMode getQueryMode(Ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
+    QueryMode getQueryMode(ptr<ResourceDescriptor> desc, const TiXmlElement *e, const char *name)
     {
         try {
             if (strcmp(e->Attribute(name), "WAIT") == 0) {
@@ -1296,7 +1293,7 @@ public:
         throw exception();
     }
 
-    SetStateTaskResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    SetStateTaskResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, SetStateTask>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -1608,7 +1605,7 @@ public:
                 }
             } else if (strcmp(f->Value(), "occlusion") == 0) {
                 checkParameters(desc, f, "query,mode,");
-                Ptr<Query> q;
+                ptr<Query> q;
                 QueryMode m = QueryMode(-1);
 
                 m = getQueryMode(desc, f, "mode");
@@ -1662,7 +1659,5 @@ extern const char setState[] = "setState";
 static ResourceFactory::Type<setState, SetStateTaskResource> SetStateTaskType;
 
 /// @endcond
-
-}
 
 }

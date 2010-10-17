@@ -32,18 +32,13 @@
 #include "ork/resource/ResourceTemplate.h"
 
 using namespace std;
-using namespace ork::resource;
-using namespace ork::render;
-
-void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t);
-
-void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params);
 
 namespace ork
 {
 
-namespace render
-{
+void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t);
+
+void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params);
 
 GLenum getTextureInternalFormat(TextureInternalFormat f);
 
@@ -127,7 +122,7 @@ void Texture3D::setCompressedSubImage(int level, int x, int y, int z, int w, int
     assert(FrameBuffer::getError() == GL_NO_ERROR);
 }
 
-void Texture3D::swap(Ptr<Texture> t)
+void Texture3D::swap(ptr<Texture> t)
 {
     Texture::swap(t);
     std::swap(w, t.cast<Texture3D>()->w);
@@ -140,7 +135,7 @@ void Texture3D::swap(Ptr<Texture> t)
 class Texture3DResource : public ResourceTemplate<0, Texture3D>
 {
 public:
-    Texture3DResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    Texture3DResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<0, Texture3D>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -180,7 +175,5 @@ extern const char texture3D[] = "texture3D";
 static ResourceFactory::Type<texture3D, Texture3DResource> Texture3DType;
 
 /// @endcond
-
-}
 
 }

@@ -1,14 +1,13 @@
 #include "ork/render/FrameBuffer.h"
 #include "ork/ui/GlutWindow.h"
 
-using namespace ork::render;
-using namespace ork::ui;
+using namespace ork;
 
 class SimpleExample : public GlutWindow
 {
 public:
-    Ptr< Mesh<vec2f, unsigned int> > m;
-    Ptr<Program> p;
+    ptr< Mesh<vec2f, unsigned int> > m;
+    ptr<Program> p;
 
     SimpleExample() : GlutWindow(Window::Parameters())
     {
@@ -25,7 +24,7 @@ public:
 			0, 255, 0, 255,
 			255, 0, 255, 0
 		};
-        Ptr<Texture2D> tex = new Texture2D(4, 4, R8, RED, UNSIGNED_BYTE,
+        ptr<Texture2D> tex = new Texture2D(4, 4, R8, RED, UNSIGNED_BYTE,
             Texture::Parameters().mag(NEAREST), Buffer::Parameters(), CPUBuffer(data));
 
         p = new Program(new Module(330, NULL, "\
@@ -42,7 +41,7 @@ public:
 
     virtual void redisplay(double t, double dt)
     {
-        Ptr<FrameBuffer> fb = FrameBuffer::getDefault();
+        ptr<FrameBuffer> fb = FrameBuffer::getDefault();
         fb->clear(true, false, false);
         fb->draw(p, *m);
         GlutWindow::redisplay(t, dt);
@@ -60,7 +59,7 @@ public:
 int main(int argc, char** argv)
 {
     atexit(Object::exit);
-    Ptr<SimpleExample> app = new SimpleExample();
+    ptr<SimpleExample> app = new SimpleExample();
     app->start();
     return 0;
 }

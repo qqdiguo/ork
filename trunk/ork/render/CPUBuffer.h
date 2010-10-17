@@ -29,11 +29,9 @@
 namespace ork
 {
 
-namespace render
-{
-
 /**
  * A Buffer whose data is on the CPU.
+ * @ingroup render
  */
 class ORK_API CPUBuffer : public Buffer
 {
@@ -65,8 +63,6 @@ private:
 
     friend class FrameBuffer;
 };
-
-}
 
 }
 

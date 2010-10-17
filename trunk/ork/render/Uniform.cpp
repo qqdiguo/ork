@@ -30,9 +30,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 #ifdef ORK_NO_GLPROGRAMUNIFORM
 Uniform::Uniform(const char *type, Program *program, UniformBlock *block, const string &name, GLint location) :
     Object(type), program(program), block(block), name(name), location(location), dirty(false)
@@ -518,12 +515,12 @@ UniformType UniformSampler::getType() const
     return type;
 }
 
-Ptr<Sampler> UniformSampler::getSampler() const
+ptr<Sampler> UniformSampler::getSampler() const
 {
     return sampler;
 }
 
-void UniformSampler::setSampler(const Ptr<Sampler> sampler)
+void UniformSampler::setSampler(const ptr<Sampler> sampler)
 {
     this->sampler = sampler;
     if (program != NULL && program == Program::CURRENT) {
@@ -531,12 +528,12 @@ void UniformSampler::setSampler(const Ptr<Sampler> sampler)
     }
 }
 
-Ptr<Texture> UniformSampler::get() const
+ptr<Texture> UniformSampler::get() const
 {
     return value;
 }
 
-void UniformSampler::set(Ptr<Texture> value)
+void UniformSampler::set(ptr<Texture> value)
 {
     if (program != NULL) {
         if (this->value != NULL) {
@@ -552,9 +549,9 @@ void UniformSampler::set(Ptr<Texture> value)
     }
 }
 
-void UniformSampler::setValue(Ptr<Value> v)
+void UniformSampler::setValue(ptr<Value> v)
 {
-    Ptr<ValueSampler> vs = v.cast<ValueSampler>();
+    ptr<ValueSampler> vs = v.cast<ValueSampler>();
     //setSampler(vs->getSampler());
     set(vs->get());
 }
@@ -578,8 +575,8 @@ void UniformSampler::setValue()
 
 // ----------------------------------------------------------------------------
 
-StaticPtr<Factory<string, Ptr<GPUBuffer> > > UniformBlock::buffers
-    (new Factory<string, Ptr<GPUBuffer> >(UniformBlock::newBuffer));
+static_ptr<Factory<string, ptr<GPUBuffer> > > UniformBlock::buffers
+    (new Factory<string, ptr<GPUBuffer> >(UniformBlock::newBuffer));
 
 class UniformBlockBuffer : public GPUBuffer
 {
@@ -601,7 +598,7 @@ UniformBlock::~UniformBlock()
     setBuffer(NULL);
 }
 
-Ptr<GPUBuffer> UniformBlock::newBuffer(string name)
+ptr<GPUBuffer> UniformBlock::newBuffer(string name)
 {
     return new UniformBlockBuffer(name);
 }
@@ -611,14 +608,14 @@ string UniformBlock::getName() const
     return name;
 }
 
-Ptr<GPUBuffer> UniformBlock::getBuffer() const
+ptr<GPUBuffer> UniformBlock::getBuffer() const
 {
     return buffer;
 }
 
-Ptr<Uniform> UniformBlock::getUniform(const string &name) const
+ptr<Uniform> UniformBlock::getUniform(const string &name) const
 {
-    map<string, Ptr<Uniform> >::const_iterator i = uniforms.find(name);
+    map<string, ptr<Uniform> >::const_iterator i = uniforms.find(name);
     if (i == uniforms.end()) {
         i = uniforms.find(getName() + "." + name);
         if (i == uniforms.end()) {
@@ -628,11 +625,11 @@ Ptr<Uniform> UniformBlock::getUniform(const string &name) const
     return i->second;
 }
 
-void UniformBlock::setBuffer(Ptr<GPUBuffer> buffer)
+void UniformBlock::setBuffer(ptr<GPUBuffer> buffer)
 {
     if (this->buffer != NULL && isMapped()) {
         unmapBuffer();
-        Ptr<UniformBlockBuffer> b = this->buffer.cast<UniformBlockBuffer>();
+        ptr<UniformBlockBuffer> b = this->buffer.cast<UniformBlockBuffer>();
         if (b != NULL) {
             buffers->put(b->name);
         }
@@ -660,8 +657,6 @@ void UniformBlock::unmapBuffer()
 {
     assert(buffer != NULL && buffer->getMappedData() != NULL);
     buffer->unmap();
-}
-
 }
 
 }

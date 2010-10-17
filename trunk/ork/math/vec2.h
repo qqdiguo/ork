@@ -32,13 +32,14 @@ namespace ork
 {
 
 /**
+ * @defgroup math math
+ * @ingroup ork
  * Provides classes for vectors, matrices, segments, bounding boxes, etc.
  */
-namespace math
-{
 
 /**
  * A 2D vector.
+ * @ingroup math
  */
 template <typename type> class vec2
 {
@@ -225,25 +226,28 @@ public:
 };
 
 /**
+ * A 2D vector with half float coordinates.
+ * @ingroup math
+ */
+typedef vec2<half> vec2h;
+
+/**
  * A 2D vector with float coordinates.
+ * @ingroup math
  */
 typedef vec2<float> vec2f;
 
 /**
  * A 2D vector with double coordinates.
+ * @ingroup math
  */
 typedef vec2<double> vec2d;
 
 /**
  * A 2D vector with int coordinates.
+ * @ingroup math
  */
 typedef vec2<int> vec2i;
-
-/**
- * A 2D vector with half float coordinates.
- */
-typedef vec2<half> vec2h;
-
 
 template <typename type>
 inline vec2<type>::vec2()
@@ -452,9 +456,6 @@ const vec2<type> vec2<type>::UNIT_X(1, 0);
 
 template <typename type>
 const vec2<type> vec2<type>::UNIT_Y(0, 1);
-
-
-}
 
 }
 

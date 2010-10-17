@@ -29,21 +29,18 @@
 #include "ork/resource/ResourceTemplate.h"
 #include "ork/scenegraph/SceneManager.h"
 
-void initInfoTask(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e,
-    Ptr<Font> &f, Ptr<Program> &p, int &c, float &size, vec3i &pos);
-
 namespace ork
 {
 
-namespace scenegraph
-{
+void initInfoTask(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e,
+    ptr<Font> &f, ptr<Program> &p, int &c, float &size, vec3i &pos);
 
 class LogBuffer : public Object
 {
 public:
-    static StaticPtr<LogBuffer> INSTANCE;
+    static static_ptr<LogBuffer> INSTANCE;
 
-    static Ptr<LogBuffer> getInstance(int capacity = 256)
+    static ptr<LogBuffer> getInstance(int capacity = 256)
     {
         if (INSTANCE == NULL) {
             INSTANCE = new LogBuffer(capacity);
@@ -130,12 +127,12 @@ private:
     int size;
 };
 
-StaticPtr<LogBuffer> LogBuffer::INSTANCE;
+static_ptr<LogBuffer> LogBuffer::INSTANCE;
 
 class MemLogger : public Logger
 {
 public:
-    MemLogger(const string &type, LogBuffer::type t, Ptr<LogBuffer> buf, Ptr<Logger> next = NULL) :
+    MemLogger(const string &type, LogBuffer::type t, ptr<LogBuffer> buf, ptr<Logger> next = NULL) :
         Logger(type), type(t), buf(buf), next(next)
     {
     }
@@ -166,9 +163,9 @@ public:
 private:
     LogBuffer::type type;
 
-    Ptr<LogBuffer> buf;
+    ptr<LogBuffer> buf;
 
-    Ptr<Logger> next;
+    ptr<Logger> next;
 };
 
 bool ShowLogTask::enabled = false;
@@ -177,17 +174,17 @@ ShowLogTask::ShowLogTask() : ShowInfoTask()
 {
 }
 
-ShowLogTask::ShowLogTask(Ptr<Font> f, Ptr<Program> p, float fontHeight, vec3i pos) :
+ShowLogTask::ShowLogTask(ptr<Font> f, ptr<Program> p, float fontHeight, vec3i pos) :
     ShowInfoTask(f, p, 0, fontHeight, pos)
 {
 }
 
-void ShowLogTask::init(Ptr<Font> f, Ptr<Program> p, float fontHeight, vec3i pos)
+void ShowLogTask::init(ptr<Font> f, ptr<Program> p, float fontHeight, vec3i pos)
 {
     static bool initialized = false;
     if (!initialized) {
         int capacity = 256;
-        Ptr<LogBuffer> buf = LogBuffer::getInstance(capacity);
+        ptr<LogBuffer> buf = LogBuffer::getInstance(capacity);
         if (Logger::DEBUG_LOGGER != NULL) {
             Logger::DEBUG_LOGGER = new MemLogger("DEBUG_LOGGER", LogBuffer::DEBUG_LOG, buf, Logger::DEBUG_LOGGER);
         }
@@ -203,12 +200,12 @@ ShowLogTask::~ShowLogTask()
 {
 }
 
-void ShowLogTask::draw(Ptr<Method> context)
+void ShowLogTask::draw(ptr<Method> context)
 {
     if (Logger::DEBUG_LOGGER != NULL) {
         Logger::DEBUG_LOGGER->log("SCENEGRAPH", "ShowLog");
     }
-    Ptr<LogBuffer> buf = LogBuffer::getInstance();
+    ptr<LogBuffer> buf = LogBuffer::getInstance();
     if (buf->hasNewErrors) {
         enabled = true;
         buf->hasNewErrors = false;
@@ -216,7 +213,7 @@ void ShowLogTask::draw(Ptr<Method> context)
     if (!enabled) {
         return;
     }
-    Ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
+    ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
     fb->setBlend(true, ADD, SRC_ALPHA, ONE_MINUS_SRC_ALPHA, ADD, ZERO, ONE);
 
     fontMesh->clear();
@@ -248,11 +245,11 @@ void ShowLogTask::draw(Ptr<Method> context)
 class ShowLogTaskResource : public ResourceTemplate<40, ShowLogTask>
 {
 public:
-    ShowLogTaskResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    ShowLogTaskResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, ShowLogTask>(manager, name, desc)
     {
-        Ptr<Font> f;
-        Ptr<Program> p;
+        ptr<Font> f;
+        ptr<Program> p;
         int c;
         float fontHeight;
         vec3i pos;
@@ -266,7 +263,5 @@ extern const char showLog[] = "showLog";
 static ResourceFactory::Type<showLog, ShowLogTaskResource> ShowLogTaskType;
 
 /// @endcond
-
-}
 
 }

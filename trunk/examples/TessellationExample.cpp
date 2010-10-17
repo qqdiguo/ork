@@ -27,18 +27,17 @@
 
 #include "examples/Main.h"
 
-using namespace ork::render;
-using namespace ork::ui;
+using namespace ork;
 
 class TessellationExample : public GlutWindow
 {
 public:
-    Ptr< Mesh<vec3f, unsigned int> > model;
-    Ptr<UniformMatrix4f> localToScreen;
-    Ptr<Program> p;
-    Ptr<Uniform1f> inner;
-    Ptr<Uniform1f> outer;
-    Ptr<FrameBuffer> fb;
+    ptr< Mesh<vec3f, unsigned int> > model;
+    ptr<UniformMatrix4f> localToScreen;
+    ptr<Program> p;
+    ptr<Uniform1f> inner;
+    ptr<Uniform1f> outer;
+    ptr<FrameBuffer> fb;
     float fov;
     float alpha;
     float theta;
@@ -254,10 +253,10 @@ public:
         return true;
     }
 
-    static StaticPtr<Window> app;
+    static static_ptr<Window> app;
 };
 
-StaticPtr<Window> TessellationExample::app;
+static_ptr<Window> TessellationExample::app;
 
 int tessellationExample(int argc, char* argv[])
 {

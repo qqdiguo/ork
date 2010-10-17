@@ -28,9 +28,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 Query::Query(QueryType type) : Object("Query"), type(type), resultAvailable(false), resultRead(false)
 {
     glGenQueries(1, &id);
@@ -98,8 +95,6 @@ GLuint64 Query::getResult()
         resultRead = true;
     }
     return result;
-}
-
 }
 
 }

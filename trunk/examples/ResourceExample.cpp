@@ -31,24 +31,22 @@
 
 #include "examples/Main.h"
 
-using namespace ork::resource;
-using namespace ork::render;
-using namespace ork::ui;
+using namespace ork;
 
 class ResourceExample : public GlutWindow
 {
 public:
-    Ptr<ResourceManager> resManager;
-    Ptr<MeshBuffers> cube;
-    Ptr<MeshBuffers> plane;
-    Ptr<Program> p1;
-    Ptr<Program> p2;
-    Ptr<Uniform3f> worldCamera;
-    Ptr<UniformMatrix4f> localToWorld1;
-    Ptr<UniformMatrix4f> localToScreen1;
-    Ptr<UniformMatrix4f> localToWorld2;
-    Ptr<UniformMatrix4f> localToScreen2;
-    Ptr<FrameBuffer> fb;
+    ptr<ResourceManager> resManager;
+    ptr<MeshBuffers> cube;
+    ptr<MeshBuffers> plane;
+    ptr<Program> p1;
+    ptr<Program> p2;
+    ptr<Uniform3f> worldCamera;
+    ptr<UniformMatrix4f> localToWorld1;
+    ptr<UniformMatrix4f> localToScreen1;
+    ptr<UniformMatrix4f> localToWorld2;
+    ptr<UniformMatrix4f> localToScreen2;
+    ptr<FrameBuffer> fb;
     float fov;
     float alpha;
     float theta;
@@ -62,7 +60,7 @@ public:
         Logger::WARNING_LOGGER = new FileLogger("WARNING", out, Logger::WARNING_LOGGER);
         Logger::ERROR_LOGGER = new FileLogger("ERROR", out, Logger::ERROR_LOGGER);
 
-        Ptr<XMLResourceLoader> resLoader = new XMLResourceLoader();
+        ptr<XMLResourceLoader> resLoader = new XMLResourceLoader();
         resLoader->addPath(dir + "/textures");
         resLoader->addPath(dir + "/shaders");
         resLoader->addPath(dir + "/meshes");
@@ -168,10 +166,10 @@ public:
         return true;
     }
 
-    static StaticPtr<Window> app;
+    static static_ptr<Window> app;
 };
 
-StaticPtr<Window> ResourceExample::app;
+static_ptr<Window> ResourceExample::app;
 
 int resourceExample(int argc, char* argv[])
 {

@@ -38,8 +38,7 @@
 #include <string>
 #endif
 
-using namespace ork::render;
-using namespace ork::ui;
+using namespace ork;
 
 TestSuite *TestSuite::getInstance()
 {
@@ -130,10 +129,10 @@ public:
         idle(false);
     }
 
-    static StaticPtr<Window> app;
+    static static_ptr<Window> app;
 };
 
-StaticPtr<Window> TestWindow::app;
+static_ptr<Window> TestWindow::app;
 
 #if defined( _WIN64 ) || defined( _WIN32 )
 

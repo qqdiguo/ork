@@ -30,16 +30,12 @@
 #include "ork/core/Timer.h"
 #include "ork/ui/Window.h"
 
-using namespace ork::math;
-
 namespace ork
-{
-
-namespace ui
 {
 
 /**
  * A Window implemented using GLUT.
+ * @ingroup ui
  */
 class ORK_API GlutWindow : public Window
 {
@@ -160,8 +156,6 @@ private:
      */
     static void focusFunc(int focus);
 };
-
-}
 
 }
 

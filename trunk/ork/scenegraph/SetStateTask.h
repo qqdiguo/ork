@@ -30,11 +30,9 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 /**
  * An AbstractTask to set the state of a framebuffer.
+ * @ingroup scenegraph
  */
 class ORK_API SetStateTask : public AbstractTask
 {
@@ -55,7 +53,7 @@ public:
          *
          * @param fb the framebuffer to use for this 'subtask'.
          */
-        virtual void run(Ptr<FrameBuffer> fb) = 0;
+        virtual void run(ptr<FrameBuffer> fb) = 0;
 
         friend class SetStateTask;
     };
@@ -195,7 +193,7 @@ public:
     /**
      * Adds an occlusion query.
      */
-    void setOcclusionTest(Ptr<Query> occlusionQuery, QueryMode occlusionMode);
+    void setOcclusionTest(ptr<Query> occlusionQuery, QueryMode occlusionMode);
 
     /**
      * Enables or disables scissor test.
@@ -288,7 +286,7 @@ public:
      */
     void setBuffers(BufferId rb, BufferId db);
 
-    virtual Ptr<Task> getTask(Ptr<Object> context);
+    virtual ptr<Task> getTask(ptr<Object> context);
 
 protected:
     /**
@@ -296,7 +294,7 @@ protected:
      *
      * @param t a SetStateTask.
      */
-    void swap(Ptr<SetStateTask> t);
+    void swap(ptr<SetStateTask> t);
 
 private:
     /**
@@ -310,7 +308,7 @@ private:
     void run();
 
     /**
-     * A ork::taskgraph::Task to set the state of a framebuffer.
+     * A ork::Task to set the state of a framebuffer.
      */
     class Impl : public Task
     {
@@ -318,14 +316,14 @@ private:
         /**
          * The SetStateTask that created this task.
          */
-        Ptr<SetStateTask> source;
+        ptr<SetStateTask> source;
 
         /**
          * Creates a new SetStateTask::Impl.
          *
          * @param source the SetStateTask that created this task.
          */
-        Impl(Ptr<SetStateTask> source);
+        Impl(ptr<SetStateTask> source);
 
         /**
          * Deletes this SetStateTask::Impl.
@@ -337,8 +335,6 @@ private:
 
     friend class Impl;
 };
-
-}
 
 }
 

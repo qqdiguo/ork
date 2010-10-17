@@ -26,17 +26,12 @@
 namespace ork
 {
 
-namespace taskgraph
-{
-
 TaskFactory::TaskFactory(const char *type) : Object(type)
 {
 }
 
 TaskFactory::~TaskFactory()
 {
-}
-
 }
 
 }

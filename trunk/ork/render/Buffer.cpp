@@ -28,9 +28,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 Buffer::Parameters::Parameters() :
     _swapBytes(false), _leastSignificantBitFirst(false), _alignment(4),
     _compressedSize(0), _subImage2D(0, 0, 0), _subImage3D(0, 0), modified(false)
@@ -143,8 +140,6 @@ Buffer::Buffer() : Object("Buffer")
 
 Buffer::~Buffer()
 {
-}
-
 }
 
 }

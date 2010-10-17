@@ -26,17 +26,14 @@
 namespace ork
 {
 
-namespace resource
-{
-
-ResourceManager::ResourceManager(Ptr<ResourceLoader> loader, unsigned int cacheSize) :
+ResourceManager::ResourceManager(ptr<ResourceLoader> loader, unsigned int cacheSize) :
     Object("ResourceManager"), loader(loader), cacheSize(cacheSize)
 {
 }
 
 ResourceManager::~ResourceManager()
 {
-    // since a Resource has a Ptr to its manager, the manager cannot be
+    // since a Resource has a ptr to its manager, the manager cannot be
     // deleted until all the resources it manages are deleted or unused (when
     // a Resource gets released its pointer to its manager is set to NULL)
     // Hence, at this point, all the managed resources should be unused.
@@ -49,12 +46,12 @@ ResourceManager::~ResourceManager()
     }
 }
 
-Ptr<ResourceLoader> ResourceManager::getLoader()
+ptr<ResourceLoader> ResourceManager::getLoader()
 {
     return loader;
 }
 
-Ptr<Object> ResourceManager::loadResource(const string &name)
+ptr<Object> ResourceManager::loadResource(const string &name)
 {
     map<string, pair<int, Resource*> >::iterator i = resources.find(name);
     if (i != resources.end()) { // if the requested resource has already been loaded
@@ -76,8 +73,8 @@ Ptr<Object> ResourceManager::loadResource(const string &name)
         Logger::INFO_LOGGER->log("RESOURCE", "Loading resource '" + name + "'");
     }
     // otherwise the resource is not already loaded; we first load its descriptor
-    Ptr<Object> r = NULL;
-    Ptr<ResourceDescriptor> d = loader->loadResource(name);
+    ptr<Object> r = NULL;
+    ptr<ResourceDescriptor> d = loader->loadResource(name);
 
     if (d != NULL) {
         // then we create the actual resource from this descriptor
@@ -87,7 +84,7 @@ Ptr<Object> ResourceManager::loadResource(const string &name)
         }
         if (r != NULL) {
             // and we register this resource with this manager
-            Resource *res = dynamic_cast<Resource*>(&(*r));
+            Resource *res = dynamic_cast<Resource*>(r.get());
             resources[name] = make_pair(res->getUpdateOrder(), res);
             resourceOrder[make_pair(res->getUpdateOrder(), res->getName())] = res;
             return r;
@@ -99,7 +96,7 @@ Ptr<Object> ResourceManager::loadResource(const string &name)
     throw exception();
 }
 
-Ptr<Object> ResourceManager::loadResource(Ptr<ResourceDescriptor> desc, const TiXmlElement *f)
+ptr<Object> ResourceManager::loadResource(ptr<ResourceDescriptor> desc, const TiXmlElement *f)
 {
     string name;
     const char *nm = f->Attribute("name");
@@ -110,7 +107,7 @@ Ptr<Object> ResourceManager::loadResource(Ptr<ResourceDescriptor> desc, const Ti
     } else {
         name = nm;
     }
-    Ptr<Object> r = NULL;
+    ptr<Object> r = NULL;
 
     if (desc != NULL) {
         // then we create the actual resource from this descriptor
@@ -120,7 +117,7 @@ Ptr<Object> ResourceManager::loadResource(Ptr<ResourceDescriptor> desc, const Ti
         }
         if (r != NULL) {
             // and we register this resource with this manager
-            Resource *res = dynamic_cast<Resource*>(&(*r));
+            Resource *res = dynamic_cast<Resource*>(r.get());
             resources[name] = make_pair(res->getUpdateOrder(), res);
             resourceOrder[make_pair(res->getUpdateOrder(), res->getName())] = res;
             return r;
@@ -231,8 +228,6 @@ void ResourceManager::removeResource(Resource *resource)
     }
     // it is not necessary to remove the resource from the unused resource cache
     // indeed this should have been done already (see #releaseResource)
-}
-
 }
 
 }

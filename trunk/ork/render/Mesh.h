@@ -35,13 +35,11 @@ using namespace std;
 namespace ork
 {
 
-namespace render
-{
-
 class FrameBuffer;
 
 /**
  * A MeshBuffers wrapper that provides a convenient API to define the mesh content.
+ * @ingroup render
  *
  * @tparam vertex the type of the vertices of this mesh.
  * @tparam index the type of the indices of this mesh.
@@ -68,7 +66,7 @@ public:
      * @param vertexCount the initial capacity of the vertex array.
      * @param indiceCount the initial capacity of the indice array.
      */
-    Mesh(Ptr<MeshBuffers> target, MeshMode m, MeshUsage usage, int vertexCount = 4, int indiceCount = 4);
+    Mesh(ptr<MeshBuffers> target, MeshMode m, MeshUsage usage, int vertexCount = 4, int indiceCount = 4);
 
     /**
      * Deletes this mesh.
@@ -110,7 +108,7 @@ public:
     /**
      * Returns the MeshBuffers wrapped by this Mesh instance.
      */
-    inline Ptr<MeshBuffers> getBuffers() const;
+    inline ptr<MeshBuffers> getBuffers() const;
 
     /**
      * Declares an attribute of the vertices of this mesh.
@@ -197,12 +195,12 @@ private:
     /**
      * The Buffer containing the vertices data.
      */
-    mutable Ptr<Buffer> vertexBuffer;
+    mutable ptr<Buffer> vertexBuffer;
 
     /**
      * The Buffer containing the indices data.
      */
-    mutable Ptr<Buffer> indexBuffer;
+    mutable ptr<Buffer> indexBuffer;
 
     /**
      * True if the vertex data has changed since last call to #uploadVertexDataToGPU.
@@ -267,7 +265,7 @@ private:
     /**
      * The MeshBuffers wrapped by this Mesh.
      */
-    mutable Ptr<MeshBuffers> buffers;
+    mutable ptr<MeshBuffers> buffers;
 
     /**
      * Resizes the vertex array to expand its capacity.
@@ -315,7 +313,7 @@ Mesh<vertex, index>::Mesh(MeshMode m, MeshUsage usage, int vertexCount, int indi
 }
 
 template<class vertex, class index>
-Mesh<vertex, index>::Mesh(Ptr<MeshBuffers> target, MeshMode m, MeshUsage usage, int vertexCount, int indiceCount) :
+Mesh<vertex, index>::Mesh(ptr<MeshBuffers> target, MeshMode m, MeshUsage usage, int vertexCount, int indiceCount) :
     Object("Mesh"), usage(usage), created(false), m(m), buffers(target)
 {
     vertices = new vertex[vertexCount];
@@ -376,7 +374,7 @@ GLint Mesh<vertex, index>::getPatchVertices() const
 template<class vertex, class index>
 void Mesh<vertex, index>::uploadVertexDataToGPU(BufferUsage u) const
 {
-    Ptr<GPUBuffer> vb = vertexBuffer.cast<GPUBuffer>();
+    ptr<GPUBuffer> vb = vertexBuffer.cast<GPUBuffer>();
     assert(vb != NULL); // check it's a GPU mesh
     vb->setData(verticesCount * sizeof(vertex), vertices, u);
     vertexDataHasChanged = false;
@@ -385,14 +383,14 @@ void Mesh<vertex, index>::uploadVertexDataToGPU(BufferUsage u) const
 template<class vertex, class index>
 void Mesh<vertex, index>::uploadIndexDataToGPU(BufferUsage u) const
 {
-    Ptr<GPUBuffer> ib = indexBuffer.cast<GPUBuffer>();
+    ptr<GPUBuffer> ib = indexBuffer.cast<GPUBuffer>();
     assert(ib != NULL);
     ib->setData(indicesCount * sizeof(index), indices, u);
     indexDataHasChanged = false;
 }
 
 template<class vertex, class index>
-Ptr<MeshBuffers> Mesh<vertex, index>::getBuffers() const
+ptr<MeshBuffers> Mesh<vertex, index>::getBuffers() const
 {
     if (!created) {
         createBuffers();
@@ -547,13 +545,13 @@ void Mesh<vertex, index>::createBuffers() const
 {
     if (usage == GPU_STATIC || usage == GPU_DYNAMIC || usage ==  GPU_STREAM) {
         GPUBuffer *gpub = new GPUBuffer();
-        vertexBuffer = Ptr<Buffer>(gpub);
+        vertexBuffer = ptr<Buffer>(gpub);
         if (usage == GPU_STATIC) {
             uploadVertexDataToGPU(STATIC_DRAW);
         }
     } else if (usage == CPU) {
         CPUBuffer *cpub = new CPUBuffer(vertices);
-        vertexBuffer = Ptr<Buffer>((Buffer*)cpub);
+        vertexBuffer = ptr<Buffer>((Buffer*)cpub);
     }
 
     assert(buffers->getAttributeCount() > 0);
@@ -564,13 +562,13 @@ void Mesh<vertex, index>::createBuffers() const
     if (indicesCount != 0) {
         if (usage == GPU_STATIC || usage == GPU_DYNAMIC || usage == GPU_STREAM) {
             GPUBuffer *gpub = new GPUBuffer();
-            indexBuffer = Ptr<Buffer>(gpub);
+            indexBuffer = ptr<Buffer>(gpub);
             if (usage == GPU_STATIC) {
                 uploadIndexDataToGPU(STATIC_DRAW);
             }
         } else if (usage == CPU) {
             CPUBuffer *cpub = new CPUBuffer(indices);
-            indexBuffer = Ptr<Buffer>(cpub);
+            indexBuffer = ptr<Buffer>(cpub);
         }
 
         AttributeType type;
@@ -591,8 +589,6 @@ void Mesh<vertex, index>::createBuffers() const
     buffers->nvertices = verticesCount;
     buffers->nindices = indicesCount;
     created = true;
-}
-
 }
 
 }

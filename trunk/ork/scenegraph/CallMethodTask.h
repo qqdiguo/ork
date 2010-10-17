@@ -29,11 +29,9 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 /**
  * An AbstractTask to execute a Method on a SceneNode.
+ * @ingroup scenegraph
  */
 class ORK_API CallMethodTask : public AbstractTask
 {
@@ -52,7 +50,7 @@ public:
      */
     virtual ~CallMethodTask();
 
-    virtual Ptr<Task> getTask(Ptr<Object> context);
+    virtual ptr<Task> getTask(ptr<Object> context);
 
 protected:
     /**
@@ -74,7 +72,7 @@ protected:
      *
      * @param t a CallMethodTask.
      */
-    void swap(Ptr<CallMethodTask> t);
+    void swap(ptr<CallMethodTask> t);
 
 private:
     /**
@@ -84,8 +82,6 @@ private:
      */
     QualifiedName method;
 };
-
-}
 
 }
 

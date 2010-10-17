@@ -28,9 +28,6 @@
 namespace ork
 {
 
-namespace resource
-{
-
 CompiledResourceLoader::StaticResourceDescriptor::StaticResourceDescriptor(const TiXmlElement *descriptor, unsigned char *data, unsigned int size) :
     ResourceDescriptor(descriptor, data, size)
 {
@@ -65,12 +62,12 @@ string CompiledResourceLoader::findResource(const string &name)
     return paths[name];
 }
 
-Ptr<ResourceDescriptor> CompiledResourceLoader::loadResource(const string &name)
+ptr<ResourceDescriptor> CompiledResourceLoader::loadResource(const string &name)
 {
     return resources[name];
 }
 
-Ptr<ResourceDescriptor> CompiledResourceLoader::reloadResource(const string &name, Ptr<ResourceDescriptor> currentValue)
+ptr<ResourceDescriptor> CompiledResourceLoader::reloadResource(const string &name, ptr<ResourceDescriptor> currentValue)
 {
     return NULL;
 }
@@ -80,11 +77,9 @@ void CompiledResourceLoader::addPath(const string &name, const string &path)
     paths.insert(make_pair(name, path));
 }
 
-void CompiledResourceLoader::addResource(const string &name, Ptr<ResourceDescriptor> desc)
+void CompiledResourceLoader::addResource(const string &name, ptr<ResourceDescriptor> desc)
 {
     resources.insert(make_pair(name, desc));
-}
-
 }
 
 }

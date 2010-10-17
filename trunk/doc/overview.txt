@@ -62,36 +62,49 @@ scenes, based on a task scheduling framework.
 
 \section sec_core Core classes
 
-The core classes of Ork are provided in the ork::core and ork::math
-namespaces. The first namespace provides memory management facilities
+The core classes of Ork are provided in the \ref core and \ref math
+modules. The first module provides memory management facilities
 (namely a smart pointer framework), as well as some utility classes
 to log messages, measure time or iterate over STL collections. The
-second namespace provides classes related to linear algebra in 2D and
+second module provides classes related to linear algebra in 2D and
 3D (vectors and matrices).
 
 \subsection sec_object Smart pointers
 
-The main class in ork::core is the ork::core::Object class, and the
-related ork::core::Ptr and ork::core::StaticPtr templates. These
+The main class in \ref core is the ork::Object class, and the
+related ork::ptr and ork::static_ptr templates. These
 classes provide a smart pointer framework i.e., a framework that
 ensures the automatic destruction of objects when they are no longer
-referenced. All the classes that inherit from ork::core::Object have
+referenced. 
+
+\note with the USE_SHARED_PTR preprocessor flag ork::ptr extends 
+std::tr1::shared_ptr; without this flag ork::ptr is fully implemented in Ork
+(using an intrusive counter in ork::Object). Note that, with the 
+USE_SHARED_PTR flag, you can use either ork::ptr or std::tr1::shared_ptr
+in your application: since ork::ptr is a subclass of std::tr1::shared_ptr,
+the result of an Ork function returning a ork::ptr can be stored 
+transparently in a std:tr1::shared_ptr. Conversely, you can transparently
+pass a std::tr1::shared_ptr to an Ork function requiring a ork::ptr, 
+because there is an implicit ork::ptr constructor taking a 
+std::tr1::shared_ptr as argument.
+
+All the classes that inherit from ork::Object have
 this automatic destruction behavior. All the instances of theses
-classes have a reference counter, declared in ork::core::Object,
+classes have a reference counter, declared in ork::Object,
 which is incremented (resp. decremented) each time a new
-ork::core::Ptr or ork::core::StaticPtr reference to an object is
+ork::ptr or ork::static_ptr reference to an object is
 created (resp. deleted). For instance, in the following code
 
 \code
 void f() {
-    Ptr<Object> o = new Object(); // shortcut for Ptr<Object>(new Object());
+    ptr<Object> o = new Object(); // shortcut for ptr<Object>(new Object());
     // ...
 }
 \endcode
 
 an object is created in heap memory with the new operator, and its
 reference counter is incremented during the creation of the <tt>
-Ptr<Object></tt> reference. At the end of the function the destructor
+ptr<Object></tt> reference. At the end of the function the destructor
 of this reference is automatically called (as defined in the C++
 specification), which decrements the reference counter of the object.
 And if this counter becomes null, then the object destructor is
@@ -101,29 +114,29 @@ Notes:
 <ul>
 <li>thanks to C++ implicit conversion rules, you can use smart
 pointers almost like normal pointers. In particular you can write, as
-above, <tt>Ptr<Object> o = new Object();</tt> instead of using an
-explicit constructor call <tt>Ptr<Object> o = Ptr<Object>(new
-Object());</tt>. Also the ork::core::Ptr class defines the =, ==, !=,
+above, <tt>ptr<Object> o = new Object();</tt> instead of using an
+explicit constructor call <tt>ptr<Object> o = ptr<Object>(new
+Object());</tt>. Also the ork::ptr class defines the =, ==, !=,
 * and -> operators, so that you can assign, compare and dereference
 smart pointers like ordinary pointers. Finally you can cast a smart
-pointer to another smart pointer type <tt>Ptr<T></tt> with <tt>
+pointer to another smart pointer type <tt>ptr<T></tt> with <tt>
 o.cast<T>()</tt> (note that if <tt>D</tt> is a subclass of <tt>
-C</tt>, a <tt>Ptr<D></tt> can be used anywhere a <tt>Ptr<C></tt> is
+C</tt>, a <tt>ptr<D></tt> can be used anywhere a <tt>ptr<C></tt> is
 expected, without any cast).</li>
 
-<li>the ork::core::StaticPtr template is similar to ork::core::Ptr,
+<li>the ork::static_ptr template is similar to ork::ptr,
 but is reserved for static variables. By calling
-ork::core::Object#exit at the end of your program, you can then set
+ork::Object#exit at the end of your program, you can then set
 all these static references to <tt>NULL</tt>, which should destroys
 all statically referenced objects. Note that, in debug compilation
-mode, the <tt>exit</tt> method checks that all ork::core::Object
+mode, the <tt>exit</tt> method checks that all ork::Object
 instances have been destroyed, which is useful to detect memory
 leaks. One way to ensure that this method is called at the end of
 your program is to use <tt>atexit(Object::exit);</tt>.</li>
 
 <li>you can change the default behavior that destroys an object when
 its reference count becomes 0 by overriding the
-ork::core::Object#doRelease method.</li>
+ork::Object#doRelease method.</li>
 </ul>
 
 Restrictions:
@@ -133,11 +146,11 @@ Restrictions:
 is not accurate and an object may be destroyed while it is still
 referenced via normal pointers. For instance, in the following code
 \code
-void f(Ptr<Object> o);
+void f(ptr<Object> o);
 
 void g() {
     Object *o = new Object();
-    f(o); // shortcut for f(Ptr<Object>(o));
+    f(o); // shortcut for f(ptr<Object>(o));
     delete o; // Error: double delete!
 }
 \endcode
@@ -161,7 +174,7 @@ above). A common pattern is the following:
 class C
 {
 public:
-    Ptr<D> d;
+    ptr<D> d;
     ~C() {
         d->c = NULL; // deletes normal pointers to this
     }
@@ -170,7 +183,7 @@ public:
 class D
 {
 public:
-    C* c; // using Ptr<C> would create smart pointer cycles!
+    C* c; // using ptr<C> would create smart pointer cycles!
 };
 \endcode
 since the reference <tt>c</tt> in <tt>D</tt> is a normal pointer, and
@@ -190,9 +203,9 @@ to <tt>NULL</tt>).</li>
 The Ork logging framework can be used to log messages. A message can
 be an error message, a warning message, an informative message, or a
 debug message. It has a topic and a content. The main class is the
-ork::core::Logger class. This class stores in static variables
+ork::Logger class. This class stores in static variables
 several loggers for error, warning, informative and debug messages,
-one per category. It also defines a ork::core::Logger#log method, to
+one per category. It also defines a ork::Logger#log method, to
 log a message in a given topic. A typical use is the following:
 
 \code
@@ -201,13 +214,13 @@ if (Logger::INFO_LOGGER != NULL) {
 }
 \endcode
 
-The ork::core::Logger class prints messages to the standard output.
-The ork::core::FileLogger subclass writes messages to an HTML file.
-The ork::core::FileLogger can be chained to another logger. It is
+The ork::Logger class prints messages to the standard output.
+The ork::FileLogger subclass writes messages to an HTML file.
+The ork::FileLogger can be chained to another logger. It is
 then possible to log messages both to standard output and to an HTML
 file. You can also define your own logger subclass. All loggers can
 be configured to print only the messages related to one or more
-topics, with the ork::core::Logger#addTopic method (by default they
+topics, with the ork::Logger#addTopic method (by default they
 print all messages, whatever their topic). The topics defined in the
 Ork library are the following:
 <ul>
@@ -222,7 +235,7 @@ Ork library are the following:
 
 \subsection sec_ork_math Maths
 
-The ork::math namespace provides classes related to linear algebra in
+The \ref math module provides classes related to linear algebra in
 2D and 3D (vectors and matrices).
 
 <ul>
@@ -245,7 +258,7 @@ another bounding box.</li>
 
 \section sec_render Rendering framework
 
-The ork::render namespace provide the Ork
+The \ref render module provides the Ork
 rendering framework, an object oriented view of the OpenGL API. 
 The OpenGL API can be quite unnatural and hard to use for C++ programmers. 
 The first reason is that OpenGL "objects" are simply represented with 
@@ -321,9 +334,9 @@ programs, configured via <i>uniform variables</i>.
 \htmlonly --> \endhtmlonly
 
 The rendering framework defines classes for all these elements. These
-classes extend the ork::core::Object class, so that GPU resources are
+classes extend the ork::Object class, so that GPU resources are
 automatically deleted when they are no longer used (for example when
-a ork::render::Texture object is no longer referenced it is deleted,
+a ork::Texture object is no longer referenced it is deleted,
 which deletes the corresponding OpenGL texture in GPU memory).
 
 The rendering API fully covers the OpenGL 3.3 core profile, and 
@@ -338,17 +351,17 @@ A mesh is a list of vertices organized in some topology (points,
 lines, line strip, triangles, triangle strip, etc). Each vertex has
 some attributes. Attributes are user defined and can hold any kind of
 value (position, normal, color, texture coordinates, etc). The
-attributes are grouped into ork::render::AttributeBuffer, grouped
-themselves into an ork::render::MeshBuffers. An attribute buffer
+attributes are grouped into ork::AttributeBuffer, grouped
+themselves into an ork::MeshBuffers. An attribute buffer
 describes the storage format for one vertex attribute. The values of
 this attribute for all the vertices of the mesh are not stored in the
-attribute buffer itself, but in a separate ork::render::Buffer. This
-buffer can reside in CPU memory if an ork::render::CPUBuffer is used,
-or in GPU memory if an ork::render::GPUBuffer is used.
+attribute buffer itself, but in a separate ork::Buffer. This
+buffer can reside in CPU memory if an ork::CPUBuffer is used,
+or in GPU memory if an ork::GPUBuffer is used.
 
-Thanks to the \link ork::render::AttributeBuffer#getStride stride
-\endlink and \link ork::render::AttributeBuffer#getOffset offset
-\endlink parameters in ork::render::AttributeBuffer, the attributes
+Thanks to the \link ork::AttributeBuffer#getStride stride
+\endlink and \link ork::AttributeBuffer#getOffset offset
+\endlink parameters in ork::AttributeBuffer, the attributes
 of the vertices of a mesh can be organized in many different ways.
 Here are some possibilities:
 <ul>
@@ -379,11 +392,11 @@ attributes can be interleaved or not in this buffer:
 This flexibility can be an advantage to organize your mesh data as
 you want, but it complicates the creation of a mesh. In order to
 simplify the creation of meshes using the interleaved storage mode in
-a single buffer, it is possible to use the ork::render::Mesh
+a single buffer, it is possible to use the ork::Mesh
 template. For example, the following code
 
 \code
-Ptr< Mesh<vec4f, unsigned byte> > m;
+ptr< Mesh<vec4f, unsigned byte> > m;
 m = new Mesh<vec4f, unsigned byte>(TRIANGLE_STRIP, GPU_STATIC);
 m->addAttributeType(0, 2, A32F, false);
 m->addAttributeType(1, 2, A32F, false);
@@ -396,19 +409,19 @@ m->addVertex(vec4f(1, 1, 1, 1));
 creates a mesh with the triangle strip topology, where each vertex is
 represented with a vec4f struct (you can use any user defined
 structure to describe the vertices). Each vertex has two attributes,
-described with ork::render::Mesh#addAttributeType. The first one is
+described with ork::Mesh#addAttributeType. The first one is
 made of two floats, as well as the second one (they can be
 interpreted as a 2D position and a 2D texture coordinate). The
-vertices are defined with ork::render::Mesh#addVertex, using the type
+vertices are defined with ork::Mesh#addVertex, using the type
 passed as template parameter for the mesh. The resulting
-ork::render::MeshBuffers can then be retrieved with
-ork::render::Mesh#getBuffers.
+ork::MeshBuffers can then be retrieved with
+ork::Mesh#getBuffers.
 
 \subsubsection sec_meshes1 Attribute identifiers
 
 Each vertex attribute has an identifier represented with an integer
-(specified by the first argument of the ork::render::AttributeBuffer
-constructor, or of the \link ork::render::Mesh#addAttributeType 
+(specified by the first argument of the ork::AttributeBuffer
+constructor, or of the \link ork::Mesh#addAttributeType 
 addAttributeType\endlink method. You must specifiy these identifiers
 in your shaders, with a <tt>location</tt> layout qualifier. For
 instance, using <tt>layout(location=0) in vec3 position;</tt>
@@ -427,33 +440,33 @@ described once in an array, then the vertices that make up each
 triangle are described by their index in this array.
 
 This kind of mesh can be defined in ork by using
-ork::render::MeshBuffers#setIndicesBuffer. This method takes an
-ork::render::AttributeBuffer as parameter, that describes the indices
+ork::MeshBuffers#setIndicesBuffer. This method takes an
+ork::AttributeBuffer as parameter, that describes the indices
 of the mesh vertices in the other attribute buffers, seen as vertex
-arrays. This can also be done with a ork::render::Mesh, using the
-ork::render::Mesh::addIndice method (the format of the vertex indices
-is then specified by the second parameter of the ork::render::Mesh
+arrays. This can also be done with a ork::Mesh, using the
+ork::Mesh::addIndice method (the format of the vertex indices
+is then specified by the second parameter of the ork::Mesh
 template).
 
 \subsubsection sec_meshes3 Modifying meshes
 
-A mesh can be modified by modifying the ork::render::Buffer that
+A mesh can be modified by modifying the ork::Buffer that
 contain the actual vertex data. In the case of a
-ork::render::CPUBuffer you can directly modify the buffer content in
-CPU memory. In the case of a ork::render::GPUBuffer, you can either
-use the ork::render::GPUBuffer#setData or
-ork::render::GPUBuffer#setSubData methods, or you can map the buffer
-content to CPU memory with ork::render::GPUBuffer#map, and then
+ork::CPUBuffer you can directly modify the buffer content in
+CPU memory. In the case of a ork::GPUBuffer, you can either
+use the ork::GPUBuffer#setData or
+ork::GPUBuffer#setSubData methods, or you can map the buffer
+content to CPU memory with ork::GPUBuffer#map, and then
 modify this mapped buffer directly in CPU memory, before unmapping
 it.
 
 \subsubsection sec_meshes4 Drawing meshes
 
-A mesh must be drawn with the ork::render::FrameBuffer#draw method,
-either with a ork::render::MeshBuffers argument, or with a
-ork::render::Mesh argument. In the first case you can specify a
+A mesh must be drawn with the ork::FrameBuffer#draw method,
+either with a ork::MeshBuffers argument, or with a
+ork::Mesh argument. In the first case you can specify a
 different mesh topology and vertex count than in the
-ork::render::MeshBuffers itself (this could be used to draw only a
+ork::MeshBuffers itself (this could be used to draw only a
 part of the mesh). In both cases you can specify the number of times
 this mesh must be drawn (this is called geometry instancing).
 
@@ -465,8 +478,8 @@ positions of vertices in the render targets, and the color or other
 data to write in these render targets. They can also use some uniform
 variables, whose value is constant during the rendering of a mesh.
 
-In Ork a ork::render::Program is made of one or more ork::render::Module
-linked together. Each ork::render::Module object groups in the same object 
+In Ork a ork::Program is made of one or more ork::Module
+linked together. Each ork::Module object groups in the same object 
 a (part of a) vertex shader, a (part of a) tessellation control shader,
 a (part of a) tessellation evaluation shader, a (part of
 a) geometry shader and a (part of a) fragment shader (all parts are
@@ -531,11 +544,11 @@ the corresponding OpenGL shader). The common code can include uniform
 variables and data type declarations that are common to the vertex,
 tessellation, geometry and fragment parts.
 
-A ork::render::Program is made of one or more ork::render::Module
-linked together. Using several ork::render::Module to create a
+A ork::Program is made of one or more ork::Module
+linked together. Using several ork::Module to create a
 program can be useful to define modular code, where one module
 uses a function implemented in another module. For example, you can
-use something like this in a "wood" ork::render::Module
+use something like this in a "wood" ork::Module
 
 \verbatim
 ... common GLSL code ...
@@ -586,34 +599,34 @@ that we can use this function in a vertex shader for per-vertex
 lighting, or in a fragment shader of per pixel lighting. Another
 advantage is that you can combine these "point light" and "spot
 light" modules with other "material" modules, for instance with a
-"marble" module (this means that a ork::render::Module can be used by
-several ork::render::Program). Hence can you avoid code duplication
+"marble" module (this means that a ork::Module can be used by
+several ork::Program). Hence can you avoid code duplication
 between all these material shaders.
 
 \subsubsection sec_shaders1 Uniforms
 
 The uniform variables of a program are represented with the
-ork::render::Uniform class and its subclasses. Uniforms can 
-be retrieved with the ork::render::Program#getUniform and 
+ork::Uniform class and its subclasses. Uniforms can 
+be retrieved with the ork::Program#getUniform and 
 <tt>getUniformXxx</tt> methods. Uniforms inside uniform blocks
 can be retrieved in the same way, or in two steps via 
-ork::render::Program#getUniformBlock and 
-ork::render::UniformBlock#getUniform.
+ork::Program#getUniformBlock and 
+ork::UniformBlock#getUniform.
 
-As in OpenGL, the value of a ork::render::Uniform is 
+As in OpenGL, the value of a ork::Uniform is 
 "persistent", which means that this value remains the same
-forever, unless you change it with ork::render::Uniform#setValue
+forever, unless you change it with ork::Uniform#setValue
 (or one of the specific <tt>set</tt> methods in the
-ork::render::Uniform subclasses).
+ork::Uniform subclasses).
 
 The value of a uniform defined in an uniform block is set like
 the value of an uniform in the default block. Under the hood, Ork
-automatically creates a ork::render::GPUBuffer object for the
+automatically creates a ork::GPUBuffer object for the
 uniform block, and maps and unmaps it in main memory when 
 necessary.
 
 <b>Important note:</b> For the best performance you should not
-use ork::render::Program#getUniform in your rendering loop.
+use ork::Program#getUniform in your rendering loop.
 Instead of doing this:
 \verbatim
 ... initialization
@@ -627,7 +640,7 @@ for (each frame) {
 Use this:
 \verbatim
 ... initialization
-Ptr<Uniform1f> x = myProgram->getUniform1f("x");
+ptr<Uniform1f> x = myProgram->getUniform1f("x");
 for (each frame) {
     ...
     x->set(...);
@@ -640,38 +653,38 @@ for (each frame) {
 \subsection sec_textures Textures
 
 The OpenGL textures are represented in Ork with the
-ork::render::Texture class and its subclasses. Each texture
+ork::Texture class and its subclasses. Each texture
 has an <i>internal format</i> describing the number of components (or
 color channels) per pixel and the number of bits per components. Each
 texture also has a set of parameters, represented with the
-ork::render::Texture::Parameters class.
+ork::Texture::Parameters class.
 In Ork the texture parameters are immutable, i.e., only the
 content of the texture can be changed at runtime. 
 
 The texture
 parameters are specified in the texture constructor. An initial
 texture content can also be specified in the constructor, using a
-ork::render::Buffer object. Using a \link ork::render::CPUBuffer
+ork::Buffer object. Using a \link ork::CPUBuffer
 CPUBuffer(NULL)\endlink can be used to left this content
-uninitialized. Using a ork::render::GPUBuffer can be used to
+uninitialized. Using a ork::GPUBuffer can be used to
 initialize the texture content from a buffer already on GPU (the
 content of this buffer is <i>copied</i> to the texture, it is not use
 as is, by reference). The texture content can be read back on CPU
-with the ork::render::Texture#getImage method.
+with the ork::Texture#getImage method.
 
 The texture content can be changed at runtime in two ways. The first
 one copies the new content from a buffer object, the second one from
 a framebuffer attachment:
 <ul>
 
-<li>the \link ork::render::Texture2D#setSubImage setSubImage\endlink
+<li>the \link ork::Texture2D#setSubImage setSubImage\endlink
 methods specify which sub part of the texture must be changed, the
-new values being provided in a ork::render::CPUBuffer or
-ork::render::GPUBuffer.</li>
+new values being provided in a ork::CPUBuffer or
+ork::GPUBuffer.</li>
 
-<li>the \link ork::render::FrameBuffer#copyPixels copyPixels\endlink
+<li>the \link ork::FrameBuffer#copyPixels copyPixels\endlink
 methods copy a part of a framebuffer attachment (specified with
-ork::render::FrameBuffer#setReadBuffer) into a sub part of a
+ork::FrameBuffer#setReadBuffer) into a sub part of a
 texture.</li>
 </ul>
 
@@ -684,23 +697,23 @@ read and write the content of these textures:
 <li>the initial content is specified in the texture constructor, as
 for uncompressed textures, but you need to provide the compressed
 texture size in the buffer parameters, represented with the 
-ork::render::Buffer::Parameters class.</li>
+ork::Buffer::Parameters class.</li>
 
 <li>the texture content must be read back on CPU with the
-ork::render::Texture::getCompressedImage method. The compressed
+ork::Texture::getCompressedImage method. The compressed
 texture size can be retrieved with
-ork::render::Texture::getCompressedSize.</li>
+ork::Texture::getCompressedSize.</li>
 
 <li>the texture content must be changed at runtime with the \link
-ork::render::Texture2D#setCompressedSubImage
+ork::Texture2D#setCompressedSubImage
 setCompressedSubImage\endlink methods.</li>
 </ul>
 
 \subsubsection sec_textures2 Uniform samplers
 
 A texture can be bound to a uniform sampler in a program very simply,
-with a ork::render::UniformSampler object. For instance, if <tt>
-p</tt> is a ork::render::Program made of the following module
+with a ork::UniformSampler object. For instance, if <tt>
+p</tt> is a ork::Program made of the following module
 
 \verbatim
 uniform samplerCube envMap;
@@ -716,13 +729,13 @@ then you can bind a texture to its <tt>envMap</tt> uniform sampler
 like this:
 
 \code
-Ptr<TextureCube> t = ...
+ptr<TextureCube> t = ...
 p->getUniformSampler("envMap")->set(t);
 \endcode
 
 \subsection sec_framebuffers Framebuffers
 
-The ork::render::FrameBuffer class is used to represent both the
+The ork::FrameBuffer class is used to represent both the
 default framebuffer and the OpenGL framebuffer objects.
 As in OpenGL, a framebuffer has some attachments. These attachments
 are associated with their framebuffer, i.e., when a framebuffer
@@ -736,35 +749,35 @@ pipeline state is automatically set up to replace the pipeline state
 of the previous framebuffer.
 
 The framebuffer attachments are defined with the
-ork::render::FrameBuffer#setRenderBuffer and ork::render::FrameBuffer#setTextureBuffer
+ork::FrameBuffer#setRenderBuffer and ork::FrameBuffer#setTextureBuffer
 methods.
 
 The framebuffer pipeline state is represented with
-the ork::render::FrameBuffer::Parameters class and can be modified
-with the getter and setter methods of the ork::render::FrameBuffer
+the ork::FrameBuffer::Parameters class and can be modified
+with the getter and setter methods of the ork::FrameBuffer
 class.
 
 The default framebuffer is accessible via the
-ork::render::FrameBuffer#getDefault static method (the attachments of
+ork::FrameBuffer#getDefault static method (the attachments of
 this framebuffer cannot be changed, but its pipeline
 state <i>can</i> be changed). The user defined framebuffers are
-created with the ork::render::FrameBuffer constructor.
+created with the ork::FrameBuffer constructor.
 
-The main methods of ork::render::FrameBuffer are the \link
-ork::render::FrameBuffer#draw draw\endlink methods to draw meshes
-(there is also a convenient \link ork::render::FrameBuffer#drawQuad
+The main methods of ork::FrameBuffer are the \link
+ork::FrameBuffer#draw draw\endlink methods to draw meshes
+(there is also a convenient \link ork::FrameBuffer#drawQuad
 drawQuad\endlink method to draw quads). There are also some methods
-to \link ork::render::FrameBuffer#clear clear\endlink the render
+to \link ork::FrameBuffer#clear clear\endlink the render
 targets, and to read and copy pixels from these attachments:
 
 <ul>
-<li>the ork::render::FrameBuffer#readPixels method can be used to
+<li>the ork::FrameBuffer#readPixels method can be used to
 copy pixels from one of the framebuffer attachments (chosen with
-ork::render::FrameBuffer::setReadBuffer) into a ork::render::Buffer
+ork::FrameBuffer::setReadBuffer) into a ork::Buffer
 (either a CPU or a GPU buffer).</li>
-<li>the ork::render::FrameBuffer#copyPixels methods can be used to
+<li>the ork::FrameBuffer#copyPixels methods can be used to
 copy pixels from one of the framebuffer attachments (chosen with
-ork::render::FrameBuffer::setReadBuffer) into a texture.</li>
+ork::FrameBuffer::setReadBuffer) into a texture.</li>
 </ul>
 
 \subsubsection sec_framebuffers1 Multiple render targets
@@ -772,12 +785,12 @@ ork::render::FrameBuffer::setReadBuffer) into a texture.</li>
 A fragment shader can write to several framebuffer attachments 
 simultaneously. Before that you must select the
 attachments used for drawing with the \link
-ork::render::FrameBuffer#setDrawBuffers setDrawBuffers\endlink
+ork::FrameBuffer#setDrawBuffers setDrawBuffers\endlink
 method. For example, to choose the <tt>COLOR0</tt> and <tt>
 COLOR2</tt> attachments:
 
 \code
-Ptr<FrameBufer> fb = ...
+ptr<FrameBufer> fb = ...
 fb->setDrawBuffers(FrameBuffer::COLOR0 | FrameBuffer::COLOR2);
 \endcode
 
@@ -809,17 +822,17 @@ textures, modules, programs, meshes and framebuffers.
 
 \until SimpleExample()
 
-The ork::ui::GlutWindow class provides an object oriented view of the
+The ork::GlutWindow class provides an object oriented view of the
 basic GLUT functionalities, namely windows and user interface events
 callbacks. The methods of this class can be overridden in order to
 define the user interface of your application. These methods are the
-\link ork::ui::Window#redisplay redisplay\endlink,
-\link ork::ui::Window#reshape reshape\endlink,
-\link ork::ui::Window#mouseClick mouseClick\endlink,
-\link ork::ui::Window#mouseMotion mouseMotion\endlink,
-\link ork::ui::Window#keyTyped keyTyped\endlink,
-\link ork::ui::Window#specialKey specialKey\endlink, and
-\link ork::ui::Window#idle idle\endlink methods. You can then
+\link ork::Window#redisplay redisplay\endlink,
+\link ork::Window#reshape reshape\endlink,
+\link ork::Window#mouseClick mouseClick\endlink,
+\link ork::Window#mouseMotion mouseMotion\endlink,
+\link ork::Window#keyTyped keyTyped\endlink,
+\link ork::Window#specialKey specialKey\endlink, and
+\link ork::Window#idle idle\endlink methods. You can then
 create a window by instantiating this sub class. Note: if the initial
 window size is set to (0,0) a full screen window will be created.
 
@@ -845,7 +858,7 @@ sets the value of its "sampler" uniform to the previous texture.
 \until GlutWindow::redisplay(t, dt);
 \line }
 
-In the above code we override the ork::ui::GlutWindow#redisplay
+In the above code we override the ork::GlutWindow#redisplay
 method, called at each frame, and which is responsible to redraw the
 window content. We clear the default framebuffer, and then
 use the previous program to draw the above mesh. The
@@ -854,37 +867,37 @@ the window content (with a <tt>glSwapBuffers</tt>).
 
 \until };
 
-In the above code we override the ork::ui::GlutWindow#reshape method,
+In the above code we override the ork::GlutWindow#reshape method,
 called when the window is created or resized, in order to adapt the
 viewport of the framebuffer to the window size.
 
 \until }
 
-Finally we create an instance of our ork::ui::Window subclass and
-we call its ork::ui::Window#start method to start the user
+Finally we create an instance of our ork::Window subclass and
+we call its ork::Window#start method to start the user
 interface event processing loop (this method never returns). Before
-that we register the static ork::core::Object#exit method to properly
+that we register the static ork::Object#exit method to properly
 deletes unused resources when the application stops.
 
 \section sec_resource Resource framework
 
-The ork::render classes do not provide any tool to load a 3D mesh, to
+The \ref render classes do not provide any tool to load a 3D mesh, to
 load the content of a texture from a PNG file (or any other image
 file format), or to load the source code of a shader from a text
 file. This is why in the \ref sec_example "above example" the mesh,
 the texture and the shader source code were included manually in the
 C++ code. Of course this way of loading content is not very
-convenient. The ork::resource namespace provides a framework to load
+convenient. The \ref resource module provides a framework to load
 this content and other data from disk. In addition this framework
 provides the ability to update the resources at runtime. This is
 especially useful for shaders because you can modify a shader on disk
 and see instantly the effects of these changes, without needing to
 restart your application.
 
-Ork resources are managed by a ork::resource::ResourceManager, which
-uses a ork::resource::ResourceLoader to load the actual resource
-content. The ork::resource::ResourceLoader class is abstract, but a
-concrete ork::resource::XMLResourceLoader subclass is provided. As
+Ork resources are managed by a ork::ResourceManager, which
+uses a ork::ResourceLoader to load the actual resource
+content. The ork::ResourceLoader class is abstract, but a
+concrete ork::XMLResourceLoader subclass is provided. As
 its name implies, it uses XML files to load resources. An XML
 resource file describes the resource "meta data" (such as the
 minification and magnification filters for a texture) and specifies
@@ -892,23 +905,23 @@ where the resource data (e.g., for a texture, the texture image
 itself) can be found. These classes are typically used as follows:
 
 \code
-Ptr<XMLResourceLoader> resLoader = new XMLResourceLoader();
+ptr<XMLResourceLoader> resLoader = new XMLResourceLoader();
 resLoader->addPath("my-resources/textures");
 resLoader->addPath("my-resources/shaders");
 resLoader->addPath("my-resources/meshes");
 \endcode
 
-we first start by creating a ork::resource::XMLResourceLoader, and we
+we first start by creating a ork::XMLResourceLoader, and we
 configure it by adding paths where the resource files can be found. In
 this example the resources are sorted by type in 3 subdirectories in
 the <tt>my-resources</tt> directory, so we add these 3 paths (adding
 a directory does <i>not</i> add recursively its subdirectories).
 
 \code
-Ptr<ResourceManager> resManager = new ResourceManager(resLoader, 8);
+ptr<ResourceManager> resManager = new ResourceManager(resLoader, 8);
 \endcode
 
-we then create a ork::resource::ResourceManager using the previous
+we then create a ork::ResourceManager using the previous
 resource loader. The second constructor argument, 8, is the size of
 the cache of unused resources. Indeed, instead of deleting
 immediately an unused resource, a resource manager can cache it
@@ -920,7 +933,7 @@ Once the resource loader and manager are created and configured, we
 can load resources very easily with a code like this:
 
 \code
-Ptr<Texture> t = resManager->loadResource("envMap").cast<Texture>();
+ptr<Texture> t = resManager->loadResource("envMap").cast<Texture>();
 \endcode
 
 \note A resource is loaded only once. If you try to load an already
@@ -944,22 +957,22 @@ is looked for in the configured paths of the resource loader.
 \subsection sec_dummy Dummy section
 \htmlonly --> \endhtmlonly
 
-\note The ork::resource::XMLResourceLoader is convenient during
+\note The ork::XMLResourceLoader is convenient during
 the development phase because you can easily change a single
 resource with a text editor, and you can also do that at runtime.
 But this is a drawback when you want to distribute your 
 application: you may not want users to be able to see your 
 resources in "clear text" (especially for shaders), and you
 certainly don't want them to be able to modify them at runtime.
-The ork::resource::CompiledResourceLoader solves this problem:
+The ork::CompiledResourceLoader solves this problem:
 it disables runtime resource updates, and loads all resources 
 from a single data file (that you can encrypt if necessary), 
-produced by the ork::resource::ResourceCompiler. To use these
+produced by the ork::ResourceCompiler. To use these
 classes you must first run your application with the 
-ork::resource::ResourceCompiler (a subclass of 
-ork::resource::XMLResourceLoader). This will agglomerate all 
+ork::ResourceCompiler (a subclass of 
+ork::XMLResourceLoader). This will agglomerate all 
 the resource data in two files, that you can then use with 
-the ork::resource::CompiledResourceLoader.
+the ork::CompiledResourceLoader.
 
 \subsubsection sec_archives Archive resource files
 
@@ -969,7 +982,7 @@ several resources per file. In fact both can be used at the same
 time, i.e., some resources can be loaded from individual files, while
 others are loaded from one or more archive files. In order to load
 resources from an archive file <tt>myArchive.xml</tt>, the
-ork::resource::XMLResourceLoader must be configured as follows:
+ork::XMLResourceLoader must be configured as follows:
 
 \code
 resLoader->addArchive("my-resources/myArchive.xml");
@@ -998,7 +1011,7 @@ etc you will see instantly in the running application the effect of
 these changes: a new texture image on a 3D model, the effect of a new
 texture filter, the effect of a new shader, the effect of using a
 different mesh for a 3D model, etc. This is done with the
-ork::resource::ResourceManager#updateResources method.
+ork::ResourceManager#updateResources method.
 
 This method checks the last modification time of the resource files
 on disk to detect those that have changed since they were loaded. It
@@ -1006,7 +1019,7 @@ then updates these resources, and returns <tt>true</tt> if the update
 was successful. Indeed the update can fail, for instance if there is
 a syntax error in a GLSL shader. In this case the shader is not
 updated, i.e., the old version of the shader remains in use. The
-\link ork::resource::ResourceManager#updateResources
+\link ork::ResourceManager#updateResources
 updateResources\endlink method can be called in many different ways:
 when the user presses a specific key, at regular time intervals, when
 the application window gets the focus, etc.
@@ -1040,7 +1053,7 @@ editor, in parallel with your application.
 A mesh resource is loaded like this:
 
 \code
-Ptr<MeshBuffers> m = resManager->loadResource("cube.mesh").cast<MeshBuffers>();
+ptr<MeshBuffers> m = resManager->loadResource("cube.mesh").cast<MeshBuffers>();
 \endcode
 
 The <tt>cube.mesh</tt> (the <tt>.mesh</tt> is important) must have
@@ -1071,7 +1084,7 @@ color
 A module resource is loaded like this:
 
 \code
-Ptr<Module> m = resManager->loadResource("myModule").cast<Module>();
+ptr<Module> m = resManager->loadResource("myModule").cast<Module>();
 \endcode
 
 The <tt>myModule.xml</tt> file must have the following form if the
@@ -1122,15 +1135,15 @@ shaders with a lot of code in common from a single GLSL file.
 \note if loaded via the Ork resource framework, a GLSL source
 file can include other source files with a <tt>\#include
 &quot;</tt>...<tt>.glsl&quot;</tt>: the
-ork::resource::XMLResourceLoader will automatically detect these
+ork::XMLResourceLoader will automatically detect these
 directives and replace them with the content of the referenced file.
 
 A program made of one or more modules can be loaded without declaring
 any resource file:
 
 \code
-Ptr<Program> p1 = resManager->loadResource("myModule;").cast<Program>();
-Ptr<Program> p2 = resManager->loadResource("module1;module2;").cast<Program>();
+ptr<Program> p1 = resManager->loadResource("myModule;").cast<Program>();
+ptr<Program> p2 = resManager->loadResource("module1;module2;").cast<Program>();
 \endcode
 
 the first line loads the program made of the single <tt>myModule</tt>
@@ -1143,7 +1156,7 @@ are important).
 A texture resource is loaded like this:
 
 \code
-Ptr<Texture> t = resManager->loadResource("myTexture").cast<Texture>();
+ptr<Texture> t = resManager->loadResource("myTexture").cast<Texture>();
 \endcode
 
 The <tt>myTexure.xml</tt> file must have the following form:
@@ -1193,7 +1206,7 @@ texture (<i>left</i>) and for a texture cube (<i>right</i>).</div>
 
 Sometimes you need some textures to use them as render targets in a
 framebuffer. In these cases the texture content is irrelevant. These
-textures can easily be created with a ork::render::Texture
+textures can easily be created with a ork::Texture
 constructor, but it is also possible to load them via the resource
 framework. The advantage is that you can share these render targets
 more easily (since a resource is loaded only once, if the same render
@@ -1213,10 +1226,10 @@ names of the form <tt>renderbuffer-64-I32F-1</tt>,
 \subsection sec_resuser User defined resources
 
 You can define your own resources by extending the
-ork::resource::Resource class. The common pattern used in Ork is to
+ork::Resource class. The common pattern used in Ork is to
 define a base class for the resource (so that you can instantiate and
 use it without needing the resource framework), and a sub class of
-this base class that also extends ork::resource::Resource, to be able
+this base class that also extends ork::Resource, to be able
 to instantiate this resource via the Ork resource framework. The base
 class has the following form:
 
@@ -1240,7 +1253,7 @@ protected:
         this->p2 = p2;
     }
 
-    virtual void swap(Ptr<MyClass> c)
+    virtual void swap(ptr<MyClass> c)
     {
         std::swap(p1, c->p1);
         std::swap(p2, c->p2);
@@ -1263,14 +1276,14 @@ changed on disk (there is no magic, you must implement the swap
 method yourself).
 
 The resource sub class is defined by using the
-ork::resource::ResourceTemplate class:
+ork::ResourceTemplate class:
 
 \code
 class MyClassResource : public ResourceTemplate<0, MyClass>
 {
 public:
-    MyClassResource(Ptr<ResourceManager> manager, const string &name,
-            Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    MyClassResource(ptr<ResourceManager> manager, const string &name,
+            ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<0, MyClass>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -1289,7 +1302,7 @@ static ResourceFactory::Type<myClass, MyClassResource> MyClassType;
 \endcode
 
 this makes <tt>MyClassResource</tt> extend both <tt>MyClass</tt> and
-ork::resource::Resource (see the ork::resource::ResourceTemplate
+ork::Resource (see the ork::ResourceTemplate
 definition). The constructor must have this predefined signature, and
 its role is to decode the XML descriptor to extract the arguments to
 be passed to the <tt>init</tt> method of the super class. The last
@@ -1399,7 +1412,7 @@ scene graph which is minimal but fully extensible (at the price
 of efficicency, i.e., this scene graph cannot be used with scenes
 made of hundreds or thousands of nodes).
 In fact an Ork scene graph is a <i>tree</i> of generic scene nodes
-ork::scenegraph::SceneNode, where each node can be seen as an object
+ork::SceneNode, where each node can be seen as an object
 with a state (fields) and a behavior (methods). The state is made of
 a reference frame (relatively to the parent node), some meshes,
 modules and uniforms (that can reference textures), and any other
@@ -1410,22 +1423,22 @@ etc). Scene nodes, methods and tasks are explained below.
 
 \subsection sec_scenenode Nodes
 
-A scene node is an instance of the ork::scenegraph::SceneNode class.
+A scene node is an instance of the ork::SceneNode class.
 The <b>state</b> associated with a scene node is made of:
 <ul>
 <li>a reference frame, relatively to the parent node. This reference
 frame can be retrieved with
-ork::scenegraph::SceneNode#getLocalToParent: this is the
+ork::SceneNode#getLocalToParent: this is the
 transformation matrix to transform local coordinates in the local
 reference frame to coordinates in the parent reference frame. You can
 also transform local coordinates to world coordinates (i.e. to
 coordinates in the reference frame of the root node in the scene
-graph) with ork::scenegraph::SceneNode#getLocalToWorld (or do the
-reverse with ork::scenegraph::SceneNode#getWorldToLocal). Finally you
+graph) with ork::SceneNode#getLocalToWorld (or do the
+reverse with ork::SceneNode#getWorldToLocal). Finally you
 can transform points from the local reference frame to the camera
 frame or to the screen frame with
-ork::scenegraph::SceneNode#getLocalToCamera and
-ork::scenegraph::SceneNode#getLocalToScreen (the camera frame is the
+ork::SceneNode#getLocalToCamera and
+ork::SceneNode#getLocalToScreen (the camera frame is the
 reference frame of the node defined as the "camera" in the scene
 manager - see below).</li>
 
@@ -1451,20 +1464,20 @@ shadow map etc.</li>
 <li>a set of meshes. For instance you can have one mesh per level of
 details.</li>
 
-<li>a set of arbitrary ork::core::Object. Here you can store any
+<li>a set of arbitrary ork::Object. Here you can store any
 other value you need in (the methods of) your scene node.</li>
 </ul>
 
 The <b>behavior</b> associated with a node is defined as a set of
-ork::scenegraph::Method. They are explained below (see \ref
+ork::Method. They are explained below (see \ref
 sec_methods). Finally each scene node has a list of child nodes, that
-you can get and modify with ork::scenegraph::SceneNode#getChild,
-ork::scenegraph::SceneNode#addChild and
-ork::scenegraph::SceneNode#removeChild.
+you can get and modify with ork::SceneNode#getChild,
+ork::SceneNode#addChild and
+ork::SceneNode#removeChild.
 
 Since an Ork scene node is fully generic, there are no specific scene
 node classes for lights, objects, cameras, etc. In fact all the nodes
-in a scene graph are instances of the ork::scenegraph::SceneNode
+in a scene graph are instances of the ork::SceneNode
 class, but their state and behavior can be completely different
 because they are fully specified by the user.
 
@@ -1537,27 +1550,27 @@ whole root node to load them).
 
 \subsubsection sec_scenemanager Scene manager
 
-The ork::scenegraph::SceneManager manages a scene graph:
+The ork::SceneManager manages a scene graph:
 <ul>
 <li>it gives the root node of the scene graph, with
-ork::scenegraph::SceneManager#getRoot. You can change this node with
-ork::scenegraph::SceneManager#setRoot.</li>
+ork::SceneManager#getRoot. You can change this node with
+ork::SceneManager#setRoot.</li>
 
 <li>it defines which node of the scene graph is the "camera", with
-ork::scenegraph::SceneManager#getCameraNode. This
+ork::SceneManager#getCameraNode. This
 node must have a "draw" method, whose name is specified with
-ork::scenegraph::SceneManager#setCameraMethod. This method defines
+ork::SceneManager#setCameraMethod. This method defines
 how the full scene must be rendered (in particular it must define all
 the shadowing, lighting, rendering, and postprocessing passes).</li>
 
-<li>it has an associated ork::resource::ResourceManager, that can be
+<li>it has an associated ork::ResourceManager, that can be
 used to load and update the scene graph resources at runtime.</li>
 
 <li>finally the scene manager provides an <tt>update</tt> and a <tt>
 draw</tt> method. The <tt>update</tt> method updates the
 transformation matrices from the nodes to the world, camera and
 screen frames, after you changed the transformation matrices of nodes
-with ork::scenegraph::SceneNode#setLocalToParent. The <tt>draw</tt>
+with ork::SceneNode#setLocalToParent. The <tt>draw</tt>
 method simply executes the "draw" method of the camera node. Hence
 its behavior is completely defined by the user, which can use a
 forward rendering strategy, a deferred rendering approach, or any
@@ -1566,7 +1579,7 @@ other strategy.</li>
 
 \subsection sec_methods Methods
 
-A ork::scenegraph::Method defines a behavior of a scene node. It can
+A ork::Method defines a behavior of a scene node. It can
 be a basic task or a combination of basic tasks using sequences,
 loops or method calls. The basic tasks are presented in the next
 section. We present here the control structures to combine them,
@@ -1683,7 +1696,7 @@ own tasks if needed.
 
 \subsubsection sec_settarget setTarget task
 
-The ork::scenegraph::SetTargetTask task selects a framebuffer and its
+The ork::SetTargetTask task selects a framebuffer and its
 attachments. It can be used to select the default framebuffer, or an
 offscreen framebuffer with some specific attachments. To select the
 default framebuffer, use:
@@ -1731,7 +1744,7 @@ resp. 2D cube texture).
 
 \subsubsection sec_setstate setState task
 
-The ork::scenegraph::SetStateTask task sets the pipeline state of the
+The ork::SetStateTask task sets the pipeline state of the
 currently selected framebuffer (read and draw buffers,
 stencil, and depth tests, clearing, blending, culling and writing
 states, etc). It has the following form (all attributes and nested
@@ -1748,7 +1761,7 @@ elements are optional):
 
 \subsubsection sec_setprogram setProgram task
 
-The ork::scenegraph::SetProgramTask task selects a program made of
+The ork::SetProgramTask task selects a program made of
 one or more modules. It has the following form:
 
 \verbatim
@@ -1791,7 +1804,7 @@ on screen (like a color, a texture, etc).
 
 \subsubsection sec_settransforms setTransforms task
 
-The ork::scenegraph::SetTransformsTask task can set some
+The ork::SetTransformsTask task can set some
 transformation matrices from local to world, camera or screen space
 in a program. It has the following form (all attributes are
 optional):
@@ -1858,7 +1871,7 @@ or <i>flag</i><tt>.</tt><i>name</i> (see \ref sec_methods).
 
 \subsubsection sec_drawmesh drawMesh task
 
-The ork::scenegraph::DrawMeshTask task draws a mesh using the
+The ork::DrawMeshTask task draws a mesh using the
 currently selected framebuffer and program. It has the following
 form:
 
@@ -1883,7 +1896,7 @@ This integer specifies the number of time the mesh must be drawn
 
 \subsubsection sec_showinfo showInfo task
 
-The ork::scenegraph::ShowInfoTask task displays the framerate and
+The ork::ShowInfoTask task displays the framerate and
 other text information in the current framebuffer. It has the
 following form (all the attributes are optional: their default values
 are the one of the example):
@@ -1909,15 +1922,15 @@ in a font texture.
 
 By default the showInfo task displays only the framerate. You can
 display additional text by using the
-ork::scenegraph::ShowInfoTask#setInfo method in your code.
+ork::ShowInfoTask#setInfo method in your code.
 
 \subsubsection sec_showlog showLog task
 
-The ork::scenegraph::ShowLogTask task is similar to the showInfo
+The ork::ShowLogTask task is similar to the showInfo
 task, but displays the message logs on screen (see \ref sec_logger).
 By default this task is disabled, i.e. it displays nothing, until a
 warning or error log occurs. It then stays enabled as long as the
-ork::scenegraph::ShowLogTask#enabled flag is not set to <tt>
+ork::ShowLogTask#enabled flag is not set to <tt>
 false</tt> by the user. If a new warning or error log occurs the task
 will again enable itself automatically. And so on. This can be useful
 to be notified of warnings or errors, in particular after an update
@@ -1932,7 +1945,7 @@ the same format as the \ref sec_showinfo :
 \subsubsection sec_usertask User defined tasks
 
 You can define your own tasks and your own task resources by
-extending the ork::scenegraph::AbstractTask class. Using the basic
+extending the ork::AbstractTask class. Using the basic
 pattern to define resources (see \ref sec_resuser), a new task can be
 defined as follows:
 
@@ -1942,7 +1955,7 @@ class MyTask : public AbstractTask
 public:
     MyTask(...) { init(...); }
 
-    virtual Ptr<Task> getTask(Ptr<Object> context)
+    virtual ptr<Task> getTask(ptr<Object> context)
     {
         return new Impl(...);
     }
@@ -1952,7 +1965,7 @@ protected:
 
     void init(...) { ... }
 
-    void swap(Ptr<MyTask> t) { ... }
+    void swap(ptr<MyTask> t) { ... }
 
 private:
     ...
@@ -1978,8 +1991,8 @@ with the corresponding resource class:
 class MyTaskResource : public ResourceTemplate<0, MyTask>
 {
 public:
-    MyTaskResource(Ptr<ResourceManager> manager, const string &name,
-            Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    MyTaskResource(ptr<ResourceManager> manager, const string &name,
+            ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<0, MyClass>(manager, name, desc)
     {
         ...
@@ -2044,7 +2057,7 @@ However this parallel execution of tasks can not be done without a
 the dependencies between tasks must be explicit, so that a task is
 not started before the tasks that produce the data it needs are all
 executed. This is why Ork provides such a framework, in the
-ork::taskgraph namespace. This framework provides the following
+\ref taskgraph module. This framework provides the following
 features:
 <ul>
 <li>basic tasks can be CPU or GPU tasks. CPU tasks can be executed in
@@ -2097,41 +2110,41 @@ well.</li>
 
 \subsection sec_basictask Basic tasks
 
-Basic tasks are represented with the ork::taskgraph::Task class. The
-ork::taskgraph::Task#isGpuTask method indicates wheter this task is a
+Basic tasks are represented with the ork::Task class. The
+ork::Task#isGpuTask method indicates wheter this task is a
 GPU task or not. If it is a GPU task, its context is given by
-ork::taskgraph::Task#getContext. It is set and unset with the
-ork::taskgraph::Task#begin and ork::taskgraph::Task#end methods. The
-task itself is defined by the ork::taskgraph::Task#run method. The
-task deadline is managed with ork::taskgraph::Task#getDeadline and
-ork::taskgraph::Task#setDeadline.
+ork::Task#getContext. It is set and unset with the
+ork::Task#begin and ork::Task#end methods. The
+task itself is defined by the ork::Task#run method. The
+task deadline is managed with ork::Task#getDeadline and
+ork::Task#setDeadline.
 
 \subsection sec_taskgraph Task graphs
 
-Task graphs are represented with the ork::taskgraph::TaskGraph class.
+Task graphs are represented with the ork::TaskGraph class.
 In order to create a task graph you must first add some tasks in the
-graph, with ork::taskgraph::TaskGraph#addTask method. You can then
+graph, with ork::TaskGraph#addTask method. You can then
 define the dependencies between them with
-ork::taskgraph::TaskGraph#addDependency.
+ork::TaskGraph#addDependency.
 
-The ork::taskgraph::Scheduler class is an abstract class that defines
+The ork::Scheduler class is an abstract class that defines
 how tasks can be scheduled for execution. The
-ork::taskgraph::Scheduler#run method is used to schedule a task or
+ork::Scheduler#run method is used to schedule a task or
 task graph for immediate execution. It does not return until all the
 tasks with an immediate deadline have been executed (the task graph
 can contain tasks whose deadline is not immediate). The
-ork::taskgraph::Scheduler#schedule method is used to schedule tasks
+ork::Scheduler#schedule method is used to schedule tasks
 whose deadline is not immediate. It puts these tasks in a pool of
 tasks to be executed, and returns immediately. This method must not
 be called if the scheduler does not support prefetch (this can be
-determined with ork::taskgraph::Scheduler#supportsPrefetch). Finally
-the ork::taskgraph::Scheduler#reschedule method is used to reexecute
+determined with ork::Scheduler#supportsPrefetch). Finally
+the ork::Scheduler#reschedule method is used to reexecute
 some tasks. It marks these tasks and all the tasks that depend on
 them as "not executed", puts them in the pool of tasks to be
 executed, and returns immediately.
 
-The ork::taskgraph::MultithreadScheduler is a concrete implementation
-of ork::taskgraph::Scheduler. Its constructor takes a framerate and a
+The ork::MultithreadScheduler is a concrete implementation
+of ork::Scheduler. Its constructor takes a framerate and a
 number of threads in parameter. If the framerate is 0 then no
 framerate is imposed. Otherwise the scheduler tries to impose this
 target framerate (if necessary it waits between frame to avoid
@@ -2146,8 +2159,8 @@ loaded with the resource framework, using the following format:
 <multithreadScheduler name="myScheduler" nthreads="3" fps="0"/>
 \endverbatim
 
-\note The ork::scenegraph::AbstractTask class is not a
-ork::taskgraph::Task, but a ork::taskgraph::TaskFactory, i.e.
+\note The ork::AbstractTask class is not a
+ork::Task, but a ork::TaskFactory, i.e.
 something that creates tasks. This means that all the "tasks"
 presented in the previous section are in fact task factories. This is
 because, as said above, a task can not be reexecuted at each frame
@@ -2206,7 +2219,7 @@ events such as those provided by glut.
 
 \subsection sec_eventhandlers Event Handlers
 
-The ork::ui::EventHandler class contains functions that should 
+The ork::EventHandler class contains functions that should 
 be called when an event occurs. Some of them return a 
 boolean indicating if the event has been handled by this handler.
 The EventHandler abstraction provides independence from the 
@@ -2215,38 +2228,38 @@ windows, ...).
 
 The event functions are the following:
 <ul>
-<li> \link ork::ui::EventHandler#redisplay() redisplay\endlink: 
+<li> \link ork::EventHandler#redisplay() redisplay\endlink: 
 Called at each new frame.</li>
-<li> \link ork::ui::EventHandler#reshape() reshape\endlink: 
+<li> \link ork::EventHandler#reshape() reshape\endlink: 
 Called when the window is resized.</li>
-<li> \link ork::ui::EventHandler#idle() idle\endlink: 
+<li> \link ork::EventHandler#idle() idle\endlink: 
 Called when nothing happened.</li>
-<li> \link ork::ui::EventHandler#mouseClick() mouseClick\endlink: 
+<li> \link ork::EventHandler#mouseClick() mouseClick\endlink: 
 Called when the user clicks; This method uses the mouse position, 
 the button that was used, if it was pressed or released, and if any
 modifier was used (ALT, CTRL, ..). </li>
-<li> \link ork::ui::EventHandler#mouseMotion() mouseMotion\endlink: 
+<li> \link ork::EventHandler#mouseMotion() mouseMotion\endlink: 
 Called when the mouse moves.</li>
-<li> \link ork::ui::EventHandler#mouseWheel() mouseWheel\endlink: 
+<li> \link ork::EventHandler#mouseWheel() mouseWheel\endlink: 
 Called when the mouse wheel was used. </li>
-<li> \link ork::ui::EventHandler#mousePassiveMotion() mousePassiveMotion\endlink: 
+<li> \link ork::EventHandler#mousePassiveMotion() mousePassiveMotion\endlink: 
 Called when the mouse moves with no other events.</li>
-<li> \link ork::ui::EventHandler#keyTyped() keyTyped\endlink: 
+<li> \link ork::EventHandler#keyTyped() keyTyped\endlink: 
 Called when a key was typed.</li>
-<li> \link ork::ui::EventHandler#keyReleased() keyReleased\endlink: 
+<li> \link ork::EventHandler#keyReleased() keyReleased\endlink: 
 Called when a key was released. </li>
-<li> \link ork::ui::EventHandler#specialKey() specialKey\endlink: 
+<li> \link ork::EventHandler#specialKey() specialKey\endlink: 
 Called when certain keys are typed (ESC, PAGE_UP, HOME etc...). </li>
-<li> \link ork::ui::EventHandler#specialKeyReleased() specialKeyReleased\endlink: 
+<li> \link ork::EventHandler#specialKeyReleased() specialKeyReleased\endlink: 
 Called when certain keys are released. </li>
 </ul>
 
-ork::ui::EventHandler also provides enums describing the events (Mouse 
-button \link ork::ui::EventHandler#button name\endlink and 
-\link ork::ui::EventHandler#state state\endlink, key 
-\link ork::ui::EventHandler#modifier modifiers\endlink, special key 
-\link ork::ui::EventHandler#key names\endlink, mouse 
-\link ork::ui::EventHandler#wheel() wheel state\endlink).
+ork::EventHandler also provides enums describing the events (Mouse 
+button \link ork::EventHandler#button name\endlink and 
+\link ork::EventHandler#state state\endlink, key 
+\link ork::EventHandler#modifier modifiers\endlink, special key 
+\link ork::EventHandler#key names\endlink, mouse 
+\link ork::EventHandler#wheel() wheel state\endlink).
 
 \subsection sec_windows Windows
 
@@ -2254,8 +2267,8 @@ Windows are EventHandler themselves, so once initialized, they behave
 just like any other EventHandler. They can be moved, resized, navigated 
 through,... via this system.
 
-ork::ui::Window is the abstract super class for windows. A concrete
-subclass ork::ui::GlutWindow is provided. This implementation is based on
+ork::Window is the abstract super class for windows. A concrete
+subclass ork::GlutWindow is provided. This implementation is based on
 GLUT.
 
 */

@@ -32,10 +32,11 @@
 #include "ork/render/FrameBuffer.h"
 
 using namespace std;
-using namespace ork::resource;
-using namespace ork::render;
 
-ORK_API void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t)
+namespace ork
+{
+
+ORK_API void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t)
 {
     const char* v = e->Attribute("internalformat");
     if (v == NULL) {
@@ -300,7 +301,7 @@ ORK_API void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElemen
     }
 }
 
-ORK_API void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params)
+ORK_API void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params)
 {
     const char* v = e->Attribute("min");
     if (v == NULL) {
@@ -482,14 +483,7 @@ ORK_API void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElemen
             throw exception();
         }
     }
-
 }
-
-namespace ork
-{
-
-namespace render
-{
 
 GLenum getTextureFormat(TextureFormat f);
 
@@ -1291,7 +1285,7 @@ void Texture::generateMipMap()
     }
 }
 
-GLint Texture::bindToTextureUnit(Ptr<Sampler> sampler, GLuint programId) const
+GLint Texture::bindToTextureUnit(ptr<Sampler> sampler, GLuint programId) const
 {
     assert(programId != 0);
 
@@ -1305,7 +1299,7 @@ GLint Texture::bindToTextureUnit(Ptr<Sampler> sampler, GLuint programId) const
         unit = i->second;
     }
 
-    TEXTURE_UNIT_MANAGER->bind(GLuint(unit), sampler == NULL ? NULL : &(*sampler), this);
+    TEXTURE_UNIT_MANAGER->bind(GLuint(unit), sampler.get(), this);
 
     return unit;
 }
@@ -1330,7 +1324,7 @@ GLint Texture::bindToTextureUnit() const
    // return -1;
 }
 
-void Texture::swap(Ptr<Texture> t)
+void Texture::swap(ptr<Texture> t)
 {
     TEXTURE_UNIT_MANAGER->unbind(this);
     TEXTURE_UNIT_MANAGER->unbind(&(*t));
@@ -1379,8 +1373,6 @@ void Texture::unbindSampler(Sampler *sampler)
 void Texture::unbindAll()
 {
     TEXTURE_UNIT_MANAGER->unbindAll();
-}
-
 }
 
 }

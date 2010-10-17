@@ -28,10 +28,7 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
-Method::Method(Ptr<TaskFactory> body) : Object("Method"), enabled(true)
+Method::Method(ptr<TaskFactory> body) : Object("Method"), enabled(true)
 {
     taskFactory = body;
 }
@@ -40,7 +37,7 @@ Method::~Method()
 {
 }
 
-Ptr<SceneNode> Method::getOwner()
+ptr<SceneNode> Method::getOwner()
 {
     return owner;
 }
@@ -55,21 +52,19 @@ void Method::setIsEnabled(bool enabled)
     this->enabled = enabled;
 }
 
-Ptr<TaskFactory> Method::getTaskFactory()
+ptr<TaskFactory> Method::getTaskFactory()
 {
     return taskFactory;
 }
 
-void Method::setTaskFactory(Ptr<TaskFactory> taskFactory)
+void Method::setTaskFactory(ptr<TaskFactory> taskFactory)
 {
     this->taskFactory = taskFactory;
 }
 
-Ptr<Task> Method::getTask()
+ptr<Task> Method::getTask()
 {
     return taskFactory->getTask(this);
-}
-
 }
 
 }

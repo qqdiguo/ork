@@ -32,11 +32,9 @@ using namespace std;
 namespace ork
 {
 
-namespace core
-{
-
 /**
  * A set iterator.
+ * @ingroup core
  */
 template <typename type>
 class SetIterator
@@ -92,6 +90,7 @@ private:
 
 /**
  * A map iterator.
+ * @ingroup core
  */
 template <typename key, typename type>
 class MapIterator
@@ -155,6 +154,7 @@ private:
 
 /**
  * A multimap iterator.
+ * @ingroup core
  */
 template <typename key, typename type>
 class MultiMapIterator
@@ -336,8 +336,6 @@ type MultiMapIterator<key, type>::next(key &k)
 
 template <typename key, typename type>
 multimap<key,type> MultiMapIterator<key, type>::emptyMap;
-
-}
 
 }
 

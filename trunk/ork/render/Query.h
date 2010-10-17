@@ -27,12 +27,7 @@
 #include "ork/core/Object.h"
 #include "ork/render/Types.h"
 
-using namespace ork::core;
-
 namespace ork
-{
-
-namespace render
 {
 
 /**
@@ -40,6 +35,8 @@ namespace render
  * between the calls to #begin() and #end(). After #end() has been called, the
  * result is available asynchronously. Its availability can be tested with
  * #available(), and its value with #getResult().
+ *
+ * @ingroup render
  */
 class ORK_API Query : public Object
 {
@@ -118,8 +115,6 @@ private:
      */
     GLuint64 result;
 };
-
-}
 
 }
 

@@ -29,19 +29,18 @@
 #include "ork/math/vec2.h"
 #include "ork/ui/EventHandler.h"
 
-using namespace ork::math;
-
 namespace ork
 {
 
 /**
+ * @defgroup ui ui
+ * @ingroup ork
  * Provides a minimal graphical user interface framework for Ork applications.
  */
-namespace ui
-{
 
 /**
  * A window, displays the default FrameBuffer and receives user interface events.
+ * @ingroup ui
  */
 class ORK_API Window : public EventHandler
 {
@@ -203,8 +202,6 @@ public:
      */
     virtual void start() = 0;
 };
-
-}
 
 }
 

@@ -26,18 +26,15 @@
 
 #include "ork/core/Object.h"
 
-using namespace ork::core;
-
 namespace ork
-{
-
-namespace ui
 {
 
 /**
  * A handler of user interface events (i.e. window, mouse and keyboard events).
  * By default nothing is done for any event. You must override this class to
  * provide a user interface behavior.
+ *
+ * @ingroup ui
  */
 class ORK_API EventHandler : public Object
 {
@@ -235,8 +232,6 @@ public:
      */
     virtual bool specialKeyReleased(key  k, modifier m, int x, int y);
 };
-
-}
 
 }
 

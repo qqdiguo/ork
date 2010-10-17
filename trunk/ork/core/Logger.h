@@ -30,15 +30,13 @@
 namespace ork
 {
 
-namespace core
-{
-
 /**
  * A logger to log messages. Debug, info, warning and error messages must be
  * logged to the static #DEBUG_LOGGER, #INFO_LOGGER, #WARNING_LOGGER and
  * #ERROR_LOGGER. Each message has a topic. By default a logger logs all
  * messages, whatever their topic, but it is possible to restrict logging to
  * some topics only with #addTopic.
+ * @ingroup core
  */
 class ORK_API Logger : public Object
 {
@@ -46,22 +44,22 @@ public:
     /**
      * The logger for debug messages.
      */
-    static StaticPtr<Logger> DEBUG_LOGGER;
+    static static_ptr<Logger> DEBUG_LOGGER;
 
     /**
      * The logger for information messages.
      */
-    static StaticPtr<Logger> INFO_LOGGER;
+    static static_ptr<Logger> INFO_LOGGER;
 
     /**
      * The logger for warning messages.
      */
-    static StaticPtr<Logger> WARNING_LOGGER;
+    static static_ptr<Logger> WARNING_LOGGER;
 
     /**
      * The logger for error messages.
      */
-    static StaticPtr<Logger> ERROR_LOGGER;
+    static static_ptr<Logger> ERROR_LOGGER;
 
     /**
      * Creates a new logger of the given type (debug, info, warning, etc).
@@ -126,8 +124,6 @@ protected:
      */
     void *mutex;
 };
-
-}
 
 }
 

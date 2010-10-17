@@ -31,15 +31,13 @@
 namespace ork
 {
 
-namespace core
-{
-
 #define BUFFER_SIZE 1024
 
 /**
  * A Logger that logs messages to an html file. This logger removes duplicated
  * messages when the same messages are logged at each frame, in order to avoid
  * very big log files.
+ * @ingroup core
  */
 class ORK_API FileLogger : public Logger
 {
@@ -104,7 +102,7 @@ public:
      * @param out the File to which messages must be logged.
      * @param next the logger to which messages must be forwarded after logging by this logger.
      */
-    FileLogger(const string &type, File *out, Ptr<Logger> next = NULL);
+    FileLogger(const string &type, File *out, ptr<Logger> next = NULL);
 
     /**
      * Destroys this logger.
@@ -130,12 +128,9 @@ protected:
     /**
      * The logger to which messages are forwarded after logging by this logger.
      */
-    Ptr<Logger> next;
+    ptr<Logger> next;
 };
 
 }
-
-}
-
 
 #endif

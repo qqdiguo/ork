@@ -32,9 +32,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 GLenum getTextureInternalFormat(TextureInternalFormat f);
 
 Texture2DMultisampleArray::Texture2DMultisampleArray(int w, int h, int l, int samples, TextureInternalFormat tf, bool fixedLocations) :
@@ -80,8 +77,6 @@ int Texture2DMultisampleArray::getLayers()
 int Texture2DMultisampleArray::getSamples()
 {
     return samples;
-}
-
 }
 
 }

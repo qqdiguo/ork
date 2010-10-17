@@ -29,8 +29,6 @@
 #include "ork/resource/ResourceTemplate.h"
 #include "ork/render/FrameBuffer.h"
 
-using namespace ork::resource;
-
 #define GL_DOUBLE_MAT2x3 0x8F49
 #define GL_DOUBLE_MAT2x4 0x8F4A
 #define GL_DOUBLE_MAT3x2 0x8F4B
@@ -41,9 +39,6 @@ using namespace ork::resource;
 namespace ork
 {
 
-namespace render
-{
-
 GLenum getStage(Stage s);
 
 Program *Program::CURRENT = NULL;
@@ -52,19 +47,19 @@ Program::Program() : Object("Program")
 {
 }
 
-Program::Program(const vector< Ptr<Module> > &modules) : Object("Program")
+Program::Program(const vector< ptr<Module> > &modules) : Object("Program")
 {
     init(modules);
 }
 
-Program::Program(Ptr<Module> module) : Object("Program")
+Program::Program(ptr<Module> module) : Object("Program")
 {
-    vector< Ptr<Module> > modules;
+    vector< ptr<Module> > modules;
     modules.push_back(module);
     init(modules);
 }
 
-void Program::init(const vector< Ptr<Module> > &modules)
+void Program::init(const vector< ptr<Module> > &modules)
 {
     this->modules = modules;
 
@@ -75,7 +70,7 @@ void Program::init(const vector< Ptr<Module> > &modules)
     int feedbackVaryingCount = 0;
 
     // attach all the shader objects
-    vector< Ptr<Module> >::iterator i;
+    vector< ptr<Module> >::iterator i;
     for (i = this->modules.begin(); i != this->modules.end(); ++i) {
         (*i)->users.insert(this);
         if ((*i)->vertexShaderId != -1) {
@@ -179,12 +174,12 @@ void Program::init(const vector< Ptr<Module> > &modules)
 
         string name = string(buf);
 
-        Ptr<UniformBlock> b = NULL;
+        ptr<UniformBlock> b = NULL;
         if (blockIndex != -1) {
             glGetActiveUniformBlockName(programId, GLuint(blockIndex), GLsizei(maxNameLength), &length, buf);
             string blockName = string(buf);
 
-            map<string, Ptr<UniformBlock> >::iterator it = uniformBlocks.find(blockName);
+            map<string, ptr<UniformBlock> >::iterator it = uniformBlocks.find(blockName);
             if (it == uniformBlocks.end()) {
                 GLint blockSize;
                 glGetActiveUniformBlockiv(programId, GLuint(blockIndex), GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
@@ -195,10 +190,10 @@ void Program::init(const vector< Ptr<Module> > &modules)
             }
         }
 
-        UniformBlock *block = b == NULL ? NULL : &(*b);
+        UniformBlock *block = b.get();
 
         for (GLint j = 0; j < size; ++j) {
-            Ptr<Uniform> u = NULL;
+            ptr<Uniform> u = NULL;
 
             string uname;
             if (size == 1) {
@@ -454,11 +449,11 @@ void Program::init(const vector< Ptr<Module> > &modules)
     delete[] buf;
 
     // finds GPUBuffer suitable for the blocks used in this Program
-    for (map<string, Ptr<UniformBlock> >::iterator it = uniformBlocks.begin(); it != uniformBlocks.end(); ++it) {
-        Ptr<UniformBlock> u = it->second;
+    for (map<string, ptr<UniformBlock> >::iterator it = uniformBlocks.begin(); it != uniformBlocks.end(); ++it) {
+        ptr<UniformBlock> u = it->second;
         ostringstream oss;
         oss << u->getName() << "-" << u->size << "-" << u->uniforms.size(); //example : deformation-8-32
-        Ptr<GPUBuffer> buffer = UniformBlock::buffers->get(oss.str());
+        ptr<GPUBuffer> buffer = UniformBlock::buffers->get(oss.str());
         if (buffer->getSize() == 0) {
             buffer->setData(u->size, NULL, DYNAMIC_DRAW);
             newBlocks.insert(u->getName());
@@ -468,13 +463,13 @@ void Program::init(const vector< Ptr<Module> > &modules)
 
     // sets the initial values of the uniforms
     for (i = this->modules.begin(); i != this->modules.end(); ++i) {
-        Ptr<Module> module = *i;
-        map<string, Ptr<Value> >::iterator j = module->initialValues.begin();
+        ptr<Module> module = *i;
+        map<string, ptr<Value> >::iterator j = module->initialValues.begin();
         while (j != module->initialValues.end()) {
-            Ptr<Value> v = j->second;
-            Ptr<Uniform> u = NULL;
+            ptr<Value> v = j->second;
+            ptr<Uniform> u = NULL;
 
-            map<string, Ptr<Uniform> >::iterator k = uniforms.find(j->first);
+            map<string, ptr<Uniform> >::iterator k = uniforms.find(j->first);
             if (k != uniforms.end()) {
                 u = k->second;
             }
@@ -486,8 +481,8 @@ void Program::init(const vector< Ptr<Module> > &modules)
             }
 
             if (u != NULL) {
-                Ptr<ValueSampler> vs = v.cast<ValueSampler>();
-                Ptr<UniformSampler> us = u.cast<UniformSampler>();
+                ptr<ValueSampler> vs = v.cast<ValueSampler>();
+                ptr<UniformSampler> us = u.cast<UniformSampler>();
                 assert(u->getName() == v->getName());
                 if (u->getType() == v->getType() || (us != NULL && vs != NULL)) {
                     u->setValue(v);
@@ -525,14 +520,14 @@ int Program::getModuleCount() const
     return modules.size();
 }
 
-Ptr<Module> Program::getModule(int index) const
+ptr<Module> Program::getModule(int index) const
 {
     return modules[index];
 }
 
-Ptr<Uniform> Program::getUniform(const string &name)
+ptr<Uniform> Program::getUniform(const string &name)
 {
-    map<string, Ptr<Uniform> >::iterator i = uniforms.find(name);
+    map<string, ptr<Uniform> >::iterator i = uniforms.find(name);
     if (i == uniforms.end()) {
 //        Logger::WARNING_LOGGER->logf("RENDER", "Missing Uniform %s", name.c_str());
         return NULL;
@@ -540,16 +535,16 @@ Ptr<Uniform> Program::getUniform(const string &name)
     return i->second;
 }
 
-Ptr<UniformBlock> Program::getUniformBlock(const string &name)
+ptr<UniformBlock> Program::getUniformBlock(const string &name)
 {
-    map<string, Ptr<UniformBlock> >::iterator i = uniformBlocks.find(name);
+    map<string, ptr<UniformBlock> >::iterator i = uniformBlocks.find(name);
     if (i == uniformBlocks.end()) {
         return NULL;
     }
     return i->second;
 }
 
-void Program::swap(Ptr<Program> p)
+void Program::swap(ptr<Program> p)
 {
     updateTextureUsers(false);
     p->updateTextureUsers(false);
@@ -562,12 +557,12 @@ void Program::swap(Ptr<Program> p)
     std::swap(uniforms, p->uniforms);
     std::swap(uniformBlocks, p->uniformBlocks);
 
-    map<string, Ptr<Uniform> >::iterator i = p->uniforms.begin();
+    map<string, ptr<Uniform> >::iterator i = p->uniforms.begin();
     while (i != p->uniforms.end()) {
-        Ptr<Uniform> u = i->second;
-        map<string, Ptr<Uniform> >::iterator j = uniforms.find(u->getName());
+        ptr<Uniform> u = i->second;
+        map<string, ptr<Uniform> >::iterator j = uniforms.find(u->getName());
         if (j != uniforms.end()) {
-            Ptr<Uniform> pu = j->second;
+            ptr<Uniform> pu = j->second;
             if (pu->getType() == u->getType()) {
                 std::swap(i->second, j->second);
                 std::swap(i->second->location, j->second->location);
@@ -589,13 +584,13 @@ void Program::swap(Ptr<Program> p)
 
     i = oldUniforms.begin();
     while (i != oldUniforms.end()) {
-        Ptr<Uniform> oldU = i->second;
-        map<string, Ptr<Uniform> >::iterator j = uniforms.find(oldU->getName());
+        ptr<Uniform> oldU = i->second;
+        map<string, ptr<Uniform> >::iterator j = uniforms.find(oldU->getName());
         if (j != uniforms.end()) {
             // if an uniform of this program corresponds to an old uniform object,
             // we reuse the old uniform object (so that clients do not have to
             // update their references to the uniforms of this program)
-            Ptr<Uniform> u = j->second;
+            ptr<Uniform> u = j->second;
             if (u != oldU && u->getType() == oldU->getType()) {
                 std::swap(i->second, j->second);
                 std::swap(i->second->location, j->second->location);
@@ -612,12 +607,12 @@ void Program::swap(Ptr<Program> p)
         }
     }
 
-    map<string, Ptr<UniformBlock> >::iterator k = uniformBlocks.begin();
+    map<string, ptr<UniformBlock> >::iterator k = uniformBlocks.begin();
     while (k != uniformBlocks.end()) {
-        Ptr<UniformBlock> b = k->second;
-        map<string, Ptr<UniformBlock> >::iterator i = p->uniformBlocks.find(b->getName());
+        ptr<UniformBlock> b = k->second;
+        map<string, ptr<UniformBlock> >::iterator i = p->uniformBlocks.find(b->getName());
         if (i != p->uniformBlocks.end()) {
-            Ptr<UniformBlock> pb = i->second;
+            ptr<UniformBlock> pb = i->second;
             std::swap(k->second, i->second);
         }
         ++k;
@@ -637,7 +632,7 @@ void Program::swap(Ptr<Program> p)
 bool Program::checkSamplers()
 {
     for (unsigned int i = 0; i < uniformSamplers.size(); ++i) {
-        Ptr<UniformSampler> u = uniformSamplers[i];
+        ptr<UniformSampler> u = uniformSamplers[i];
         if (u->location != -1 && u->get() == NULL) {
             if (Logger::ERROR_LOGGER != NULL) {
                 Logger::ERROR_LOGGER->log("OPENGL", "Sampler not bound " + u->getName());
@@ -662,9 +657,9 @@ void Program::set()
             uniformSamplers[i]->setValue();
         }
 
-        map<string, Ptr<UniformBlock> >::iterator j = uniformBlocks.begin();
+        map<string, ptr<UniformBlock> >::iterator j = uniformBlocks.begin();
         while (j != uniformBlocks.end()) {
-            Ptr<UniformBlock> u = j->second;
+            ptr<UniformBlock> u = j->second;
             GLint unit = u->buffer->bindToUniformBufferUnit(programId);
             assert(unit >= 0);
             glUniformBlockBinding(programId, u->index, GLuint(unit));
@@ -674,13 +669,13 @@ void Program::set()
         assert(FrameBuffer::getError() == 0);
     }
 
-    map<string, Ptr<UniformBlock> >::iterator j = uniformBlocks.begin();
+    map<string, ptr<UniformBlock> >::iterator j = uniformBlocks.begin();
 
     if (Logger::DEBUG_LOGGER != NULL && Logger::DEBUG_LOGGER->hasTopic("RENDER")) {
         ostringstream oss;
         int nBlocks = 0;
         while (j != uniformBlocks.end()) {
-            Ptr<UniformBlock> u = j->second;
+            ptr<UniformBlock> u = j->second;
             if (u->isMapped()) {
                 oss << j->first.c_str() << ";";
                 ++nBlocks;
@@ -694,7 +689,7 @@ void Program::set()
     }
 
     while (j != uniformBlocks.end()) {
-        Ptr<UniformBlock> u = j->second;
+        ptr<UniformBlock> u = j->second;
         if (u->isMapped()) {
             u->unmapBuffer();
         }
@@ -702,9 +697,9 @@ void Program::set()
     }
 
 #ifdef ORK_NO_GLPROGRAMUNIFORM
-    map<string, Ptr<Uniform> >::iterator i = uniforms.begin();
+    map<string, ptr<Uniform> >::iterator i = uniforms.begin();
     while (i != uniforms.end()) {
-        Ptr<Uniform> u = i->second;
+        ptr<Uniform> u = i->second;
         if (u->dirty) {
             u->setValue();
             u->dirty = false;
@@ -717,8 +712,8 @@ void Program::set()
 void Program::updateTextureUsers(bool add)
 {
     for (unsigned int i = 0; i < uniformSamplers.size(); ++i) {
-        Ptr<UniformSampler> us = uniformSamplers[i];
-        Ptr<Texture> t = us->get();
+        ptr<UniformSampler> us = uniformSamplers[i];
+        ptr<Texture> t = us->get();
         if (t != NULL) {
             if (add) {
                 t->addUser(us->program->getId());
@@ -733,10 +728,10 @@ void Program::updateTextureUsers(bool add)
 void Program::updateUniformBlocks(bool add)
 {
     if (add) {
-        map<string, Ptr<UniformBlock> >::iterator j = uniformBlocks.begin();
+        map<string, ptr<UniformBlock> >::iterator j = uniformBlocks.begin();
         while (j != uniformBlocks.end()) {
-            Ptr<UniformBlock> b = j->second;
-            map<string, Ptr<Uniform> >::iterator i = b->uniforms.begin();
+            ptr<UniformBlock> b = j->second;
+            map<string, ptr<Uniform> >::iterator i = b->uniforms.begin();
             while (i != b->uniforms.end()) {
                 uniforms.insert(make_pair(i->second->getName(), i->second));
                 ++i;
@@ -745,7 +740,7 @@ void Program::updateUniformBlocks(bool add)
         }
 
     } else {
-        map<string, Ptr<Uniform> >::iterator i = uniforms.begin();
+        map<string, ptr<Uniform> >::iterator i = uniforms.begin();
         while (i != uniforms.end()) {
             if (i->second->block != NULL) {
                 uniforms.erase(i++);
@@ -760,29 +755,29 @@ void Program::updateUniforms(Program *owner)
 {
     uniformSamplers.clear();
 
-    map<string, Ptr<Uniform> >::iterator i = uniforms.begin();
+    map<string, ptr<Uniform> >::iterator i = uniforms.begin();
     while (i != uniforms.end()) {
-        Ptr<Uniform> u = i->second;
+        ptr<Uniform> u = i->second;
         u->program = owner;
 
-        Ptr<UniformSampler> us = u.cast<UniformSampler>();
+        ptr<UniformSampler> us = u.cast<UniformSampler>();
         if (us != NULL) {
             uniformSamplers.push_back(us);
         }
         ++i;
     }
 
-    map<string, Ptr<UniformBlock> >::iterator k = uniformBlocks.begin();
+    map<string, ptr<UniformBlock> >::iterator k = uniformBlocks.begin();
     while (k != uniformBlocks.end()) {
-        Ptr<UniformBlock> b = k->second;
+        ptr<UniformBlock> b = k->second;
         b->program = owner;
         if (b->buffer != NULL && b->isMapped()) {
             b->unmapBuffer();
         }
-        map<string, Ptr<Uniform> >::iterator i = b->uniforms.begin();
+        map<string, ptr<Uniform> >::iterator i = b->uniforms.begin();
         while (i != b->uniforms.end()) {
             i->second->program = owner;
-            i->second->block = &(*b);
+            i->second->block = b.get();
             ++i;
         }
         ++k;
@@ -798,11 +793,11 @@ void Program::updateUniforms(Program *owner)
 class ProgramResource : public ResourceTemplate<30, Program>
 {
 public:
-    ProgramResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    ProgramResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<30, Program>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
-        vector< Ptr<Module> > modules;
+        vector< ptr<Module> > modules;
         checkParameters(desc, e, "name,");
         const TiXmlNode *n = e->FirstChild();
         while (n != NULL) {
@@ -822,7 +817,7 @@ public:
                     }
                     throw exception();
                 }
-                Ptr<Module> module;
+                ptr<Module> module;
                 try {
                     module = manager->loadResource(string(moduleName)).cast<Module>();
                 } catch (...) {
@@ -876,7 +871,5 @@ extern const char program[] = "program";
 static ResourceFactory::Type<program, ProgramResource> ProgramType;
 
 /// @endcond
-
-}
 
 }

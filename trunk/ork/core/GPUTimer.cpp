@@ -30,9 +30,6 @@
 namespace ork
 {
 
-namespace core
-{
-
 GPUTimer::GPUTimer() : Timer()
 {
     glGenQueries(1, &query);
@@ -85,8 +82,6 @@ void GPUTimer::getQueryResult()
             maxDuration = std::max(lastDuration, maxDuration);
         }
     }
-}
-
 }
 
 }

@@ -32,11 +32,9 @@
 namespace ork
 {
 
-namespace math
-{
-
 /**
  * A 2x2 matrix.
+ * @ingroup math
  */
 template <typename type> class mat2
 {
@@ -194,11 +192,13 @@ public:
 
 /**
  * A 2x2 matrix with float components.
+ * @ingroup math
  */
 typedef mat2<float> mat2f;
 
 /**
  * A 2x2 matrix with double components.
+ * @ingroup math
  */
 typedef mat2<double> mat2d;
 
@@ -409,8 +409,6 @@ const mat2<type> mat2<type>::ZERO(0, 0,
 template <typename type>
 const mat2<type> mat2<type>::IDENTITY(1, 0,
                                       0, 1);
-
-}
 
 }
 

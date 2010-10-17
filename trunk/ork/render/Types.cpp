@@ -33,9 +33,6 @@ using namespace std;
 namespace ork
 {
 
-namespace render
-{
-
 GLenum getBufferUsage(BufferUsage u)
 {
     switch (u) {
@@ -942,8 +939,6 @@ GLenum getQueryMode(QueryMode m)
     }
     assert(false);
     throw exception();
-}
-
 }
 
 }

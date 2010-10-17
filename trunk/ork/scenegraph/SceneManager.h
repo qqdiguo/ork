@@ -28,17 +28,12 @@
 #include "ork/taskgraph/Scheduler.h"
 #include "ork/scenegraph/SceneNode.h"
 
-using namespace ork::resource;
-using namespace ork::taskgraph;
-
 namespace ork
-{
-
-namespace scenegraph
 {
 
 /**
  * A manager to manage a scene graph.
+ * @ingroup scenegraph
  */
 class ORK_API  SceneManager : public Object
 {
@@ -55,7 +50,7 @@ public:
     /**
      * An iterator over a map of SceneNode.
      */
-    typedef MultiMapIterator<string, Ptr<SceneNode> > NodeIterator;
+    typedef MultiMapIterator<string, ptr<SceneNode> > NodeIterator;
 
     /**
      * Creates an empty SceneManager.
@@ -70,17 +65,17 @@ public:
     /**
      * Returns the root node of the scene graph managed by this manager.
      */
-    Ptr<SceneNode> getRoot();
+    ptr<SceneNode> getRoot();
 
     /**
      * Sets the root node of the scene graph managed by this manager.
      */
-    void setRoot(Ptr<SceneNode> root);
+    void setRoot(ptr<SceneNode> root);
 
     /**
      * Returns the camera node of the scene graph managed by this manager.
      */
-    Ptr<SceneNode> getCameraNode();
+    ptr<SceneNode> getCameraNode();
 
     /**
      * Sets the camera node of the scene graph managed by this manager. This
@@ -115,7 +110,7 @@ public:
      *
      * @param name a loop variable.
      */
-    Ptr<SceneNode> getNodeVar(const string &name);
+    ptr<SceneNode> getNodeVar(const string &name);
 
     /**
      * Sets the node currently bound to the given loop variable.
@@ -123,30 +118,30 @@ public:
      * @param name a loop variable.
      * @param node the new node bound to this loop variable.
      */
-    void setNodeVar(const string &name, Ptr<SceneNode> node);
+    void setNodeVar(const string &name, ptr<SceneNode> node);
 
     /**
      * Returns the ResourceManager used to manage the resources of the scene
      * graph.
      */
-    Ptr<ResourceManager> getResourceManager();
+    ptr<ResourceManager> getResourceManager();
 
     /**
      * Sets the ResourceManager used to manage the resources of the scene graph.
      *
      * @param resourceManager a resource manager.
      */
-    void setResourceManager(Ptr<ResourceManager> resourceManager);
+    void setResourceManager(ptr<ResourceManager> resourceManager);
 
     /**
      * Returns the Scheduler used to schedule the Task to draw the scene.
      */
-    Ptr<Scheduler> getScheduler();
+    ptr<Scheduler> getScheduler();
 
     /**
      * Sets the Scheduler to schedule the Task to draw the scene.
      */
-    void setScheduler(Ptr<Scheduler> scheduler);
+    void setScheduler(ptr<Scheduler> scheduler);
 
     /**
      * Returns the transformation from camera space to screen space.
@@ -228,24 +223,24 @@ public:
 	/**
      * Returns the current FrameBuffer.
      */
-    static Ptr<FrameBuffer> getCurrentFrameBuffer();
+    static ptr<FrameBuffer> getCurrentFrameBuffer();
 
 	/**
      * Sets the current FrameBuffer. This can then be used in any module to retrieve
      * a target on which the user wants to render to.
      */
-    static void setCurrentFrameBuffer(Ptr<FrameBuffer> fb);
+    static void setCurrentFrameBuffer(ptr<FrameBuffer> fb);
 
 	/**
      * Returns the current Program.
      */
-    static Ptr<Program> getCurrentProgram();
+    static ptr<Program> getCurrentProgram();
 
 	/**
      * Sets the current GLSL Program. This can then be used in any module to retrieve a given
      * Program for further drawings.
      */
-    static void setCurrentProgram(Ptr<Program> prog);
+    static void setCurrentProgram(ptr<Program> prog);
 
 private:
     /**
@@ -261,12 +256,12 @@ private:
     /**
      * The root node of the scene graph managed by this manager.
      */
-    Ptr<SceneNode> root;
+    ptr<SceneNode> root;
 
     /**
      * The camera node of the scene graph.
      */
-    Ptr<SceneNode> camera;
+    ptr<SceneNode> camera;
 
     /**
      * The camera to screen transformation.
@@ -296,27 +291,27 @@ private:
     /**
      * The last task or task graph that was used to draw the scene.
      */
-    Ptr<Task> currentTask;
+    ptr<Task> currentTask;
 
     /**
      * A multimap that associates to each flag all the nodes having this flag.
      */
-    multimap<string, Ptr<SceneNode> > nodeMap;
+    multimap<string, ptr<SceneNode> > nodeMap;
 
     /**
      * A map that associates to each loop variable its current value.
      */
-    map<string, Ptr<SceneNode> > nodeVariables;
+    map<string, ptr<SceneNode> > nodeVariables;
 
     /**
      * The ResourceManager that manages the resources of the scene graph.
      */
-    Ptr<ResourceManager> resourceManager;
+    ptr<ResourceManager> resourceManager;
 
     /**
      * The Scheduler used to schedule the Task to draw the scene.
      */
-    Ptr<Scheduler> scheduler;
+    ptr<Scheduler> scheduler;
 
     /**
      * The current frame number.
@@ -348,7 +343,7 @@ private:
      * @param n a SceneNode.
      * @param v the visibility of its parent node.
      */
-    void computeVisibility(Ptr<SceneNode> n, visibility v);
+    void computeVisibility(ptr<SceneNode> n, visibility v);
 
     /**
      * Clears the #nodeMap map.
@@ -360,12 +355,10 @@ private:
      *
      * @param node the root node of a scene graph.
      */
-    void buildNodeMap(Ptr<SceneNode> node);
+    void buildNodeMap(ptr<SceneNode> node);
 
     friend class SceneNode;
 };
-
-}
 
 }
 

@@ -32,16 +32,13 @@
 namespace ork
 {
 
-namespace core
-{
+static_ptr<Logger> Logger::DEBUG_LOGGER(NULL);
 
-StaticPtr<Logger> Logger::DEBUG_LOGGER(NULL);
+static_ptr<Logger> Logger::INFO_LOGGER(new Logger("INFO"));
 
-StaticPtr<Logger> Logger::INFO_LOGGER(new Logger("INFO"));
+static_ptr<Logger> Logger::WARNING_LOGGER(new Logger("WARNING"));
 
-StaticPtr<Logger> Logger::WARNING_LOGGER(new Logger("WARNING"));
-
-StaticPtr<Logger> Logger::ERROR_LOGGER(new Logger("ERROR"));
+static_ptr<Logger> Logger::ERROR_LOGGER(new Logger("ERROR"));
 
 Logger::Logger(const string &type) : Object("Logger"), type(type)
 {
@@ -91,8 +88,6 @@ void Logger::logf(const char * topic, const char *fmt, ...)
 void Logger::flush()
 {
     cerr.flush();
-}
-
 }
 
 }

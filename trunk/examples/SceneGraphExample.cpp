@@ -34,16 +34,12 @@
 
 #include "examples/Main.h"
 
-using namespace ork::resource;
-using namespace ork::render;
-using namespace ork::taskgraph;
-using namespace ork::scenegraph;
-using namespace ork::ui;
+using namespace ork;
 
 class SceneGraphExample : public GlutWindow
 {
 public:
-    Ptr<SceneManager> manager;
+    ptr<SceneManager> manager;
     float fov;
     float alpha;
     float theta;
@@ -59,35 +55,35 @@ public:
         Logger::WARNING_LOGGER = new FileLogger("WARNING", out, Logger::WARNING_LOGGER);
         Logger::ERROR_LOGGER = new FileLogger("ERROR", out, Logger::ERROR_LOGGER);
 
-        Ptr<XMLResourceLoader> resLoader = new XMLResourceLoader();
+        ptr<XMLResourceLoader> resLoader = new XMLResourceLoader();
         resLoader->addPath(dir + "/textures");
         resLoader->addPath(dir + "/shaders");
         resLoader->addPath(dir + "/meshes");
         resLoader->addPath(dir + "/methods");
         resLoader->addPath(dir + "/scenes");
 
-        Ptr<ResourceManager> resManager = new ResourceManager(resLoader);
+        ptr<ResourceManager> resManager = new ResourceManager(resLoader);
 
         manager = new SceneManager();
         manager->setResourceManager(resManager);
         manager->setScheduler(new MultithreadScheduler());
 
-        Ptr<SceneNode> root = new SceneNode();
+        ptr<SceneNode> root = new SceneNode();
 
-        Ptr<SceneNode> camera = new SceneNode();
+        ptr<SceneNode> camera = new SceneNode();
         camera->addFlag("camera");
         camera->addModule("material", resManager->loadResource("camera").cast<Module>());
         camera->addMethod("draw", new Method(resManager->loadResource("cameraMethod").cast<TaskFactory>()));
         root->addChild(camera);
 
-        Ptr<SceneNode> light = new SceneNode();
+        ptr<SceneNode> light = new SceneNode();
         light->setLocalToParent(mat4d::translate(vec3d(3, 3, 3)) * mat4d::rotatez(135) * mat4d::rotatex(45));
         light->addFlag("light");
         light->addModule("material", resManager->loadResource("spotlight").cast<Module>());
         light->addMethod("draw", new Method(resManager->loadResource("lightMethod").cast<TaskFactory>()));
         root->addChild(light);
 
-        Ptr<SceneNode> cube = new SceneNode();
+        ptr<SceneNode> cube = new SceneNode();
         cube->setLocalToParent(mat4d::rotatez(15));
         cube->addFlag("object");
         cube->addMesh("geometry", resManager->loadResource("cube.mesh").cast<MeshBuffers>());
@@ -95,7 +91,7 @@ public:
         cube->addMethod("draw", new Method(resManager->loadResource("objectMethod").cast<TaskFactory>()));
         root->addChild(cube);
 
-        Ptr<SceneNode> plane = new SceneNode();
+        ptr<SceneNode> plane = new SceneNode();
         plane->setLocalToParent(mat4d::translate(vec3d(0, 0, -2)) * mat4d::rotatez(180));
         plane->addFlag("object");
         plane->addMesh("geometry", resManager->loadResource("plane.mesh").cast<MeshBuffers>());
@@ -103,12 +99,12 @@ public:
         plane->addMethod("draw", new Method(resManager->loadResource("objectMethod").cast<TaskFactory>()));
         root->addChild(plane);
 
-        Ptr<SceneNode> log = new SceneNode();
+        ptr<SceneNode> log = new SceneNode();
         log->addFlag("overlay");
         log->addMethod("draw", new Method(resManager->loadResource("logMethod").cast<TaskFactory>()));
         root->addChild(log);
 
-        Ptr<SceneNode> info = new SceneNode();
+        ptr<SceneNode> info = new SceneNode();
         info->addFlag("overlay");
         info->addMethod("draw", new Method(resManager->loadResource("infoMethod").cast<TaskFactory>()));
         root->addChild(info);
@@ -127,7 +123,7 @@ public:
 
         manager->getCameraNode()->setLocalToParent(cameraToWorld.cast<double>());
 
-        Ptr<FrameBuffer> fb = FrameBuffer::getDefault();
+        ptr<FrameBuffer> fb = FrameBuffer::getDefault();
         fb->clear(true, false, true);
 
         manager->update(t, dt);
@@ -142,7 +138,7 @@ public:
 
     void reshape(int x, int y)
     {
-        Ptr<FrameBuffer> fb = FrameBuffer::getDefault();
+        ptr<FrameBuffer> fb = FrameBuffer::getDefault();
         fb->setViewport(vec4<GLint>(0, 0, x, y));
         fb->setDepthTest(true, LESS);
 
@@ -197,10 +193,10 @@ public:
         return true;
     }
 
-    static StaticPtr<Window> app;
+    static static_ptr<Window> app;
 };
 
-StaticPtr<Window> SceneGraphExample::app;
+static_ptr<Window> SceneGraphExample::app;
 
 int sceneGraphExample(int argc, char* argv[])
 {

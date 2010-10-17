@@ -31,9 +31,6 @@
 namespace ork
 {
 
-namespace resource
-{
-
 /**
  * A ResourceLoader that loads ResourceDescriptor from XML files. This loader
  * can load resources from individual XML files, each file containing a single
@@ -41,6 +38,8 @@ namespace resource
  * containing one or more ResourceDescriptor. This loader can search for these
  * files in several directories and archives files configured with #addPath and
  * #addArchive.
+ *
+ * @ingroup resource
  */
 class ORK_API XMLResourceLoader : public ResourceLoader
 {
@@ -81,7 +80,7 @@ public:
      * @return the ResourceDescriptor of the given name, or NULL if the %resource
      *      is not found.
      */
-    virtual Ptr<ResourceDescriptor> loadResource(const string &name);
+    virtual ptr<ResourceDescriptor> loadResource(const string &name);
 
     /**
      * Reloads the ResourceDescriptor of the given name.
@@ -91,7 +90,7 @@ public:
      * @return the new value of this ResourceDescriptor, or NULL if this value
      *      has not changed on disk.
      */
-    virtual Ptr<ResourceDescriptor> reloadResource(const string &name, Ptr<ResourceDescriptor> currentValue);
+    virtual ptr<ResourceDescriptor> reloadResource(const string &name, ptr<ResourceDescriptor> currentValue);
 
 private:
     /**
@@ -176,8 +175,6 @@ private:
      */
     unsigned char* loadData(TiXmlElement *e, unsigned int &size, vector< pair<string, time_t> > &stamps);
 };
-
-}
 
 }
 

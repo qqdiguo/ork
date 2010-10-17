@@ -28,9 +28,6 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 AbstractTask::AbstractTask(const char* type) :
     TaskFactory(type)
 {
@@ -55,7 +52,7 @@ AbstractTask::QualifiedName::QualifiedName(const string &n)
     }
 }
 
-Ptr<SceneNode> AbstractTask::QualifiedName::getTarget(Ptr<SceneNode> context)
+ptr<SceneNode> AbstractTask::QualifiedName::getTarget(ptr<SceneNode> context)
 {
     if (target.size() == 0) {
         return NULL;
@@ -67,8 +64,6 @@ Ptr<SceneNode> AbstractTask::QualifiedName::getTarget(Ptr<SceneNode> context)
         SceneManager::NodeIterator i = context->getOwner()->getNodes(target);
         return i.hasNext() ? i.next() : NULL;
     }
-}
-
 }
 
 }

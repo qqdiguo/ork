@@ -33,12 +33,10 @@
 namespace ork
 {
 
-namespace math
-{
-
 /**
  * A templated quaternion class.
  * Important : assumes T is typeing point type.
+ * @ingroup math
  */
 template <typename type>
 class quat {
@@ -141,11 +139,13 @@ public:
 
 /**
  * Quaternion using float.
+ * @ingroup math
  */
 typedef quat<float> quatf;
 
 /**
  * Quaternion using double.
+ * @ingroup math
  */
 typedef quat<double> quatd;
 
@@ -325,8 +325,6 @@ quat<type> slerp(const quat<type>& from, const quat<type>& to, type t)
                                     scale0 * from.w + scale1 * to.w);
         return res.normalize();
     }
-}
-
 }
 
 }

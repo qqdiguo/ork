@@ -105,9 +105,6 @@
 namespace ork
 {
 
-namespace math
-{
-
 // Negate
 #ifdef _MSC_VER
 // prevent a MSVC warning
@@ -280,8 +277,6 @@ float halfToFloat(unsigned short h)
 
     u.ui32 = f_result;
     return u.f32;
-}
-
 }
 
 }

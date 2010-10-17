@@ -29,11 +29,9 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 /**
  * An AbstractTask to execute a task on a set of scene nodes.
+ * @ingroup scenegraph
  */
 class ORK_API LoopTask : public AbstractTask
 {
@@ -48,14 +46,14 @@ public:
      * @param parallel true the apply the loop to all scene nodes in parallel.
      * @param subtask the task that must be executed on each SceneNode.
      */
-    LoopTask(const string &var, const string &flag, bool cull, bool parallel, Ptr<TaskFactory> subtask);
+    LoopTask(const string &var, const string &flag, bool cull, bool parallel, ptr<TaskFactory> subtask);
 
     /**
      * Deletes this LoopTask.
      */
     virtual ~LoopTask();
 
-    virtual Ptr<Task> getTask(Ptr<Object> context);
+    virtual ptr<Task> getTask(ptr<Object> context);
 
 protected:
     /**
@@ -73,14 +71,14 @@ protected:
      * @param parallel true the apply the loop to all scene nodes in parallel.
      * @param subtask the task that must be executed on each SceneNode.
      */
-    void init(const string &var, const string &flag, bool cull, bool parallel, Ptr<TaskFactory> subtask);
+    void init(const string &var, const string &flag, bool cull, bool parallel, ptr<TaskFactory> subtask);
 
     /**
      * Swaps this LoopTask with the given one.
      *
      * @param t a LoopTask.
      */
-    void swap(Ptr<LoopTask> t);
+    void swap(ptr<LoopTask> t);
 
 private:
     /**
@@ -106,10 +104,8 @@ private:
     /**
      * The task that must be executed on each scene node.
      */
-    Ptr<TaskFactory> subtask;
+    ptr<TaskFactory> subtask;
 };
-
-}
 
 }
 

@@ -33,15 +33,13 @@ using namespace std;
 namespace ork
 {
 
-namespace render
-{
-
 // conservative estimation of the true maximum number of texture units,
 // used to allocate static arrays for storing texture unit states
 #define MAX_TEXTURE_UNITS 64
 
 /**
  * An abstract texture.
+ * @ingroup render
  */
 class ORK_API Texture : public Object
 {
@@ -267,7 +265,7 @@ protected:
      * @return the texture unit to which the texture has been bound, or -1
      *      if the binding failed (all units already used by the program).
      */
-    GLint bindToTextureUnit(Ptr<Sampler> s, GLuint programId) const;
+    GLint bindToTextureUnit(ptr<Sampler> s, GLuint programId) const;
 
     /**
      * Binds this texture to a texture unit. If there is a texture unit
@@ -282,7 +280,7 @@ protected:
     /**
      * Swaps this texture with the given one.
      */
-    virtual void swap(Ptr<Texture> t);
+    virtual void swap(ptr<Texture> t);
 
 private:
     /**
@@ -382,8 +380,6 @@ private:
     friend class FrameBuffer;
 
 };
-
-}
 
 }
 

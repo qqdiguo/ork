@@ -32,11 +32,9 @@
 namespace ork
 {
 
-namespace render
-{
-
 /**
  * A Buffer whose data is on the GPU.
+ * @ingroup render
  */
 class ORK_API GPUBuffer : public Buffer
 {
@@ -189,8 +187,6 @@ private:
 
     friend class FrameBuffer;
 };
-
-}
 
 }
 

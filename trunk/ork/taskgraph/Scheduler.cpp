@@ -26,9 +26,6 @@
 namespace ork
 {
 
-namespace taskgraph
-{
-
 Scheduler::Scheduler(const char* type) : Object(type)
 {
 }
@@ -37,10 +34,8 @@ Scheduler::~Scheduler()
 {
 }
 
-void Scheduler::swap(Ptr<Scheduler> s)
+void Scheduler::swap(ptr<Scheduler> s)
 {
-}
-
 }
 
 }

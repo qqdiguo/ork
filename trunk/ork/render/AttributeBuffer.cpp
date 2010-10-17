@@ -31,20 +31,17 @@ using namespace std;
 namespace ork
 {
 
-namespace render
-{
-
-AttributeBuffer::AttributeBuffer(int index, int size, AttributeType t, bool norm, Ptr<Buffer> b, int stride, int offset, int divisor) :
+AttributeBuffer::AttributeBuffer(int index, int size, AttributeType t, bool norm, ptr<Buffer> b, int stride, int offset, int divisor) :
         Object("AttributeBuffer"), index(index), size(size), type(t), I(false), L(false), norm(norm), b(b), stride(stride), offset(offset), divisor(0)
 {
 }
 
-AttributeBuffer::AttributeBuffer(int index, int size, AttributeType t, Ptr<Buffer> b, int stride, int offset, int divisor) :
+AttributeBuffer::AttributeBuffer(int index, int size, AttributeType t, ptr<Buffer> b, int stride, int offset, int divisor) :
         Object("AttributeBuffer"), index(index), size(size), type(t), I(true), L(false), norm(false), b(b), stride(stride), offset(offset), divisor(0)
 {
 }
 
-AttributeBuffer::AttributeBuffer(int index, int size, Ptr<Buffer> b, int stride, int offset, int divisor) :
+AttributeBuffer::AttributeBuffer(int index, int size, ptr<Buffer> b, int stride, int offset, int divisor) :
         Object("AttributeBuffer"), index(index), size(size), type(A64F), I(true), L(true), norm(false), b(b), stride(stride), offset(offset), divisor(0)
 {
 }
@@ -94,7 +91,7 @@ int AttributeBuffer::getAttributeSize()
     return this->size * size;
 }
 
-Ptr<Buffer> AttributeBuffer::getBuffer()
+ptr<Buffer> AttributeBuffer::getBuffer()
 {
     return b;
 }
@@ -109,11 +106,9 @@ int AttributeBuffer::getOffset()
     return offset;
 }
 
-void AttributeBuffer::setBuffer(Ptr<Buffer> b)
+void AttributeBuffer::setBuffer(ptr<Buffer> b)
 {
     this->b = b;
-}
-
 }
 
 }

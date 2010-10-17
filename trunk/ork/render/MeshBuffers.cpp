@@ -30,13 +30,7 @@
 #include "ork/render/FrameBuffer.h"
 #include "ork/resource/ResourceTemplate.h"
 
-using namespace ork::math;
-using namespace ork::resource;
-
 namespace ork
-{
-
-namespace render
 {
 
 GLenum getAttributeType(AttributeType t);
@@ -61,19 +55,19 @@ int MeshBuffers::getAttributeCount() const
     return (int) attributeBuffers.size();
 }
 
-Ptr<AttributeBuffer> MeshBuffers::getAttributeBuffer(int index) const
+ptr<AttributeBuffer> MeshBuffers::getAttributeBuffer(int index) const
 {
     return attributeBuffers[index];
 }
 
-Ptr<AttributeBuffer> MeshBuffers::getIndiceBuffer() const
+ptr<AttributeBuffer> MeshBuffers::getIndiceBuffer() const
 {
     return indicesBuffer;
 }
 
 void MeshBuffers::addAttributeBuffer(int index, int size, AttributeType type, bool norm)
 {
-    Ptr<AttributeBuffer> a = new AttributeBuffer(index, size, type, norm, NULL);
+    ptr<AttributeBuffer> a = new AttributeBuffer(index, size, type, norm, NULL);
     attributeBuffers.push_back(a);
 }
 
@@ -81,16 +75,16 @@ void MeshBuffers::addAttributeBuffer(int index, int size, int vertexsize, Attrib
 {
     int offset;
     if (attributeBuffers.size() > 0) {
-        Ptr<AttributeBuffer> ab = attributeBuffers[attributeBuffers.size() - 1];
+        ptr<AttributeBuffer> ab = attributeBuffers[attributeBuffers.size() - 1];
         offset = ab->getOffset() + ab->getAttributeSize();
     } else {
         offset = 0;
     }
-    Ptr<AttributeBuffer> a = new AttributeBuffer(index, size, type, norm, NULL, vertexsize, offset);
+    ptr<AttributeBuffer> a = new AttributeBuffer(index, size, type, norm, NULL, vertexsize, offset);
     attributeBuffers.push_back(a);
 }
 
-void MeshBuffers::setIndicesBuffer(Ptr<AttributeBuffer> indices)
+void MeshBuffers::setIndicesBuffer(ptr<AttributeBuffer> indices)
 {
     indicesBuffer = indices;
 }
@@ -100,8 +94,8 @@ void MeshBuffers::bind() const
     assert(attributeBuffers.size() > 0);
     // binds the attribute buffers for each attribute
     for (int i = (int) attributeBuffers.size() - 1; i >= 0; --i) {
-        Ptr<AttributeBuffer> a = attributeBuffers[i];
-        Ptr<Buffer> b = a->b;
+        ptr<AttributeBuffer> a = attributeBuffers[i];
+        ptr<Buffer> b = a->b;
         b->bind(GL_ARRAY_BUFFER);
         int index = a->index;
         if (a->I) {
@@ -117,7 +111,7 @@ void MeshBuffers::bind() const
     assert(FrameBuffer::getError() == 0);
     // binds the indices buffer, if any
     if (indicesBuffer != NULL) {
-        Ptr<Buffer> b = indicesBuffer->b;
+        ptr<Buffer> b = indicesBuffer->b;
         b->bind(GL_ELEMENT_ARRAY_BUFFER);
         type = indicesBuffer->type;
         offset = b->data(indicesBuffer->offset);
@@ -128,7 +122,7 @@ void MeshBuffers::bind() const
 void MeshBuffers::unbind() const
 {
     for (int i = (int) attributeBuffers.size() - 1; i >= 0; --i) {
-        Ptr<AttributeBuffer> a = attributeBuffers[i];
+        ptr<AttributeBuffer> a = attributeBuffers[i];
         int index = a->index;
         glDisableVertexAttribArray(index);
     }
@@ -549,7 +543,7 @@ void MeshBuffers::setDefaultAttributeP(GLuint index, int count, GLuint *defaultV
     }
 }
 
-void MeshBuffers::swap(Ptr<MeshBuffers> buffers)
+void MeshBuffers::swap(ptr<MeshBuffers> buffers)
 {
     std::swap(mode, buffers->mode);
     std::swap(nvertices, buffers->nvertices);
@@ -561,7 +555,6 @@ void MeshBuffers::swap(Ptr<MeshBuffers> buffers)
 
 void MeshBuffers::draw(MeshMode m, GLint first, GLsizei count, GLsizei primCount, GLint base) const
 {
-    assert(this != NULL);
     if (CURRENT != this) {
         set();
     }
@@ -623,7 +616,6 @@ void MeshBuffers::draw(MeshMode m, GLint first, GLsizei count, GLsizei primCount
 
 void MeshBuffers::multiDraw(MeshMode m, GLint *firsts, GLsizei *counts, GLsizei primCount, GLint *bases) const
 {
-    assert(this != NULL);
     if (CURRENT != this) {
         set();
     }
@@ -675,7 +667,6 @@ void MeshBuffers::multiDraw(MeshMode m, GLint *firsts, GLsizei *counts, GLsizei 
 
 void MeshBuffers::drawIndirect(MeshMode m, const Buffer &buf) const
 {
-    assert(this != NULL);
     if (CURRENT != this) {
         set();
     }
@@ -732,7 +723,7 @@ void *MeshBuffers::offset;
 class MeshResource : public ResourceTemplate<0, MeshBuffers>
 {
 public:
-    MeshResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    MeshResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<0, MeshBuffers>(manager, name, desc)
     {
         char buf[256];
@@ -860,7 +851,7 @@ public:
 
             for (unsigned int i = 0; i < vertexCount; ++i) {
                 for (unsigned int j = 0; j < attributeCount; ++j) {
-                    Ptr<AttributeBuffer> ab = getAttributeBuffer(j);
+                    ptr<AttributeBuffer> ab = getAttributeBuffer(j);
                     for (int k = 0; k < ab->getSize(); ++k) {
                         switch (ab->getType()) {
                             case A8I: {
@@ -944,7 +935,7 @@ public:
                 }
             }
 
-            Ptr<GPUBuffer> gpub = new GPUBuffer();
+            ptr<GPUBuffer> gpub = new GPUBuffer();
             gpub->setData(vertexCount * vertexSize, vertexBuffer, STATIC_DRAW);
             for (int i = 0; i < getAttributeCount(); ++i) {
                 getAttributeBuffer(i)->setBuffer(gpub);
@@ -1018,7 +1009,5 @@ extern const char mesh[] = "mesh";
 static ResourceFactory::Type<mesh, MeshResource> MeshType;
 
 /// @endcond
-
-}
 
 }

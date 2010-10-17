@@ -68,7 +68,7 @@ int mainFunction(int argc, char* argv[])
     for (unsigned int i = 0; i < mainFunctions->names.size(); ++i) {
         printf("%s\n", mainFunctions->names[i]);
     }
-    return -1;
+    return 0;
 }
 
 int main(int argc, char* argv[])

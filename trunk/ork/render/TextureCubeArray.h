@@ -30,11 +30,9 @@
 namespace ork
 {
 
-namespace render
-{
-
 /**
  * A cube array texture.
+ * @ingroup render
  */
 class ORK_API TextureCubeArray : public Texture
 {
@@ -122,10 +120,8 @@ protected:
     void init(int w, int h, int l, TextureInternalFormat tf, TextureFormat f, PixelType t,
         const Parameters &params, Buffer::Parameters s, const Buffer &pixels);
 
-    virtual void swap(Ptr<Texture> t);
+    virtual void swap(ptr<Texture> t);
 };
-
-}
 
 }
 

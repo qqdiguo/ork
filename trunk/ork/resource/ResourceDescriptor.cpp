@@ -26,9 +26,6 @@
 namespace ork
 {
 
-namespace resource
-{
-
 ResourceDescriptor::ResourceDescriptor(const TiXmlElement *descriptor, unsigned char *data, unsigned int size) :
     Object("ResourceDescriptor"), data(data), size(size)
 {
@@ -58,8 +55,6 @@ void ResourceDescriptor::clearData()
         delete[] data;
         data = NULL;
     }
-}
-
 }
 
 }

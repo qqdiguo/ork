@@ -28,20 +28,14 @@
 #include "ork/math/vec4.h"
 #include "ork/render/Texture.h"
 
-using namespace ork::math;
-using namespace ork::render;
-
 namespace ork
 {
 
-namespace render
-{
 GLenum getTextureWrap(TextureWrap w);
 
 GLenum getTextureFilter(TextureFilter f);
 
 GLenum getFunction(Function f);
-
 
 Sampler::Parameters::Parameters() :
         _wrapS(CLAMP_TO_EDGE), _wrapT(CLAMP_TO_EDGE), _wrapR(CLAMP_TO_EDGE),
@@ -394,7 +388,5 @@ GLuint Sampler::getId() const
 }
 
 map<Sampler::Parameters, pair<GLuint, unsigned int> > Sampler::INSTANCES;
-
-}
 
 }

@@ -29,12 +29,11 @@
 namespace ork
 {
 
-namespace resource
-{
-
 /**
  * An abstract %resource loader, loads ResourceDescriptor from disk or other
  * locations.
+ *
+ * @ingroup resource
  */
 class ORK_API ResourceLoader : public Object
 {
@@ -65,7 +64,7 @@ public:
      * @return the ResourceDescriptor of the given name, or NULL if the %resource
      *      is not found.
      */
-    virtual Ptr<ResourceDescriptor> loadResource(const string &name) = 0;
+    virtual ptr<ResourceDescriptor> loadResource(const string &name) = 0;
 
     /**
      * Reloads the ResourceDescriptor of the given name.
@@ -75,10 +74,8 @@ public:
      * @return the new value of this ResourceDescriptor, or NULL if this value
      *      has not changed.
      */
-    virtual Ptr<ResourceDescriptor> reloadResource(const string &name, Ptr<ResourceDescriptor> currentValue) = 0;
+    virtual ptr<ResourceDescriptor> reloadResource(const string &name, ptr<ResourceDescriptor> currentValue) = 0;
 };
-
-}
 
 }
 

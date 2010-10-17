@@ -26,9 +26,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 Value::Value(const char *type, const string &name) :
     Object(type), name(name)
 {
@@ -124,7 +121,7 @@ ValueSampler::ValueSampler(UniformType type, const string &name) :
 {
 }
 
-ValueSampler::ValueSampler(UniformType type, const string &name, Ptr<Texture> value) :
+ValueSampler::ValueSampler(UniformType type, const string &name, ptr<Texture> value) :
     Value("UniformSampler", name), type(type), value(value)
 {
 }
@@ -138,16 +135,14 @@ UniformType ValueSampler::getType() const
     return type;
 }
 
-Ptr<Texture> ValueSampler::get() const
+ptr<Texture> ValueSampler::get() const
 {
     return value;
 }
 
-void ValueSampler::set(const Ptr<Texture> value)
+void ValueSampler::set(const ptr<Texture> value)
 {
     this->value = value;
-}
-
 }
 
 }

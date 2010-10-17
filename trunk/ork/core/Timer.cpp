@@ -56,8 +56,6 @@ using namespace std;
 namespace ork
 {
 
-namespace core
-{
 #if ORK_TIMER_USE_QPC && (defined( _WIN64 ) || defined( _WIN32 ))
 __int64 cpuFrequency = 0;
 #endif
@@ -199,8 +197,6 @@ double Timer::getCurrentTime()
     gettimeofday(&u, NULL);
     return double(u.tv_sec) * 1e6 + double(u.tv_usec);
 #endif
-}
-
 }
 
 }

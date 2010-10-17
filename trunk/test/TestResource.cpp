@@ -27,10 +27,9 @@
 #include "ork/resource/ResourceManager.h"
 #include "ork/render/FrameBuffer.h"
 
-using namespace ork::resource;
-using namespace ork::render;
+using namespace ork;
 
-Ptr<FrameBuffer> getFrameBuffer(RenderBuffer::RenderBufferFormat f, int w, int h);
+ptr<FrameBuffer> getFrameBuffer(RenderBuffer::RenderBufferFormat f, int w, int h);
 
 void createFile(const char *name, const char* content)
 {
@@ -51,7 +50,7 @@ void createFile(const char *name, int size, const unsigned char* content)
 class TestResourceLoader : public XMLResourceLoader
 {
 public:
-    virtual Ptr<ResourceDescriptor> reloadResource(const string &name, Ptr<ResourceDescriptor> currentValue)
+    virtual ptr<ResourceDescriptor> reloadResource(const string &name, ptr<ResourceDescriptor> currentValue)
     {
         return loadResource(name);
     }
@@ -63,18 +62,18 @@ TEST(textureResourceUpdate)
     unsigned char img1[] = { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 24, 0, 2, 1, 0 };
     createFile("test.tga", 25, img1);
 
-    Ptr<XMLResourceLoader> resLoader = new TestResourceLoader();
+    ptr<XMLResourceLoader> resLoader = new TestResourceLoader();
     resLoader->addPath(".");
-    Ptr<ResourceManager> resManager = new ResourceManager(resLoader);
-    Ptr<Texture2D> t = resManager->loadResource("test").cast<Texture2D>();
+    ptr<ResourceManager> resManager = new ResourceManager(resLoader);
+    ptr<Texture2D> t = resManager->loadResource("test").cast<Texture2D>();
 
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform isampler2D u;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { color = texture(u, vec2(0.0)); }\n"));
     p->getUniformSampler("u")->set(t);
 
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB8UI, 1, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB8UI, 1, 1);
     int pixel1[3] = { 0, 0, 0 };
     int pixel2[3] = { 0, 0, 0 };
 
@@ -102,13 +101,13 @@ TEST(moduleResourceUpdate)
     createFile("test.xml", "<?xml version=\"1.0\" ?>\n<module name=\"test\" version=\"330\" source=\"test.glsl\">\n<uniform1i name=\"u\" x=\"1\"/>\n</module>\n");
     createFile("test.glsl", "#ifdef _FRAGMENT_\nlayout(location=0) out ivec4 color;\nuniform int u;\nvoid main() { color = ivec4(u); }\n#endif\n");
 
-    Ptr<XMLResourceLoader> resLoader = new TestResourceLoader();
+    ptr<XMLResourceLoader> resLoader = new TestResourceLoader();
     resLoader->addPath(".");
-    Ptr<ResourceManager> resManager = new ResourceManager(resLoader);
-    Ptr<Program> p = resManager->loadResource("test;").cast<Program>();
-    Ptr<Uniform1i> u = p->getUniform1i("u");
+    ptr<ResourceManager> resManager = new ResourceManager(resLoader);
+    ptr<Program> p = resManager->loadResource("test;").cast<Program>();
+    ptr<Uniform1i> u = p->getUniform1i("u");
 
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
     int pixel1 = 0;
     int pixel2 = 0;
     int pixel3 = 0;
@@ -154,13 +153,13 @@ TEST(moduleResourceUpdateWithUniformSamplers)
     createFile("test.xml", "<?xml version=\"1.0\" ?>\n<module name=\"test\" version=\"330\" fragment=\"test.glsl\">\n<uniformSampler name=\"u1\" texture=\"tex1\"/>\n<uniformSampler name=\"u2\" texture=\"tex2\"/>\n</module>\n");
     createFile("test.glsl", "layout(location=0) out ivec4 color;\nuniform isampler2D u1;\nuniform isampler2D u2;\nvoid main() { color = texture(u1, vec2(0.5)) + texture(u2, vec2(0.5)); }\n");
 
-    Ptr<XMLResourceLoader> resLoader = new TestResourceLoader();
+    ptr<XMLResourceLoader> resLoader = new TestResourceLoader();
     resLoader->addPath(".");
-    Ptr<ResourceManager> resManager = new ResourceManager(resLoader);
-    Ptr<Program> p = resManager->loadResource("test;").cast<Program>();
-    Ptr<Uniform1i> u = p->getUniform1i("u");
+    ptr<ResourceManager> resManager = new ResourceManager(resLoader);
+    ptr<Program> p = resManager->loadResource("test;").cast<Program>();
+    ptr<Uniform1i> u = p->getUniform1i("u");
 
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB8UI, 1, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB8UI, 1, 1);
     int pixel1[3] = { 0, 0, 0 };
     int pixel2[3] = { 0, 0, 0 };
 
@@ -191,13 +190,13 @@ TEST(moduleResourceUpdateRemovedUniform)
     createFile("test.xml", "<?xml version=\"1.0\" ?>\n<module name=\"test\" version=\"330\" fragment=\"test.glsl\">\n<uniform1i name=\"u\" x=\"3\"/>\n</module>\n");
     createFile("test.glsl", "layout(location=0) out ivec4 color;\nuniform int u;\nvoid main() { color = ivec4(u); }\n");
 
-    Ptr<XMLResourceLoader> resLoader = new TestResourceLoader();
+    ptr<XMLResourceLoader> resLoader = new TestResourceLoader();
     resLoader->addPath(".");
-    Ptr<ResourceManager> resManager = new ResourceManager(resLoader);
-    Ptr<Program> p = resManager->loadResource("test;").cast<Program>();
-    Ptr<Uniform1i> u = p->getUniform1i("u");
+    ptr<ResourceManager> resManager = new ResourceManager(resLoader);
+    ptr<Program> p = resManager->loadResource("test;").cast<Program>();
+    ptr<Uniform1i> u = p->getUniform1i("u");
 
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
     int pixel1 = 0;
     int pixel2 = 0;
     int pixel3 = 0;
@@ -240,13 +239,13 @@ TEST(moduleResourceUpdateUniformBlock)
     createFile("test.xml", "<?xml version=\"1.0\" ?>\n<module name=\"test\" version=\"330\" fragment=\"test.glsl\">\n<uniform1i name=\"u\" x=\"1\"/>\n</module>\n");
     createFile("test.glsl", "layout(location=0) out ivec4 color;\nuniform b { int u; };\nvoid main() { color = ivec4(u); }\n");
 
-    Ptr<XMLResourceLoader> resLoader = new TestResourceLoader();
+    ptr<XMLResourceLoader> resLoader = new TestResourceLoader();
     resLoader->addPath(".");
-    Ptr<ResourceManager> resManager = new ResourceManager(resLoader);
-    Ptr<Program> p = resManager->loadResource("test;").cast<Program>();
-    Ptr<Uniform1i> u = p->getUniform1i("u");
+    ptr<ResourceManager> resManager = new ResourceManager(resLoader);
+    ptr<Program> p = resManager->loadResource("test;").cast<Program>();
+    ptr<Uniform1i> u = p->getUniform1i("u");
 
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
     int pixel1 = 0;
     int pixel2 = 0;
     int pixel3 = 0;

@@ -30,9 +30,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 /**
  * A set of Buffer objects to collect the result of a transform feedback.
  * In OpenGL 3.3 only a single TransformFeedback instance can be used, the
@@ -40,6 +37,8 @@ namespace render
  * which can be created with the constructor. In any case, only one transform
  * feedback can be performed at a time, with the static #begin, #transform
  * and #end methods.
+ *
+ * @ingroup render
  */
 class ORK_API TransformFeedback : public Object
 {
@@ -58,7 +57,7 @@ public:
     /**
      * Returns the default TransformFeedback instance.
      */
-    static Ptr<TransformFeedback> getDefault();
+    static ptr<TransformFeedback> getDefault();
 
     /**
      * Removes all the buffers associated with this object.
@@ -72,7 +71,7 @@ public:
      * @param index the index of a recorded output varying variable.
      * @param b the GPUBuffer to use to store the recorded values of this varying.
      */
-    void setVertexBuffer(int index, Ptr<GPUBuffer> b);
+    void setVertexBuffer(int index, ptr<GPUBuffer> b);
 
     /**
      * Attachs the given GPUBuffer to collect the transformed output varying
@@ -83,7 +82,7 @@ public:
      * @param offset the offset at which the first recorded value must be stored.
      * @param size the maximum size of the recorded values.
      */
-    void setVertexBuffer(int index, Ptr<GPUBuffer> b, GLuint offset, GLuint size);
+    void setVertexBuffer(int index, ptr<GPUBuffer> b, GLuint offset, GLuint size);
 
     /**
      * Starts a transform feedback session. Actual transforms are performed
@@ -100,7 +99,7 @@ public:
      * @param rasterize true to rasterize the transformed primitives, or false
      *      to disable the rasterization stage during this session.
      */
-    static void begin(Ptr<FrameBuffer> fb, Ptr<Program> transform, MeshMode m, Ptr<TransformFeedback> tfb, bool rasterize);
+    static void begin(ptr<FrameBuffer> fb, ptr<Program> transform, MeshMode m, ptr<TransformFeedback> tfb, bool rasterize);
 
     /**
      * Transforms a part of a mesh one or more times.
@@ -163,7 +162,7 @@ public:
      * @param tfb the set of buffers to use to store the results of the session,
      *      i.e., the transformed output varying variables.
      */
-    static void resume(Ptr<TransformFeedback> tfb);
+    static void resume(ptr<TransformFeedback> tfb);
 
     /**
      * Ends the current transform feedback session.
@@ -179,12 +178,12 @@ private:
     /**
      * The default transform feedback instance.
      */
-    static StaticPtr<TransformFeedback> DEFAULT;
+    static static_ptr<TransformFeedback> DEFAULT;
 
     /**
      * The program to use for the current transform feedback session.
      */
-    static Ptr<Program> TRANSFORM;
+    static ptr<Program> TRANSFORM;
 
     /**
      * How the mesh vertices must be interpreted in #transform methods.
@@ -205,8 +204,6 @@ private:
 
     friend class FrameBuffer;
 };
-
-}
 
 }
 

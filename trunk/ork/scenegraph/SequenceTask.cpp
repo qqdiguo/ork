@@ -29,20 +29,17 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 SequenceTask::SequenceTask() : AbstractTask("SequenceTask")
 {
 }
 
-SequenceTask::SequenceTask(const vector< Ptr<TaskFactory> > &subtasks) :
+SequenceTask::SequenceTask(const vector< ptr<TaskFactory> > &subtasks) :
     AbstractTask("SequenceTask")
 {
     init(subtasks);
 }
 
-void SequenceTask::init(const vector< Ptr<TaskFactory> > &subtasks)
+void SequenceTask::init(const vector< ptr<TaskFactory> > &subtasks)
 {
     this->subtasks = subtasks;
 }
@@ -51,16 +48,16 @@ SequenceTask::~SequenceTask()
 {
 }
 
-Ptr<Task> SequenceTask::getTask(Ptr<Object> context)
+ptr<Task> SequenceTask::getTask(ptr<Object> context)
 {
     if (subtasks.size() == 1) {
         return subtasks[0]->getTask(context);
     } else {
-        Ptr<TaskGraph> result = new TaskGraph();
-        Ptr<Task> prev = NULL;
+        ptr<TaskGraph> result = new TaskGraph();
+        ptr<Task> prev = NULL;
         for (unsigned int i = 0; i < subtasks.size(); ++i) {
             try {
-                Ptr<Task> next = subtasks[i]->getTask(context);
+                ptr<Task> next = subtasks[i]->getTask(context);
                 if (next.cast<TaskGraph>() == NULL || !next.cast<TaskGraph>()->isEmpty()) {
                     result->addTask(next);
                     if (prev != NULL) {
@@ -75,7 +72,7 @@ Ptr<Task> SequenceTask::getTask(Ptr<Object> context)
     }
 }
 
-void SequenceTask::swap(Ptr<SequenceTask> t)
+void SequenceTask::swap(ptr<SequenceTask> t)
 {
     std::swap(subtasks, t->subtasks);
 }
@@ -85,17 +82,17 @@ void SequenceTask::swap(Ptr<SequenceTask> t)
 class SequenceTaskResource : public ResourceTemplate<40, SequenceTask>
 {
 public:
-    SequenceTaskResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    SequenceTaskResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, SequenceTask>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
         checkParameters(desc, e, "");
-        vector< Ptr<TaskFactory> > subtasks;
+        vector< ptr<TaskFactory> > subtasks;
         const TiXmlNode *n = e->FirstChild();
         while (n != NULL) {
             const TiXmlElement *f = n->ToElement();
             if (f != NULL) {
-                Ptr<TaskFactory> tf;
+                ptr<TaskFactory> tf;
                 tf = ResourceFactory::getInstance()->create(manager, "", desc, f).cast<TaskFactory>();
                 subtasks.push_back(tf);
             }
@@ -110,7 +107,5 @@ extern const char sequence[] = "sequence";
 static ResourceFactory::Type<sequence, SequenceTaskResource> SequenceTaskType;
 
 /// @endcond
-
-}
 
 }

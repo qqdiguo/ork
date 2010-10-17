@@ -3,20 +3,18 @@
 #include "ork/render/FrameBuffer.h"
 #include "ork/ui/GlutWindow.h"
 
-using namespace ork::resource;
-using namespace ork::render;
-using namespace ork::ui;
+using namespace ork;
 
 class SimpleExample : public GlutWindow
 {
 public:
-    Ptr<ResourceManager> resManager;
-    Ptr<MeshBuffers> m;
-    Ptr<Program> p;
+    ptr<ResourceManager> resManager;
+    ptr<MeshBuffers> m;
+    ptr<Program> p;
 
     SimpleExample() : GlutWindow(Window::Parameters())
     {
-        Ptr<XMLResourceLoader> resLoader = new XMLResourceLoader();
+        ptr<XMLResourceLoader> resLoader = new XMLResourceLoader();
         resLoader->addPath("resources/textures");
         resLoader->addPath("resources/shaders");
         resLoader->addPath("resources/meshes");

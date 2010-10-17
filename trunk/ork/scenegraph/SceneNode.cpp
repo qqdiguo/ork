@@ -32,9 +32,6 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 SceneNode::SceneNode() : Object("SceneNode"), owner(NULL)
 {
     localToParent = mat4d::IDENTITY;
@@ -52,7 +49,7 @@ SceneNode::~SceneNode()
     }
 }
 
-Ptr<SceneManager> SceneNode::getOwner()
+ptr<SceneManager> SceneNode::getOwner()
 {
     return owner;
 }
@@ -142,13 +139,13 @@ SceneNode::ValueIterator SceneNode::getValues()
     return SceneNode::ValueIterator(values);
 }
 
-Ptr<Value> SceneNode::getValue(const string &name)
+ptr<Value> SceneNode::getValue(const string &name)
 {
-    map<string, Ptr<Value> >::iterator i = values.find(name);
+    map<string, ptr<Value> >::iterator i = values.find(name);
     return i == values.end() ? NULL : (*i).second;
 }
 
-void SceneNode::addValue(Ptr<Value> value)
+void SceneNode::addValue(ptr<Value> value)
 {
     values.insert(make_pair(value->getName(), value));
 }
@@ -163,13 +160,13 @@ SceneNode::ModuleIterator SceneNode::getModules()
     return SceneNode::ModuleIterator(modules);
 }
 
-Ptr<Module> SceneNode::getModule(const string &name)
+ptr<Module> SceneNode::getModule(const string &name)
 {
-    map<string, Ptr<Module> >::iterator i = modules.find(name);
+    map<string, ptr<Module> >::iterator i = modules.find(name);
     return i == modules.end() ? NULL : (*i).second;
 }
 
-void SceneNode::addModule(const string &name, Ptr<Module> s)
+void SceneNode::addModule(const string &name, ptr<Module> s)
 {
     modules[name] = s;
 }
@@ -184,13 +181,13 @@ SceneNode::MeshIterator SceneNode::getMeshes()
     return SceneNode::MeshIterator(meshes);
 }
 
-Ptr<MeshBuffers> SceneNode::getMesh(const string &name)
+ptr<MeshBuffers> SceneNode::getMesh(const string &name)
 {
-    map<string, Ptr<MeshBuffers> >::iterator i = meshes.find(name);
+    map<string, ptr<MeshBuffers> >::iterator i = meshes.find(name);
     return i == meshes.end() ? NULL : (*i).second;
 }
 
-void SceneNode::addMesh(const string &name, Ptr<MeshBuffers> m)
+void SceneNode::addMesh(const string &name, ptr<MeshBuffers> m)
 {
     meshes[name] = m;
     localBounds = localBounds.enlarge(m->bounds.cast<double>());
@@ -206,13 +203,13 @@ SceneNode::FieldIterator SceneNode::getFields()
     return SceneNode::FieldIterator(fields);
 }
 
-Ptr<Object> SceneNode::getField(const string &name)
+ptr<Object> SceneNode::getField(const string &name)
 {
-    map<string, Ptr<Object> >::iterator i = fields.find(name);
+    map<string, ptr<Object> >::iterator i = fields.find(name);
     return i == fields.end() ? NULL : (*i).second;
 }
 
-void SceneNode::addField(const string &name, Ptr<Object> f)
+void SceneNode::addField(const string &name, ptr<Object> f)
 {
     removeField(name);
     fields[name] = f;
@@ -220,7 +217,7 @@ void SceneNode::addField(const string &name, Ptr<Object> f)
 
 void SceneNode::removeField(const string &name)
 {
-    map<string, Ptr<Object> >::iterator i = fields.find(name);
+    map<string, ptr<Object> >::iterator i = fields.find(name);
     if (i != fields.end()) {
         fields.erase(i);
     }
@@ -231,13 +228,13 @@ SceneNode::MethodIterator SceneNode::getMethods()
     return SceneNode::MethodIterator(methods);
 }
 
-Ptr<Method> SceneNode::getMethod(const string &name)
+ptr<Method> SceneNode::getMethod(const string &name)
 {
-    map<string, Ptr<Method> >::iterator i = methods.find(name);
+    map<string, ptr<Method> >::iterator i = methods.find(name);
     return i == methods.end() ? NULL : (*i).second;
 }
 
-void SceneNode::addMethod(const string &name, Ptr<Method> m)
+void SceneNode::addMethod(const string &name, ptr<Method> m)
 {
     removeMethod(name);
     methods[name] = m;
@@ -246,7 +243,7 @@ void SceneNode::addMethod(const string &name, Ptr<Method> m)
 
 void SceneNode::removeMethod(const string &name)
 {
-    map<string, Ptr<Method> >::iterator i = methods.find(name);
+    map<string, ptr<Method> >::iterator i = methods.find(name);
     if (i != methods.end()) {
         methods.erase(i);
         (*i).second->owner = NULL;
@@ -258,12 +255,12 @@ unsigned int SceneNode::getChildrenCount()
     return (unsigned int) children.size();
 }
 
-Ptr<SceneNode> SceneNode::getChild(unsigned int index)
+ptr<SceneNode> SceneNode::getChild(unsigned int index)
 {
     return children[index];
 }
 
-void SceneNode::addChild(Ptr<SceneNode> child)
+void SceneNode::addChild(ptr<SceneNode> child)
 {
     if (child->owner == NULL) {
         children.push_back(child);
@@ -279,7 +276,7 @@ void SceneNode::removeChild(unsigned int index)
     children.erase(children.begin() + index);
 }
 
-void SceneNode::swap(Ptr<SceneNode> n)
+void SceneNode::swap(ptr<SceneNode> n)
 {
     std::swap(localToParent, n->localToParent);
     std::swap(flags, n->flags);
@@ -288,14 +285,14 @@ void SceneNode::swap(Ptr<SceneNode> n)
     std::swap(meshes, n->meshes);
     std::swap(methods, n->methods);
     std::swap(children, n->children);
-    map<string, Ptr<Method> >::iterator i;
+    map<string, ptr<Method> >::iterator i;
     i = methods.begin();
     while (i != methods.end()) {
         i->second->owner = this;
     }
     i = n->methods.begin();
     while (i != n->methods.end()) {
-        i->second->owner = &(*n);
+        i->second->owner = n.get();
     }
     if (owner != NULL) {
         owner->clearNodeMap();
@@ -307,22 +304,22 @@ void SceneNode::swap(Ptr<SceneNode> n)
 void SceneNode::setOwner(SceneManager *owner)
 {
     this->owner = owner;
-    vector< Ptr<SceneNode> >::iterator end = children.end();
-    vector< Ptr<SceneNode> >::iterator i = children.begin();
+    vector< ptr<SceneNode> >::iterator end = children.end();
+    vector< ptr<SceneNode> >::iterator i = children.begin();
     while (i != end) {
         (*i)->setOwner(owner);
         ++i;
     }
 }
 
-void SceneNode::updateLocalToWorld(Ptr<SceneNode> parent)
+void SceneNode::updateLocalToWorld(ptr<SceneNode> parent)
 {
     if (parent != NULL) {
         localToWorld = parent->localToWorld * localToParent;
     }
 
-    vector< Ptr<SceneNode> >::iterator end = children.end();
-    vector< Ptr<SceneNode> >::iterator i = children.begin();
+    vector< ptr<SceneNode> >::iterator end = children.end();
+    vector< ptr<SceneNode> >::iterator i = children.begin();
     while (i != end) {
         (*i)->updateLocalToWorld(this);
         ++i;
@@ -344,8 +341,8 @@ void SceneNode::updateLocalToCamera(const mat4d &worldToCamera, const mat4d &cam
     localToCamera = worldToCamera * localToWorld;
     localToScreen = cameraToScreen * localToCamera;
 
-    vector< Ptr<SceneNode> >::iterator end = children.end();
-    vector< Ptr<SceneNode> >::iterator i = children.begin();
+    vector< ptr<SceneNode> >::iterator end = children.end();
+    vector< ptr<SceneNode> >::iterator i = children.begin();
     while (i != end) {
         (*i)->updateLocalToCamera(worldToCamera, cameraToScreen);
         ++i;
@@ -354,7 +351,7 @@ void SceneNode::updateLocalToCamera(const mat4d &worldToCamera, const mat4d &cam
 
 /// @cond RESOURCES
 
-bool isIntegerTexture(Ptr<Texture> t)
+bool isIntegerTexture(ptr<Texture> t)
 {
     switch (t->getInternalFormat()) {
     case R8:
@@ -445,7 +442,7 @@ bool isIntegerTexture(Ptr<Texture> t)
     }
 }
 
-bool isUnsignedIntegerTexture(Ptr<Texture> t)
+bool isUnsignedIntegerTexture(ptr<Texture> t)
 {
     switch (t->getInternalFormat()) {
     case R8:
@@ -539,7 +536,7 @@ bool isUnsignedIntegerTexture(Ptr<Texture> t)
 class SceneNodeResource : public ResourceTemplate<50, SceneNode>
 {
 public:
-    SceneNodeResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    SceneNodeResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<50, SceneNode>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -628,7 +625,7 @@ public:
                     t = 4;
                 }
                 float x = 0.0f, y = 0.0f, z = 0.0f, w = 0.0f;
-                Ptr<Texture> texture = NULL;
+                ptr<Texture> texture = NULL;
                 string id = getParameter(desc, f, "id");
                 int paramCount = 0;
                 if (f->Attribute("x") != NULL) {
@@ -833,28 +830,28 @@ public:
             } else if (strcmp(f->Value(), "module") == 0) {
                 string id = getParameter(desc, f, "id");
                 string value = getParameter(desc, f, "value");
-                Ptr<Module> module = manager->loadResource(string(value)).cast<Module>();
+                ptr<Module> module = manager->loadResource(string(value)).cast<Module>();
                 addModule(id, module);
 
             } else if (strcmp(f->Value(), "mesh") == 0) {
                 checkParameters(desc, f, "id,value,");
                 string id = getParameter(desc, f, "id");
                 string value = getParameter(desc, f, "value");
-                Ptr<MeshBuffers> mesh = manager->loadResource(string(value)).cast<MeshBuffers>();
+                ptr<MeshBuffers> mesh = manager->loadResource(string(value)).cast<MeshBuffers>();
                 addMesh(id, mesh);
 
             } else if (strcmp(f->Value(), "field") == 0) {
                 checkParameters(desc, f, "id,value,");
                 string id = getParameter(desc, f, "id");
                 string value = getParameter(desc, f, "value");
-                Ptr<Object> field = manager->loadResource(string(value));
+                ptr<Object> field = manager->loadResource(string(value));
                 addField(string(id), field);
             } else if (strcmp(f->Value(), "method") == 0) {
                 checkParameters(desc, f, "id,value,enabled,");
                 string id = getParameter(desc, f, "id");
                 string value = getParameter(desc, f, "value");
-                Ptr<TaskFactory> meth = manager->loadResource(string(value)).cast<TaskFactory>();
-                Ptr<Method> method = new Method(meth);
+                ptr<TaskFactory> meth = manager->loadResource(string(value)).cast<TaskFactory>();
+                ptr<Method> method = new Method(meth);
                 const char *enable = f->Attribute("enabled");
                 if (enable != NULL && strcmp(enable, "false") == 0) {
                     method->setIsEnabled(false);
@@ -862,7 +859,7 @@ public:
                 addMethod(string(id), method);
 
             } else if (strcmp(f->Value(), "node") == 0) {
-                Ptr<SceneNode> child = NULL;
+                ptr<SceneNode> child = NULL;
                 const char *value = f->Attribute("value");
                 if (value != NULL) {
                     child = manager->loadResource(string(value)).cast<SceneNode>();
@@ -873,7 +870,7 @@ public:
 
             } else {
                 string id = getParameter(desc, f, "id");
-                Ptr<Object> field = ResourceFactory::getInstance()->create(manager, f->Value(), desc, f);//manager->loadResource(string(value));
+                ptr<Object> field = ResourceFactory::getInstance()->create(manager, f->Value(), desc, f);//manager->loadResource(string(value));
                 if (field != NULL) {
                     addField(string(id), field);
                 }  else {
@@ -894,7 +891,5 @@ extern const char node[] = "node";
 static ResourceFactory::Type<node, SceneNodeResource> SceneNodeType;
 
 /// @endcond
-
-}
 
 }

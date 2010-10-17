@@ -24,12 +24,7 @@
 #include "ork/util/Font.h"
 #include "ork/resource/ResourceTemplate.h"
 
-using namespace ork::resource;
-
 namespace ork
-{
-
-namespace util
 {
 
 Font::Vertex::Vertex()
@@ -41,7 +36,7 @@ Font::Vertex::Vertex(const vec4h &pos_uv, int color) :
 {
 }
 
-Font::Font(Ptr<Texture2D> fontTex, int nCols, int nRows,
+Font::Font(ptr<Texture2D> fontTex, int nCols, int nRows,
      int minChar, int maxChar, int invalidChar, bool fixedWidth, std::vector<int> charWidths)
     : Object("Font")
 {
@@ -56,7 +51,7 @@ Font::~Font()
 {
 }
 
-void Font::init(Ptr<Texture2D> fontTex, int nCols, int nRows,
+void Font::init(ptr<Texture2D> fontTex, int nCols, int nRows,
                 int minChar, int maxChar, int invalidChar, bool fixedWidth, std::vector<int> charWidths)
 {
     this->fontTex = fontTex;
@@ -70,7 +65,7 @@ void Font::init(Ptr<Texture2D> fontTex, int nCols, int nRows,
     assert(static_cast<int>(charWidths.size()) == 1 + maxChar - minChar);
 }
 
-Ptr<Texture2D> Font::getImage() const
+ptr<Texture2D> Font::getImage() const
 {
     return fontTex;
 }
@@ -121,7 +116,7 @@ vec2f Font::getSize(const string &line, float height) const
 }
 
 vec2f Font::addLine(const vec4f &viewport, float xs, float ys, const string &line, float height,
-    int color, Ptr< Mesh<Vertex, unsigned int> > textMesh)
+    int color, ptr< Mesh<Vertex, unsigned int> > textMesh)
 {
     for (unsigned int i = 0; i < line.size(); ++i) {
 
@@ -168,7 +163,7 @@ vec2f Font::addLine(const vec4f &viewport, float xs, float ys, const string &lin
 }
 
 vec2f Font::addCenteredLine(const vec4f &viewport, float xs, float ys, const string &line, float height,
-    int color, Ptr< Mesh<Vertex, unsigned int> > textMesh)
+    int color, ptr< Mesh<Vertex, unsigned int> > textMesh)
 {
     vec2f size = getSize(line, height);
     xs -= size.x * 0.5f;
@@ -176,7 +171,7 @@ vec2f Font::addCenteredLine(const vec4f &viewport, float xs, float ys, const str
     return size;
 }
 
-void Font::swap(Ptr<Font> t)
+void Font::swap(ptr<Font> t)
 {
     std::swap(fontTex, t->fontTex);
     std::swap(nCols, t->nCols);
@@ -191,14 +186,14 @@ void Font::swap(Ptr<Font> t)
 class FontResource : public ResourceTemplate<40, Font>
 {
 public:
-    FontResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    FontResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, Font>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
         checkParameters(desc, e, "name,tex,nCols,nRows,minChar,maxChar,invalidChar,charWidths,");
 
         string tex = getParameter(desc, e, "tex");
-        Ptr<Texture2D> fontTex = manager->loadResource(tex).cast<Texture2D>();
+        ptr<Texture2D> fontTex = manager->loadResource(tex).cast<Texture2D>();
 
         vec2f fontSize = vec2f(19.0f / 32.0f, 24.0f);
         int nCols, nRows;
@@ -268,7 +263,5 @@ public:
 extern const char font[] = "font";
 
 static ResourceFactory::Type<font, FontResource> FontType;
-
-}
 
 }

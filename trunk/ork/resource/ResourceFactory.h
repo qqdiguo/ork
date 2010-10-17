@@ -33,13 +33,12 @@ using namespace std;
 namespace ork
 {
 
-namespace resource
-{
-
 /**
  * A Resource factory, creates resources from ResourceDescriptor. There is only
  * one instance of this class, which registers a creation function for each
  * %resource type name.
+ *
+ * @ingroup resource
  */
 class ORK_API ResourceFactory
 {
@@ -54,8 +53,8 @@ public:
      *      as the XML element in which the %resource descriptor was found).
      * @return the created %resource.
      */
-    typedef Ptr<Object> (*createFunc) (Ptr<ResourceManager> manager, const string &name,
-        Ptr<ResourceDescriptor> desc, const TiXmlElement *e);
+    typedef ptr<Object> (*createFunc) (ptr<ResourceManager> manager, const string &name,
+        ptr<ResourceDescriptor> desc, const TiXmlElement *e);
 
     /**
      * Returns the unique instance of this class.
@@ -81,8 +80,8 @@ public:
      *      as the XML element in which the %resource descriptor was found).
      * @return the created %resource.
      */
-    Ptr<Object> create(Ptr<ResourceManager> manager, const string &name,
-        Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL);
+    ptr<Object> create(ptr<ResourceManager> manager, const string &name,
+        ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL);
 
     /**
      * A utility template to automate the registration of new %resource types.
@@ -99,8 +98,8 @@ public:
          * just calls new T(manager, name, desc, e).
          * See ResourceFactory::createFunc
          */
-        static Ptr<Object> ctor(Ptr<ResourceManager> manager, const string &name,
-                Ptr<ResourceDescriptor> desc, const TiXmlElement *e)
+        static ptr<Object> ctor(ptr<ResourceManager> manager, const string &name,
+                ptr<ResourceDescriptor> desc, const TiXmlElement *e)
         {
             return new T(manager, name, desc, e);
         }
@@ -130,8 +129,6 @@ private:
      */
     static ResourceFactory *INSTANCE;
 };
-
-}
 
 }
 

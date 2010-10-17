@@ -26,9 +26,6 @@
 namespace ork
 {
 
-namespace ui
-{
-
 EventHandler::EventHandler(const char *type) : Object(type)
 {
 }
@@ -87,8 +84,6 @@ bool EventHandler::specialKey(key  k, modifier m, int x, int y)
 bool EventHandler::specialKeyReleased(key  k, modifier m, int x, int y)
 {
     return false;
-}
-
 }
 
 }

@@ -26,8 +26,14 @@ to build:
 For the Code::Blocks project you need to define the following global compiler
 variables:
 - glut (base) : either glut32 or freeglut 
-- glut (cflags) : either GLUT or FREEGLUT
+- glut (cflags) : either USE_GLUT or USE_FREEGLUT
 - glew : the path to the glew DLL, e.g. C:\Progra~1\glew\glew32.dll
+
+The USE_SHARED_PTR preprocessor flag can be set to use std::tr1::shared_ptr
+(needs a compiler providing support for this). Otherwise smart pointers use
+an Ork specific implementation (potentially more efficient since based on
+intrusive counters).
+
 
 UNIT TESTS
 ------------------------------------------------------------------------------

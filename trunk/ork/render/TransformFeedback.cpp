@@ -32,12 +32,9 @@
 namespace ork
 {
 
-namespace render
-{
-
 GLenum getMeshMode(MeshMode m);
 
-Ptr<FrameBuffer> TRANSFORMFEEDBACK_FRAMEBUFFER;
+ptr<FrameBuffer> TRANSFORMFEEDBACK_FRAMEBUFFER;
 
 TransformFeedback::TransformFeedback() : Object("TransformFeedback")
 {
@@ -61,7 +58,7 @@ TransformFeedback::~TransformFeedback()
     }
 }
 
-Ptr<TransformFeedback> TransformFeedback::getDefault()
+ptr<TransformFeedback> TransformFeedback::getDefault()
 {
     if (DEFAULT == NULL) {
         DEFAULT = new TransformFeedback(true);
@@ -80,19 +77,19 @@ void TransformFeedback::reset()
     assert(FrameBuffer::getError() == GL_NO_ERROR);
 }
 
-void TransformFeedback::setVertexBuffer(int index, Ptr<GPUBuffer> b)
+void TransformFeedback::setVertexBuffer(int index, ptr<GPUBuffer> b)
 {
     bind(id);
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, index, b->getId());
 }
 
-void TransformFeedback::setVertexBuffer(int index, Ptr<GPUBuffer> b, GLuint offset, GLuint size)
+void TransformFeedback::setVertexBuffer(int index, ptr<GPUBuffer> b, GLuint offset, GLuint size)
 {
     bind(id);
     glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, index, b->getId(), GLintptr(offset), GLsizeiptr(size));
 }
 
-void TransformFeedback::begin(Ptr<FrameBuffer> fb, Ptr<Program> transform, MeshMode m, Ptr<TransformFeedback> tfb, bool rasterize)
+void TransformFeedback::begin(ptr<FrameBuffer> fb, ptr<Program> transform, MeshMode m, ptr<TransformFeedback> tfb, bool rasterize)
 {
     assert(m == POINTS || m == LINES || m == TRIANGLES);
     TRANSFORMFEEDBACK_FRAMEBUFFER = fb;
@@ -148,7 +145,7 @@ void TransformFeedback::pause()
     glPauseTransformFeedback();
 }
 
-void TransformFeedback::resume(Ptr<TransformFeedback> tfb)
+void TransformFeedback::resume(ptr<TransformFeedback> tfb)
 {
     TRANSFORMFEEDBACK_FRAMEBUFFER->set();
     TRANSFORM->set();
@@ -173,12 +170,10 @@ void TransformFeedback::bind(GLuint id)
     }
 }
 
-StaticPtr<TransformFeedback> TransformFeedback::DEFAULT;
+static_ptr<TransformFeedback> TransformFeedback::DEFAULT;
 
-Ptr<Program> TransformFeedback::TRANSFORM = NULL;
+ptr<Program> TransformFeedback::TRANSFORM = NULL;
 
 MeshMode TransformFeedback::MODE;
-
-}
 
 }

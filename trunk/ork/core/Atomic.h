@@ -27,9 +27,6 @@
 namespace ork
 {
 
-namespace core
-{
-
 //#define SINGLE_THREAD
 
 /**
@@ -153,8 +150,6 @@ static inline int atomic_decrement(int volatile *pw)
 #error Unsupported compiler
 
 #endif
-
-}
 
 }
 

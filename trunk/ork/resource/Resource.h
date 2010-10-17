@@ -27,25 +27,24 @@
 #include "ork/core/Logger.h"
 #include "ork/resource/ResourceDescriptor.h"
 
-using namespace ork::core;
-
 namespace ork
 {
 
 /**
+ * @defgroup resource resource
+ * @ingroup ork
  * Provides a framework to load resources (textures, shaders, etc) from disk.
  * This framework provides automatic %resource updates when resources are
  * modified on disk. This is particularly useful for shaders. Indeed you don't
  * need to restart the application to see the effect of a modification in a
  * shader (and likewise for textures and other %resource types).
  */
-namespace resource
-{
 
 class ResourceManager;
 
 /**
  * An abstract %resource (texture, shader, mesh, etc).
+ * @ingroup resource
  */
 class ORK_API Resource
 {
@@ -57,8 +56,8 @@ public:
      * @param name the name of this %resource.
      * @param desc the descriptor of this %resource.
      */
-    Resource(Ptr<ResourceManager> manager,
-            const string &name, Ptr<ResourceDescriptor> desc);
+    Resource(ptr<ResourceManager> manager,
+            const string &name, ptr<ResourceDescriptor> desc);
 
     /**
      * Deletes this %resource.
@@ -120,7 +119,7 @@ public:
      * @throw exception if e has an attribute which is not in the list specified
      *      by params.
      */
-    static void checkParameters(const Ptr<ResourceDescriptor> desc,
+    static void checkParameters(const ptr<ResourceDescriptor> desc,
             const TiXmlElement *e, const string &params);
 
     /**
@@ -132,7 +131,7 @@ public:
      * @param[out] i the value of the requested attribute.
      * @throw exception if the attribute is missing or has a wrong format.
      */
-    static void getIntParameter(const Ptr<ResourceDescriptor> desc,
+    static void getIntParameter(const ptr<ResourceDescriptor> desc,
             const TiXmlElement *e, const string &name, int *i);
 
     /**
@@ -145,7 +144,7 @@ public:
      * @throw exception if the attribute has a wrong format.
      * @return false is the attribute is missing.
      */
-    static bool getFloatParameter(const Ptr<ResourceDescriptor> desc,
+    static bool getFloatParameter(const ptr<ResourceDescriptor> desc,
             const TiXmlElement *e, const string &name, float *value);
 
     /**
@@ -157,7 +156,7 @@ public:
      * @throw exception if the attribute is missing.
      * @return the attribute's value.
      */
-    static string getParameter(Ptr<ResourceDescriptor> desc,
+    static string getParameter(ptr<ResourceDescriptor> desc,
             const TiXmlElement *e, const char* name);
 
     /**
@@ -168,7 +167,7 @@ public:
      * @param e an optional element of the XML part of the %resource descriptor.
      * @param msg the message to be logged.
      */
-    static void log(Ptr<Logger> logger, Ptr<ResourceDescriptor> desc,
+    static void log(ptr<Logger> logger, ptr<ResourceDescriptor> desc,
             const TiXmlElement *e, const string &msg);
 
     /**
@@ -179,7 +178,7 @@ public:
      * @param e an optional element of the XML part of the %resource descriptor.
      * @param msg the message to be logged.
      */
-    static void log(Ptr<Logger> logger, const TiXmlElement *desc,
+    static void log(ptr<Logger> logger, const TiXmlElement *desc,
             const TiXmlElement *e, const string &msg);
 
 protected:
@@ -187,7 +186,7 @@ protected:
      * The manager that keeps track of this %resource. May be NULL for an unused
      * %resource (see ResourceManager#releaseResource).
      */
-    Ptr<ResourceManager> manager;
+    ptr<ResourceManager> manager;
 
     /**
      * The name of this %resource.
@@ -197,7 +196,7 @@ protected:
     /**
      * The descriptor of this %resource.
      */
-    Ptr<ResourceDescriptor> desc;
+    ptr<ResourceDescriptor> desc;
 
     /**
      * The new value of the descriptor of this %resource. This field is set in
@@ -205,12 +204,10 @@ protected:
      * has changed, and the value is stored in this field. This field is set
      * back to NULL in #doUpdate.
      */
-    Ptr<ResourceDescriptor> newDesc;
+    ptr<ResourceDescriptor> newDesc;
 
     friend class ResourceManager;
 };
-
-}
 
 }
 

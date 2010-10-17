@@ -30,9 +30,6 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 SetTransformsTask::SetTransformsTask() : AbstractTask("SetTransformsTask")
 {
 }
@@ -77,10 +74,10 @@ SetTransformsTask::~SetTransformsTask()
 {
 }
 
-Ptr<Task> SetTransformsTask::getTask(Ptr<Object> context)
+ptr<Task> SetTransformsTask::getTask(ptr<Object> context)
 {
-    Ptr<SceneNode> n = context.cast<Method>()->getOwner();
-    Ptr<SceneNode> screenNode;
+    ptr<SceneNode> n = context.cast<Method>()->getOwner();
+    ptr<SceneNode> screenNode;
     if (ltos == NULL || wtos == NULL) {
         if (screen.target.size() > 0) {
             screenNode = screen.getTarget(n);
@@ -106,7 +103,7 @@ Ptr<Task> SetTransformsTask::getTask(Ptr<Object> context)
     return new Impl(screenNode, n, this);
 }
 
-void SetTransformsTask::swap(Ptr<SetTransformsTask> t)
+void SetTransformsTask::swap(ptr<SetTransformsTask> t)
 {
     std::swap(screen, t->screen);
     std::swap(module, t->module);
@@ -133,7 +130,7 @@ void SetTransformsTask::swap(Ptr<SetTransformsTask> t)
     }
 }
 
-SetTransformsTask::Impl::Impl(Ptr<SceneNode> screenNode, Ptr<SceneNode> context, Ptr<SetTransformsTask> source) :
+SetTransformsTask::Impl::Impl(ptr<SceneNode> screenNode, ptr<SceneNode> context, ptr<SetTransformsTask> source) :
     Task("SetTransforms", true, 0), screenNode(screenNode), context(context), source(source)
 {
 }
@@ -148,7 +145,7 @@ bool SetTransformsTask::Impl::run()
         Logger::DEBUG_LOGGER->log("SCENEGRAPH", "SetTransforms");
     }
 
-    Ptr<Program> prog = NULL;
+    ptr<Program> prog = NULL;
     if (source->module != NULL && !source->module->getUsers().empty()) {
         prog = *(source->module->getUsers().begin());
     } else {
@@ -159,7 +156,7 @@ bool SetTransformsTask::Impl::run()
         return true;
     }
     if (Logger::DEBUG_LOGGER != NULL) {
-        Logger::DEBUG_LOGGER->logf("SCENEGRAPH", "SetTransforms %d", &*prog);
+        Logger::DEBUG_LOGGER->logf("SCENEGRAPH", "SetTransforms %d", prog.get());
     }
 
     if (prog != source->lastProg) {
@@ -235,7 +232,7 @@ bool SetTransformsTask::Impl::run()
 class SetTransformsTaskResource : public ResourceTemplate<40, SetTransformsTask>
 {
 public:
-    SetTransformsTaskResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    SetTransformsTaskResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, SetTransformsTask>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -265,7 +262,5 @@ extern const char setTransforms[] = "setTransforms";
 static ResourceFactory::Type<setTransforms, SetTransformsTaskResource> SetTransformsTaskType;
 
 /// @endcond
-
-}
 
 }

@@ -34,11 +34,9 @@ using namespace std;
 namespace ork
 {
 
-namespace math
-{
-
 /**
  * A 3D bounding box.
+ * @ingroup math
  */
 template <typename type> struct box3
 {
@@ -147,20 +145,21 @@ template <typename type> struct box3
 
 /**
  * A 3D bounding box with int coordinates.
+ * @ingroup math
  */
 typedef box3<int> box3i;
 
 /**
  * A 3D bounding box with float coordinates.
+ * @ingroup math
  */
 typedef box3<float> box3f;
 
 /**
  * A 3D bounding box with double coordinates.
+ * @ingroup math
  */
 typedef box3<double> box3d;
-
-}
 
 }
 

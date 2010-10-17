@@ -29,11 +29,9 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 /**
  * An AbstractTask to set a program.
+ * @ingroup scenegraph
  */
 class ORK_API SetProgramTask : public AbstractTask
 {
@@ -55,7 +53,7 @@ public:
      */
     virtual ~SetProgramTask();
 
-    virtual Ptr<Task> getTask(Ptr<Object> context);
+    virtual ptr<Task> getTask(ptr<Object> context);
 
 protected:
     /**
@@ -80,7 +78,7 @@ protected:
      *
      * @param t a SetProgramTask.
      */
-    void swap(Ptr<SetProgramTask> t);
+    void swap(ptr<SetProgramTask> t);
 
 private:
     /**
@@ -98,7 +96,7 @@ private:
     bool setUniforms;
 
     /**
-     * A ork::taskgraph::Task to set a program.
+     * A ork::Task to set a program.
      */
     class Impl : public Task
     {
@@ -106,12 +104,12 @@ private:
         /**
          * The program to be set.
          */
-        Ptr<Program> p;
+        ptr<Program> p;
 
         /**
          * The scene node whose uniforms must be in #p.
          */
-        Ptr<SceneNode> n;
+        ptr<SceneNode> n;
 
         /**
          * Creates a new SetProgramTask:Impl.
@@ -119,7 +117,7 @@ private:
          * @param p the program to be set.
          * @param n the scene node whose uniforms must be in #p.
          */
-        Impl(Ptr<Program> p, Ptr<SceneNode> n);
+        Impl(ptr<Program> p, ptr<SceneNode> n);
 
         /**
          * Deletes this SetProgramTask::Impl.
@@ -129,8 +127,6 @@ private:
         virtual bool run();
     };
 };
-
-}
 
 }
 

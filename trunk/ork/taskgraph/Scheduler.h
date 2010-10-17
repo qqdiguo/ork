@@ -26,16 +26,12 @@
 
 #include "ork/taskgraph/Task.h"
 
-using namespace ork::core;
-
 namespace ork
-{
-
-namespace taskgraph
 {
 
 /**
  * An abstract scheduler, sorts and executes tasks with one or more threads.
+ * @ingroup taskgraph
  */
 class ORK_API Scheduler : public Object
 {
@@ -74,7 +70,7 @@ public:
      *
      * @param task a task or task graph whose deadline is not immediate.
      */
-    virtual void schedule(Ptr<Task> task) = 0;
+    virtual void schedule(ptr<Task> task) = 0;
 
     /**
      * Forces the reexecution of the given task and of its sub tasks.
@@ -85,7 +81,7 @@ public:
      * @param deadline the frame number before which this task must be
      *      reexecuted.
      */
-    virtual void reschedule(Ptr<Task> task, Task::reason r, unsigned int deadline) = 0;
+    virtual void reschedule(ptr<Task> task, Task::reason r, unsigned int deadline) = 0;
 
     /**
      * Executes the given tasks. This method does not return before all tasks
@@ -93,16 +89,14 @@ public:
      *
      * @param task a task or task graph to be executed.
      */
-    virtual void run(Ptr<Task> task) = 0;
+    virtual void run(ptr<Task> task) = 0;
 
 protected:
     /**
      * Swaps this scheduler with the given one.
      */
-    void swap(Ptr<Scheduler> s);
+    void swap(ptr<Scheduler> s);
 };
-
-}
 
 }
 

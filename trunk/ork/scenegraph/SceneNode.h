@@ -35,20 +35,18 @@
 #include "ork/scenegraph/Method.h"
 
 using namespace std;
-using namespace ork::math;
-using namespace ork::render;
 
 namespace ork
 {
 
 /**
+ * @defgroup scenegraph scenegraph
+ * @ingroup ork
  * Provides a "toy" generic scene graph framework. This framework is fully
  * generic and extensible, but this genericity makes it inefficient to
  * be used with large scene graphs containing hundreds of thousands of
  * nodes.
  */
-namespace scenegraph
-{
 
 class SceneManager;
 
@@ -60,6 +58,8 @@ class SceneManager;
  * any other user defined values. The behavior is made of methods, completely
  * defined by the user by combining basic tasks (draw a mesh, set a projection
  * matrix, etc) with control structures (sequences, loops, etc).
+ *
+ * @ingroup scenegraph
  */
 class ORK_API SceneNode : public Object
 {
@@ -72,27 +72,27 @@ public:
     /**
      * An iterator to iterate over a map of Value.
      */
-    typedef MapIterator<string, Ptr<Value> > ValueIterator;
+    typedef MapIterator<string, ptr<Value> > ValueIterator;
 
     /**
      * An iterator to iterate over a map of Module.
      */
-    typedef MapIterator<string, Ptr<Module> > ModuleIterator;
+    typedef MapIterator<string, ptr<Module> > ModuleIterator;
 
     /**
      * An iterator to iterate over a map of Mesh.
      */
-    typedef MapIterator<string, Ptr<MeshBuffers> > MeshIterator;
+    typedef MapIterator<string, ptr<MeshBuffers> > MeshIterator;
 
     /**
      * An iterator to iterate over a map of SceneNode fields.
      */
-    typedef MapIterator<string, Ptr<Object> > FieldIterator;
+    typedef MapIterator<string, ptr<Object> > FieldIterator;
 
     /**
      * An iterator to iterate over a map of SceneNode Method.
      */
-    typedef MapIterator<string, Ptr<Method> > MethodIterator;
+    typedef MapIterator<string, ptr<Method> > MethodIterator;
 
     /**
      * True if this scene node is visible, false otherwise.
@@ -113,7 +113,7 @@ public:
      * Returns the SceneManager that manages the scene graph to which this node
      * belongs.
      */
-    Ptr<SceneManager> getOwner();
+    ptr<SceneManager> getOwner();
 
     /**
      * Returns the transformation from this node to its parent node.
@@ -206,14 +206,14 @@ public:
      *
      * @param name the local name of a value.
      */
-    Ptr<Value> getValue(const string &name);
+    ptr<Value> getValue(const string &name);
 
     /**
      * Adds a value to this node under the given local name.
      *
      * @param value a value.
      */
-    void addValue(Ptr<Value> value);
+    void addValue(ptr<Value> value);
 
     /**
      * Removes the value whose local name is given from this node.
@@ -232,7 +232,7 @@ public:
      *
      * @param name the local name of a module.
      */
-    Ptr<Module> getModule(const string &name);
+    ptr<Module> getModule(const string &name);
 
     /**
      * Adds a module to this node under the given local name.
@@ -240,7 +240,7 @@ public:
      * @param name a local name.
      * @param s a Module.
      */
-    void addModule(const string &name, Ptr<Module> s);
+    void addModule(const string &name, ptr<Module> s);
 
     /**
      * Removes the module whose local name is given from this node.
@@ -259,7 +259,7 @@ public:
      *
      * @param name the local name of a mesh.
      */
-    Ptr<MeshBuffers> getMesh(const string &name);
+    ptr<MeshBuffers> getMesh(const string &name);
 
     /**
      * Adds a mesh to this node under the given local name.
@@ -267,7 +267,7 @@ public:
      * @param name a local name.
      * @param m a MeshBuffers.
      */
-    void addMesh(const string &name, Ptr<MeshBuffers> m);
+    void addMesh(const string &name, ptr<MeshBuffers> m);
 
     /**
      * Removes the mesh whose local name is given from this node.
@@ -286,7 +286,7 @@ public:
      *
      * @param name the name of a field.
      */
-    Ptr<Object> getField(const string &name);
+    ptr<Object> getField(const string &name);
 
     /**
      * Adds a field to this node under the given name.
@@ -294,7 +294,7 @@ public:
      * @param name the field name.
      * @param f the field value.
      */
-    void addField(const string &name, Ptr<Object> f);
+    void addField(const string &name, ptr<Object> f);
 
     /**
      * Removes the field whose name is given from this node.
@@ -313,7 +313,7 @@ public:
      *
      * @param name the name of a method.
      */
-    Ptr<Method> getMethod(const string &name);
+    ptr<Method> getMethod(const string &name);
 
     /**
      * Adds a method to this node under the given name.
@@ -321,7 +321,7 @@ public:
      * @param name the method name.
      * @param m the method.
      */
-    void addMethod(const string &name, Ptr<Method> m);
+    void addMethod(const string &name, ptr<Method> m);
 
     /**
      * Removes the method whose name is given from this node.
@@ -340,14 +340,14 @@ public:
      *
      * @param index a child node index between 0 and #getChildrenCount - 1.
      */
-    Ptr<SceneNode> getChild(unsigned int index);
+    ptr<SceneNode> getChild(unsigned int index);
 
     /**
      * Adds a child node to this node.
      *
      * @param child a child node.
      */
-    void addChild(Ptr<SceneNode> child);
+    void addChild(ptr<SceneNode> child);
 
     /**
      * Removes a child node from this node.
@@ -360,7 +360,7 @@ protected:
     /**
      * Swaps this scene node with the given one.
      */
-    void swap(Ptr<SceneNode> n);
+    void swap(ptr<SceneNode> n);
 
 private:
     /**
@@ -421,32 +421,32 @@ private:
     /**
      * The values of this node.
      */
-    map<string, Ptr<Value> > values;
+    map<string, ptr<Value> > values;
 
     /**
      * The modules of this node.
      */
-    map<string, Ptr<Module> > modules;
+    map<string, ptr<Module> > modules;
 
     /**
      * The meshes of this node.
      */
-    map<string, Ptr<MeshBuffers> > meshes;
+    map<string, ptr<MeshBuffers> > meshes;
 
     /**
      * The fields of this node.
      */
-    map<string, Ptr<Object> > fields;
+    map<string, ptr<Object> > fields;
 
     /**
      * The methods of this node.
      */
-    map<string, Ptr<Method> > methods;
+    map<string, ptr<Method> > methods;
 
     /**
      * The child nodes of this node.
      */
-    vector< Ptr<SceneNode> > children;
+    vector< ptr<SceneNode> > children;
 
     /**
      * Sets the SceneManager that manages the scene graph to which this node
@@ -462,7 +462,7 @@ private:
      *
      * @param parent the parent node of this node.
      */
-    void updateLocalToWorld(Ptr<SceneNode> parent);
+    void updateLocalToWorld(ptr<SceneNode> parent);
 
     /**
      * Updates the #localToCamera and the #localToScreen transforms.
@@ -474,8 +474,6 @@ private:
 
     friend class SceneManager;
 };
-
-}
 
 }
 

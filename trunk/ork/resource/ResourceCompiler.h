@@ -31,12 +31,10 @@
 namespace ork
 {
 
-namespace resource
-{
-
 /**
- * An XMLResourceLoader that concatenates and stores the resources it loads
- * into two files to be used with a CompiledResourceLoader. The first file
+ * An XMLResourceLoader that produces compiled resources for a
+ * CompiledResourceLoader. This class concatenates and stores the
+ * resources it loads into two files. The first file
  * contains source code that builds the XML descriptors of the resources.
  * The second file contains the %resource data (shader source code, texture
  * data, mesh data, etc). The first file can be included in the source code
@@ -53,6 +51,8 @@ public:
     }
 };
 \endcode
+ *
+ * @ingroup resource
  */
 class ResourceCompiler : public XMLResourceLoader
 {
@@ -88,7 +88,7 @@ public:
      * @return the ResourceDescriptor of the given name, or NULL if the %resource
      *      is not found.
      */
-    virtual Ptr<ResourceDescriptor> loadResource(const string &name);
+    virtual ptr<ResourceDescriptor> loadResource(const string &name);
 
 private:
     /**
@@ -106,8 +106,6 @@ private:
      */
     unsigned int offset;
 };
-
-}
 
 }
 

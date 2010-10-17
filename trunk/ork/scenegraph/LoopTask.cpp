@@ -31,20 +31,17 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 LoopTask::LoopTask() : AbstractTask("LoopTask")
 {
 }
 
-LoopTask::LoopTask(const string &var, const string &flag, bool cull, bool parallel, Ptr<TaskFactory> subtask) :
+LoopTask::LoopTask(const string &var, const string &flag, bool cull, bool parallel, ptr<TaskFactory> subtask) :
     AbstractTask("LoopTask")
 {
     init(var, flag, cull, parallel, subtask);
 }
 
-void LoopTask::init(const string &var, const string &flag, bool cull, bool parallel, Ptr<TaskFactory> subtask)
+void LoopTask::init(const string &var, const string &flag, bool cull, bool parallel, ptr<TaskFactory> subtask)
 {
     this->var = var;
     this->flag = flag;
@@ -57,14 +54,14 @@ LoopTask::~LoopTask()
 {
 }
 
-Ptr<Task> LoopTask::getTask(Ptr<Object> context)
+ptr<Task> LoopTask::getTask(ptr<Object> context)
 {
-    Ptr<SceneManager> manager = context.cast<Method>()->getOwner()->getOwner();
+    ptr<SceneManager> manager = context.cast<Method>()->getOwner()->getOwner();
 
-    vector< Ptr<SceneNode> > nodes;
+    vector< ptr<SceneNode> > nodes;
     SceneManager::NodeIterator i = manager->getNodes(flag);
     while (i.hasNext()) {
-        Ptr<SceneNode> n = i.next();
+        ptr<SceneNode> n = i.next();
         if (!cull || n->isVisible) {
             nodes.push_back(n);
         }
@@ -74,12 +71,12 @@ Ptr<Task> LoopTask::getTask(Ptr<Object> context)
         manager->setNodeVar(var, nodes[0]);
         return subtask->getTask(context);
     } else {
-        Ptr<TaskGraph> result = new TaskGraph();
-        Ptr<Task> prev = NULL;
+        ptr<TaskGraph> result = new TaskGraph();
+        ptr<Task> prev = NULL;
         for (unsigned int i = 0; i < nodes.size(); ++i) {
             manager->setNodeVar(var, nodes[i]);
             try {
-                Ptr<Task> next = subtask->getTask(context);
+                ptr<Task> next = subtask->getTask(context);
                 if (next.cast<TaskGraph>() == NULL || !next.cast<TaskGraph>()->isEmpty()) {
                     result->addTask(next);
                     if (!parallel && prev != NULL) {
@@ -94,7 +91,7 @@ Ptr<Task> LoopTask::getTask(Ptr<Object> context)
     }
 }
 
-void LoopTask::swap(Ptr<LoopTask> t)
+void LoopTask::swap(ptr<LoopTask> t)
 {
     std::swap(var, t->var);
     std::swap(flag, t->flag);
@@ -107,7 +104,7 @@ void LoopTask::swap(Ptr<LoopTask> t)
 class LoopTaskResource : public ResourceTemplate<40, LoopTask>
 {
 public:
-    LoopTaskResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    LoopTaskResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, LoopTask>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -122,12 +119,12 @@ public:
         if (e->Attribute("parallel") != NULL && strcmp(e->Attribute("parallel"), "true") == 0) {
             parallel = true;
         }
-        vector< Ptr<TaskFactory> > subtasks;
+        vector< ptr<TaskFactory> > subtasks;
         const TiXmlNode *n = e->FirstChild();
         while (n != NULL) {
             const TiXmlElement *f = n->ToElement();
             if (f != NULL) {
-                Ptr<TaskFactory> tf;
+                ptr<TaskFactory> tf;
                 tf = ResourceFactory::getInstance()->create(manager, "", desc, f).cast<TaskFactory>();
                 subtasks.push_back(tf);
             }
@@ -146,7 +143,5 @@ extern const char foreach[] = "foreach";
 static ResourceFactory::Type<foreach, LoopTaskResource> LoopTaskType;
 
 /// @endcond
-
-}
 
 }

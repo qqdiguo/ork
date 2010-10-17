@@ -30,9 +30,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 class MeshBuffers;
 
 class FrameBuffer;
@@ -52,6 +49,8 @@ class FrameBuffer;
  * instance all positions, followed by all normals, followed by all colors,
  * etc. Or the position, normal and color of the first vertex, followed by the
  * position, normal and color of the second vertex, and so on.
+ *
+ * @ingroup render
  */
 class ORK_API AttributeBuffer : public Object
 {
@@ -73,7 +72,7 @@ public:
      * @param divisor how many times each attribute much be instanced, or 0
      *      to disable attribute instancing.
      */
-    AttributeBuffer(int index, int size, AttributeType t, bool norm, Ptr<Buffer> b, int stride = 0, int offset = 0, int divisor = 0);
+    AttributeBuffer(int index, int size, AttributeType t, bool norm, ptr<Buffer> b, int stride = 0, int offset = 0, int divisor = 0);
 
     /**
      * Creates a new attribute buffer for signed or unsigned integer attributes.
@@ -91,7 +90,7 @@ public:
      * @param divisor how many times each attribute much be instanced, or 0
      *      to disable attribute instancing.
      */
-    AttributeBuffer(int index, int size, AttributeType t, Ptr<Buffer> b, int stride = 0, int offset = 0, int divisor = 0);
+    AttributeBuffer(int index, int size, AttributeType t, ptr<Buffer> b, int stride = 0, int offset = 0, int divisor = 0);
 
     /**
      * Creates a new attribute buffer for double precision attributes.
@@ -107,7 +106,7 @@ public:
      * @param divisor how many times each attribute much be instanced, or 0
      *      to disable attribute instancing.
      */
-    AttributeBuffer(int index, int size, Ptr<Buffer> b, int stride = 0, int offset = 0, int divisor = 0);
+    AttributeBuffer(int index, int size, ptr<Buffer> b, int stride = 0, int offset = 0, int divisor = 0);
 
     /**
      * Destroys this attribute buffer.
@@ -136,13 +135,13 @@ public:
      * Returns the buffer that contains the actual data of this attribute
      * buffer.
      */
-    Ptr<Buffer> getBuffer();
+    ptr<Buffer> getBuffer();
 
     /**
      * Sets the buffer that contains the actual data of this attribute
      * buffer.
      */
-    void setBuffer(Ptr<Buffer> b);
+    void setBuffer(ptr<Buffer> b);
 
     /**
      * Returns the offset between two consecutive attribute values in this
@@ -196,7 +195,7 @@ private:
     /**
      * The buffer that contains the actual vertex attribute values.
      */
-    Ptr<Buffer> b;
+    ptr<Buffer> b;
 
     /**
      * The offset between two consecutive attribute values in #b.
@@ -218,8 +217,6 @@ private:
 
     friend class FrameBuffer;
 };
-
-}
 
 }
 

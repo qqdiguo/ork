@@ -30,9 +30,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 CPUBuffer::CPUBuffer(const void *data)
 {
     p = data;
@@ -55,8 +52,6 @@ void *CPUBuffer::data(int offset) const
 
 void CPUBuffer::unbind(int target) const
 {
-}
-
 }
 
 }

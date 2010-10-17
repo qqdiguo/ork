@@ -32,18 +32,13 @@
 #include "ork/resource/ResourceTemplate.h"
 
 using namespace std;
-using namespace ork::resource;
-using namespace ork::render;
-
-void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t);
-
-void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params);
 
 namespace ork
 {
 
-namespace render
-{
+void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t);
+
+void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params);
 
 GLenum getCubeFace(CubeFace f);
 
@@ -60,13 +55,13 @@ TextureCube::TextureCube() : Texture("TextureCube", GL_TEXTURE_CUBE_MAP)
 }
 
 TextureCube::TextureCube(int w, int h, TextureInternalFormat tf, TextureFormat f, PixelType t,
-    const Parameters &params, Buffer::Parameters s[6], Ptr<Buffer> pixels[6]) : Texture("TextureCube", GL_TEXTURE_CUBE_MAP)
+    const Parameters &params, Buffer::Parameters s[6], ptr<Buffer> pixels[6]) : Texture("TextureCube", GL_TEXTURE_CUBE_MAP)
 {
     init(w, h, tf, f, t, params, s, pixels);
 }
 
 void TextureCube::init(int w, int h, TextureInternalFormat tf, TextureFormat f, PixelType t,
-    const Parameters &params, Buffer::Parameters s[6], Ptr<Buffer> pixels[6])
+    const Parameters &params, Buffer::Parameters s[6], ptr<Buffer> pixels[6])
 {
     Texture::init(tf, params);
     this->w = w;
@@ -143,7 +138,7 @@ void TextureCube::setCompressedSubImage(CubeFace cf, int level, int x, int y, in
     assert(FrameBuffer::getError() == GL_NO_ERROR);
 }
 
-void TextureCube::swap(Ptr<Texture> t)
+void TextureCube::swap(ptr<Texture> t)
 {
     Texture::swap(t);
     std::swap(w, t.cast<TextureCube>()->w);
@@ -155,7 +150,7 @@ void TextureCube::swap(Ptr<Texture> t)
 class TextureCubeResource : public ResourceTemplate<0, TextureCube>
 {
 public:
-    TextureCubeResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    TextureCubeResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<0, TextureCube>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -181,7 +176,7 @@ public:
 
             int bpp = getFormatSize(f, t);
 
-            Ptr<Buffer> pixels[6];
+            ptr<Buffer> pixels[6];
             for (int i = 0; i < 6; ++i) {
                 pixels[i] = new CPUBuffer(desc->getData() + i * w * w * bpp);
             }
@@ -204,7 +199,5 @@ extern const char textureCube[] = "textureCube";
 static ResourceFactory::Type<textureCube, TextureCubeResource> TextureCubeType;
 
 /// @endcond
-
-}
 
 }

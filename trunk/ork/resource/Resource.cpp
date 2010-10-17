@@ -28,9 +28,6 @@
 namespace ork
 {
 
-namespace resource
-{
-
 static bool TiXmlGetLocation(const TiXmlNode *parent, const TiXmlNode *e, int &loc)
 {
     if (e == parent) {
@@ -52,7 +49,7 @@ static bool TiXmlGetLocation(const TiXmlNode *parent, const TiXmlNode *e, int &l
     return false;
 }
 
-Resource::Resource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc) :
+Resource::Resource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc) :
     manager(manager), name(name), desc(desc)
 {
 }
@@ -74,7 +71,7 @@ bool Resource::prepareUpdate()
     if (manager == NULL) {
         return false;
     }
-    Ptr<ResourceLoader> loader = manager->getLoader();
+    ptr<ResourceLoader> loader = manager->getLoader();
     newDesc = loader->reloadResource(name, desc);
     return newDesc != NULL;
 }
@@ -84,7 +81,7 @@ bool Resource::changed()
     return newDesc != NULL;
 }
 
-void Resource::checkParameters(const Ptr<ResourceDescriptor> desc,
+void Resource::checkParameters(const ptr<ResourceDescriptor> desc,
         const TiXmlElement *e, const string &params)
 {
     const TiXmlAttribute *a = e->FirstAttribute();
@@ -99,7 +96,7 @@ void Resource::checkParameters(const Ptr<ResourceDescriptor> desc,
     }
 }
 
-void Resource::getIntParameter(const Ptr<ResourceDescriptor> desc,
+void Resource::getIntParameter(const ptr<ResourceDescriptor> desc,
         const TiXmlElement *e, const string &name, int *i)
 {
     if (e->QueryIntAttribute(name.c_str(), i) != TIXML_SUCCESS) {
@@ -110,7 +107,7 @@ void Resource::getIntParameter(const Ptr<ResourceDescriptor> desc,
     }
 }
 
-bool Resource::getFloatParameter(const Ptr<ResourceDescriptor> desc,
+bool Resource::getFloatParameter(const ptr<ResourceDescriptor> desc,
         const TiXmlElement *e, const string &name, float *value)
 {
     int r = e->QueryFloatAttribute(name.c_str(), value);
@@ -123,7 +120,7 @@ bool Resource::getFloatParameter(const Ptr<ResourceDescriptor> desc,
     return r == TIXML_SUCCESS;
 }
 
-string Resource::getParameter(Ptr<ResourceDescriptor> desc,
+string Resource::getParameter(ptr<ResourceDescriptor> desc,
         const TiXmlElement *e, const char* name)
 {
     const char* value = e->Attribute(name);
@@ -136,13 +133,13 @@ string Resource::getParameter(Ptr<ResourceDescriptor> desc,
     return string(value);
 }
 
-void Resource::log(Ptr<Logger> logger, Ptr<ResourceDescriptor> desc,
+void Resource::log(ptr<Logger> logger, ptr<ResourceDescriptor> desc,
         const TiXmlElement *e, const string &msg)
 {
     log(logger, desc->descriptor, e, msg);
 }
 
-void Resource::log(Ptr<Logger> logger, const TiXmlElement *desc,
+void Resource::log(ptr<Logger> logger, const TiXmlElement *desc,
         const TiXmlElement *e, const string &msg)
 {
     TiXmlPrinter p;
@@ -158,8 +155,6 @@ void Resource::log(Ptr<Logger> logger, const TiXmlElement *desc,
         os << msg << " at line " << line << " in \033" << p.CStr() << "\033";
         logger->log("RESOURCE", os.str());
     }
-}
-
 }
 
 }

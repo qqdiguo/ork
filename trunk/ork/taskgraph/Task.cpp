@@ -34,9 +34,6 @@
 namespace ork
 {
 
-namespace taskgraph
-{
-
 void *Task::mutex = NULL;
 
 map<type_info const*, Task::TaskStatistics*, Task::TypeInfoSort> Task::statistics;
@@ -89,7 +86,7 @@ int Task::getComplexity() const
     return 1;
 }
 
-void Task::init(set< Ptr<Task> > &initialized)
+void Task::init(set<Task*> &initialized)
 {
 }
 
@@ -230,8 +227,6 @@ void Task::logStatistics()
         i++;
     }
     pthread_mutex_unlock((pthread_mutex_t*) mutex);
-}
-
 }
 
 }

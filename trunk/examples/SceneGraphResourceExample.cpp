@@ -34,16 +34,12 @@
 
 #include "examples/Main.h"
 
-using namespace ork::resource;
-using namespace ork::render;
-using namespace ork::taskgraph;
-using namespace ork::scenegraph;
-using namespace ork::ui;
+using namespace ork;
 
 class SceneGraphResourceExample : public GlutWindow
 {
 public:
-    Ptr<SceneManager> manager;
+    ptr<SceneManager> manager;
     float fov;
     float alpha;
     float theta;
@@ -59,20 +55,20 @@ public:
         Logger::WARNING_LOGGER = new FileLogger("WARNING", out, Logger::WARNING_LOGGER);
         Logger::ERROR_LOGGER = new FileLogger("ERROR", out, Logger::ERROR_LOGGER);
 
-        Ptr<XMLResourceLoader> resLoader = new XMLResourceLoader();
+        ptr<XMLResourceLoader> resLoader = new XMLResourceLoader();
         resLoader->addPath(dir + "/textures");
         resLoader->addPath(dir + "/shaders");
         resLoader->addPath(dir + "/meshes");
         resLoader->addPath(dir + "/methods");
         resLoader->addPath(dir + "/scenes");
 
-        Ptr<ResourceManager> resManager = new ResourceManager(resLoader, 8);
+        ptr<ResourceManager> resManager = new ResourceManager(resLoader, 8);
 
         manager = new SceneManager();
         manager->setResourceManager(resManager);
         manager->setScheduler(new MultithreadScheduler());
 
-        Ptr<SceneNode> root = resManager->loadResource(scene).cast<SceneNode>();
+        ptr<SceneNode> root = resManager->loadResource(scene).cast<SceneNode>();
 
         manager->setRoot(root);
         manager->setCameraNode("camera");
@@ -88,7 +84,7 @@ public:
 
         manager->getCameraNode()->setLocalToParent(cameraToWorld.cast<double>());
 
-        Ptr<FrameBuffer> fb = FrameBuffer::getDefault();
+        ptr<FrameBuffer> fb = FrameBuffer::getDefault();
         fb->clear(true, false, true);
 
         manager->update(t, dt);
@@ -103,7 +99,7 @@ public:
 
     void reshape(int x, int y)
     {
-        Ptr<FrameBuffer> fb = FrameBuffer::getDefault();
+        ptr<FrameBuffer> fb = FrameBuffer::getDefault();
         fb->setViewport(vec4<GLint>(0, 0, x, y));
         fb->setDepthTest(true, LESS);
 
@@ -158,10 +154,10 @@ public:
         return true;
     }
 
-    static StaticPtr<Window> app;
+    static static_ptr<Window> app;
 };
 
-StaticPtr<Window> SceneGraphResourceExample::app;
+static_ptr<Window> SceneGraphResourceExample::app;
 
 int sceneGraphResourceExample(int argc, char* argv[])
 {

@@ -25,23 +25,23 @@
 
 #include "ork/render/FrameBuffer.h"
 
-using namespace ork::render;
+using namespace ork;
 
-Ptr<FrameBuffer> getFrameBuffer(RenderBuffer::RenderBufferFormat f, int w, int h);
+ptr<FrameBuffer> getFrameBuffer(RenderBuffer::RenderBufferFormat f, int w, int h);
 
 TEST(textureBuffer)
 {
     GLbyte in[4] = { 1, 2, 3, 4 };
     GLint out[4];
-    Ptr<GPUBuffer> b = new GPUBuffer();
+    ptr<GPUBuffer> b = new GPUBuffer();
     b->setData(4, in, STATIC_DRAW);
-    Ptr<Texture> t = new TextureBuffer(R8I, b);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<Texture> t = new TextureBuffer(R8I, b);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform isamplerBuffer tex;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { color = texelFetch(tex, int(floor(gl_FragCoord.x))); }\n"));
     p->getUniformSampler("tex")->set(t);
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 4, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 4, 1);
     fb->drawQuad(p);
     fb->readPixels(0, 0, 4, 1, RED_INTEGER, INT, Buffer::Parameters(), CPUBuffer(out));
     ASSERT(out[0] == 1 && out[1] == 2 && out[2] == 3 && out[3] == 4);
@@ -51,14 +51,14 @@ TEST(texture1D)
 {
     GLint in[4] = { 1, 2, 3, 4 };
     GLint out[4];
-    Ptr<Texture> t = new Texture1D(4, R8I, RED_INTEGER, INT,
+    ptr<Texture> t = new Texture1D(4, R8I, RED_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(in));
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform isampler1D tex;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { color = texture(tex, gl_FragCoord.x / 4.0); }\n"));
     p->getUniformSampler("tex")->set(t);
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 4, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 4, 1);
     fb->drawQuad(p);
     fb->readPixels(0, 0, 4, 1, RED_INTEGER, INT, Buffer::Parameters(), CPUBuffer(out));
     ASSERT(out[0] == 1 && out[1] == 2 && out[2] == 3 && out[3] == 4);
@@ -68,14 +68,14 @@ TEST(texture1DArray)
 {
     GLint in[4] = { 1, 2, 3, 4 };
     GLint out[4];
-    Ptr<Texture> t = new Texture1DArray(2, 2, R8I, RED_INTEGER, INT,
+    ptr<Texture> t = new Texture1DArray(2, 2, R8I, RED_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(in));
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform isampler1DArray tex;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { ivec2 uv = ivec2(floor(gl_FragCoord.xy)); color = texture(tex, uv); }\n"));
     p->getUniformSampler("tex")->set(t);
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 2, 2);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 2, 2);
     fb->drawQuad(p);
     fb->readPixels(0, 0, 2, 2, RED_INTEGER, INT, Buffer::Parameters(), CPUBuffer(out));
     ASSERT(out[0] == 1 && out[1] == 2 && out[2] == 3 && out[3] == 4);
@@ -85,14 +85,14 @@ TEST(texture2D)
 {
     GLint in[4] = { 1, 2, 3, 4 };
     GLint out[4];
-    Ptr<Texture> t = new Texture2D(2, 2, R8I, RED_INTEGER, INT,
+    ptr<Texture> t = new Texture2D(2, 2, R8I, RED_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(in));
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform isampler2D tex;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { ivec2 uv = ivec2(floor(gl_FragCoord.xy)); color = texture(tex, uv); }\n"));
     p->getUniformSampler("tex")->set(t);
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 2, 2);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 2, 2);
     fb->drawQuad(p);
     fb->readPixels(0, 0, 2, 2, RED_INTEGER, INT, Buffer::Parameters(), CPUBuffer(out));
     ASSERT(out[0] == 1 && out[1] == 2 && out[2] == 3 && out[3] == 4);
@@ -102,14 +102,14 @@ TEST(textureRectangle)
 {
     GLint in[4] = { 1, 2, 3, 4 };
     GLint out[4];
-    Ptr<Texture> t = new TextureRectangle(2, 2, R8I, RED_INTEGER, INT,
+    ptr<Texture> t = new TextureRectangle(2, 2, R8I, RED_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(in));
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform isampler2DRect tex;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { ivec2 uv = ivec2(floor(gl_FragCoord.xy)); color = texture(tex, uv); }\n"));
     p->getUniformSampler("tex")->set(t);
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 2, 2);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 2, 2);
     fb->drawQuad(p);
     fb->readPixels(0, 0, 2, 2, RED_INTEGER, INT, Buffer::Parameters(), CPUBuffer(out));
     ASSERT(out[0] == 1 && out[1] == 2 && out[2] == 3 && out[3] == 4);
@@ -119,14 +119,14 @@ TEST(texture2DArray)
 {
     GLint in[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
     GLint out[4];
-    Ptr<Texture> t = new Texture2DArray(2, 2, 2, R8I, RED_INTEGER, INT,
+    ptr<Texture> t = new Texture2DArray(2, 2, 2, R8I, RED_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(in));
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform isampler2DArray tex;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { ivec2 uv = ivec2(floor(gl_FragCoord.xy)); color = texture(tex, vec3(uv, 1.0)); }\n"));
     p->getUniformSampler("tex")->set(t);
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 2, 2);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 2, 2);
     fb->drawQuad(p);
     fb->readPixels(0, 0, 2, 2, RED_INTEGER, INT, Buffer::Parameters(), CPUBuffer(out));
     ASSERT(out[0] == 5 && out[1] == 6 && out[2] == 7 && out[3] == 8);
@@ -136,14 +136,14 @@ TEST(texture3D)
 {
     GLint in[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
     GLint out[4];
-    Ptr<Texture> t = new Texture3D(2, 2, 2, R8I, RED_INTEGER, INT,
+    ptr<Texture> t = new Texture3D(2, 2, 2, R8I, RED_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(in));
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform isampler3D tex;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { ivec2 uv = ivec2(floor(gl_FragCoord.xy)); color = texture(tex, vec3(uv, 0.75)); }\n"));
     p->getUniformSampler("tex")->set(t);
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 2, 2);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 2, 2);
     fb->drawQuad(p);
     fb->readPixels(0, 0, 2, 2, RED_INTEGER, INT, Buffer::Parameters(), CPUBuffer(out));
     ASSERT(out[0] == 5 && out[1] == 6 && out[2] == 7 && out[3] == 8);
@@ -161,7 +161,7 @@ TEST(textureCube)
         Buffer::Parameters(),
         Buffer::Parameters()
     };
-    Ptr<Buffer> buffers[6] = {
+    ptr<Buffer> buffers[6] = {
         new CPUBuffer(in),
         new CPUBuffer(in + 1),
         new CPUBuffer(in + 2),
@@ -169,15 +169,15 @@ TEST(textureCube)
         new CPUBuffer(in + 4),
         new CPUBuffer(in + 5)
     };
-    Ptr<Texture> t = new TextureCube(1, 1, R8I, RED_INTEGER, INT,
+    ptr<Texture> t = new TextureCube(1, 1, R8I, RED_INTEGER, INT,
         Texture::Parameters().mag(NEAREST), params, buffers);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform isamplerCube tex;\n\
         layout(location=0) out ivec4 color;\n\
         const vec3 dir[6] = vec3[](vec3(1.0, 0.0, 0.0), vec3(-1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), vec3(0.0, -1.0, 0.0), vec3(0.0, 0.0, 1.0), vec3(0.0, 0.0, -1.0));\n\
         void main() { color = texture(tex, dir[int(floor(gl_FragCoord.x))]); }\n"));
     p->getUniformSampler("tex")->set(t);
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 6, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 6, 1);
     fb->drawQuad(p);
     fb->readPixels(0, 0, 6, 1, RED_INTEGER, INT, Buffer::Parameters(), CPUBuffer(out));
     ASSERT(out[0] == 1 && out[1] == 2 && out[2] == 3 && out[3] == 4 && out[4] == 5 && out[5] == 6);
@@ -187,16 +187,16 @@ TEST4(textureCubeArray)
 {
     GLint in[12] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
     GLint out[6];
-    Ptr<Texture> t = new TextureCubeArray(1, 1, 2, R8I, RED_INTEGER, INT,
+    ptr<Texture> t = new TextureCubeArray(1, 1, 2, R8I, RED_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(in));
-    Ptr<Program> p = new Program(new Module(400, NULL, "\
+    ptr<Program> p = new Program(new Module(400, NULL, "\
         #extension GL_ARB_texture_cube_map_array : enable\n\
         uniform isamplerCubeArray tex;\n\
         layout(location=0) out ivec4 color;\n\
         const vec3 dir[6] = vec3[](vec3(1.0, 0.0, 0.0), vec3(-1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), vec3(0.0, -1.0, 0.0), vec3(0.0, 0.0, 1.0), vec3(0.0, 0.0, -1.0));\n\
         void main() { color = texture(tex, vec4(dir[int(floor(gl_FragCoord.x))], 1.0)); }\n"));
     p->getUniformSampler("tex")->set(t);
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 6, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 6, 1);
     fb->drawQuad(p);
     fb->readPixels(0, 0, 6, 1, RED_INTEGER, INT, Buffer::Parameters(), CPUBuffer(out));
     ASSERT(out[0] == 7 && out[1] == 8 && out[2] == 9 && out[3] == 10 && out[4] == 11 && out[5] == 12);
@@ -204,14 +204,14 @@ TEST4(textureCubeArray)
 
 TEST(automaticTextureBinding)
 {
-    vector< Ptr<Texture2D> > textures;
+    vector< ptr<Texture2D> > textures;
     for (int i = 0; i < 128; ++i) {
         textures.push_back(new Texture2D(1, 1, R32I, RED_INTEGER, INT,
             Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(&i)));
     }
-    vector< Ptr<Program> > programs;
+    vector< ptr<Program> > programs;
     for (int i = 0; i < 48; ++i) {
-        Ptr<Program> p = new Program(new Module(330, NULL, "\
+        ptr<Program> p = new Program(new Module(330, NULL, "\
             uniform isampler2D tex1;\n\
             uniform isampler2D tex2;\n\
             uniform isampler2D tex3;\n\
@@ -224,7 +224,7 @@ TEST(automaticTextureBinding)
         p->getUniformSampler("tex4")->set(textures[(3 * i + 3) % 128]);
         programs.push_back(p);
     }
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
     bool ok = true;
     for (int i = 0; i < 96; ++i) {
         int p = i % 48;
@@ -240,18 +240,18 @@ TEST(automaticTextureBinding)
 
 TEST(automaticSamplerBinding)
 {
-    vector< Ptr<Texture2D> > textures;
+    vector< ptr<Texture2D> > textures;
     for (int i = 0; i < 8; ++i) {
         textures.push_back(new Texture2D(1, 1, R32I, RED_INTEGER, INT,
             Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)));
     }
-    vector< Ptr<Sampler> > samplers;
+    vector< ptr<Sampler> > samplers;
     for (int i = 0; i < 128; ++i) {
         samplers.push_back(new Sampler(Sampler::Parameters().wrapS(CLAMP_TO_BORDER).wrapT(CLAMP_TO_BORDER).borderIi(i, 0, 0, 0)));
     }
-    vector< Ptr<Program> > programs;
+    vector< ptr<Program> > programs;
     for (int i = 0; i < 48; ++i) {
-        Ptr<Program> p = new Program(new Module(330, NULL, "\
+        ptr<Program> p = new Program(new Module(330, NULL, "\
             uniform isampler2D tex1;\n\
             uniform isampler2D tex2;\n\
             uniform isampler2D tex3;\n\
@@ -268,7 +268,7 @@ TEST(automaticSamplerBinding)
         p->getUniformSampler("tex4")->setSampler(samplers[(3 * i + 3) % 128]);
         programs.push_back(p);
     }
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
     bool ok = true;
     for (int i = 0; i < 96; ++i) {
         int p = i % 48;

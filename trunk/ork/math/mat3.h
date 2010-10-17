@@ -32,11 +32,9 @@
 namespace ork
 {
 
-namespace math
-{
-
 /**
  * A 3x3 matrix.
+ * @ingroup math
  */
 template <typename type> class mat3
 {
@@ -220,11 +218,13 @@ public:
 
 /**
  * A 3x3 matrix with float components.
+ * @ingroup math
  */
 typedef mat3<float> mat3f;
 
 /**
  * A 3x3 matrix with double components.
+ * @ingroup math
  */
 typedef mat3<double> mat3d;
 
@@ -504,8 +504,6 @@ template <typename type>
 const mat3<type> mat3<type>::IDENTITY(1, 0, 0,
                                       0, 1, 0,
                                       0, 0, 1);
-
-}
 
 }
 

@@ -30,11 +30,9 @@
 namespace ork
 {
 
-namespace render
-{
-
 /**
  * A rectangle texture.
+ * @ingroup render
  */
 class ORK_API TextureRectangle : public Texture
 {
@@ -128,8 +126,6 @@ protected:
     void init(int w, int h, TextureInternalFormat tf, TextureFormat f, PixelType t,
         const Parameters &params, const Buffer::Parameters &s, const Buffer &pixels);
 };
-
-}
 
 }
 

@@ -27,16 +27,12 @@
 #include "ork/scenegraph/AbstractTask.h"
 #include "ork/render/Program.h"
 
-using namespace ork::render;
-
 namespace ork
-{
-
-namespace scenegraph
 {
 
 /**
  * An AbstractTask to set transformation matrices in programs.
+ * @ingroup scenegraph
  */
 class ORK_API SetTransformsTask : public AbstractTask
 {
@@ -80,7 +76,7 @@ public:
      */
     virtual ~SetTransformsTask();
 
-    virtual Ptr<Task> getTask(Ptr<Object> context);
+    virtual ptr<Task> getTask(ptr<Object> context);
 
 protected:
     /**
@@ -103,7 +99,7 @@ protected:
      *
      * @param t a SetTransformsTask.
      */
-    void swap(Ptr<SetTransformsTask> t);
+    void swap(ptr<SetTransformsTask> t);
 
 
 private:
@@ -115,27 +111,27 @@ private:
 
     QualifiedName m;
 
-    Ptr<Module> module;
+    ptr<Module> module;
 
-    Ptr<Program> lastProg;
+    ptr<Program> lastProg;
 
-    Ptr<Uniform2f> time;
+    ptr<Uniform2f> time;
 
-    Ptr<UniformMatrix4f> localToWorld;
+    ptr<UniformMatrix4f> localToWorld;
 
-    Ptr<UniformMatrix4f> localToScreen;
+    ptr<UniformMatrix4f> localToScreen;
 
-    Ptr<UniformMatrix4f> cameraToWorld;
+    ptr<UniformMatrix4f> cameraToWorld;
 
-    Ptr<UniformMatrix4f> cameraToScreen;
+    ptr<UniformMatrix4f> cameraToScreen;
 
-    Ptr<UniformMatrix4f> screenToCamera;
+    ptr<UniformMatrix4f> screenToCamera;
 
-    Ptr<UniformMatrix4f> worldToScreen;
+    ptr<UniformMatrix4f> worldToScreen;
 
-    Ptr<Uniform3f> worldPos;
+    ptr<Uniform3f> worldPos;
 
-    Ptr<Uniform3f> worldDir;
+    ptr<Uniform3f> worldDir;
 
     const char *t;
 
@@ -156,7 +152,7 @@ private:
     const char *wd;
 
     /**
-     * An ork::taskgraph::Task to set transformation matrices in programs.
+     * An ork::Task to set transformation matrices in programs.
      */
     class Impl : public Task
     {
@@ -164,7 +160,7 @@ private:
         /**
          * The scene node corresponding to the "screen" space.
          */
-        Ptr<SceneNode> screenNode;
+        ptr<SceneNode> screenNode;
 
         /**
          * Creates a new SetTransformsTask::Task.
@@ -174,7 +170,7 @@ private:
          *      'source' belongs.
          * @param source the SetTransformsTask that created this task.
          */
-        Impl(Ptr<SceneNode> screenNode, Ptr<SceneNode> context, Ptr<SetTransformsTask> source);
+        Impl(ptr<SceneNode> screenNode, ptr<SceneNode> context, ptr<SetTransformsTask> source);
 
         /**
          * Deletes this SetTransformsTask::Task
@@ -187,18 +183,16 @@ private:
         /**
          * The SceneNode that contains the Method to which #source belongs.
          */
-        Ptr<SceneNode> context;
+        ptr<SceneNode> context;
 
         /**
          * The SetTransformsTask that created this task.
          */
-        Ptr<SetTransformsTask> source;
+        ptr<SetTransformsTask> source;
     };
 
     friend class Impl;
 };
-
-}
 
 }
 

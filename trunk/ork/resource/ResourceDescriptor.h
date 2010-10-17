@@ -28,12 +28,7 @@
 
 #include "tinyxml/tinyxml.h"
 
-using namespace ork::core;
-
 namespace ork
-{
-
-namespace resource
 {
 
 /**
@@ -45,6 +40,8 @@ namespace resource
  * the XML part describes default values for the shader uniforms, while the
  * binary data part contains the shader source code. And so on for other
  * resources.
+ *
+ * @ingroup resource
  */
 class ORK_API ResourceDescriptor : public Object
 {
@@ -100,8 +97,6 @@ private:
      */
     unsigned int size;
 };
-
-}
 
 }
 

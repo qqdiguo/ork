@@ -30,12 +30,8 @@
 #include "ork/taskgraph/Task.h"
 
 using namespace std;
-using namespace ork::core;
 
 namespace ork
-{
-
-namespace taskgraph
 {
 
 /**
@@ -46,6 +42,8 @@ namespace taskgraph
  * src is a successor task for dst. Likewise, we say that src has a predecessor
  * task (dst), and that dst has a successor task (src). A task graph is
  * completed when all its sub tasks are executed.
+ *
+ * @ingroup taskgraph
  */
 class ORK_API TaskGraph : public Task, public TaskListener
 {
@@ -53,7 +51,7 @@ public:
     /**
      * An iterator to iterate over a set of tasks.
      */
-    typedef SetIterator< Ptr<Task> > TaskIterator;
+    typedef SetIterator< ptr<Task> > TaskIterator;
 
     /**
      * Creates a new, empty task graph.
@@ -63,7 +61,7 @@ public:
     /**
      * Creates a new task graph that encapsulates the given task.
      */
-    TaskGraph(Ptr<Task>);
+    TaskGraph(ptr<Task>);
 
     /**
      * Deletes this tak graph.
@@ -73,7 +71,7 @@ public:
     /**
      * Calls init recursively on all sub tasks of this task graph.
      */
-    virtual void init(set< Ptr<Task> > &initialized);
+    virtual void init(set<Task*> &initialized);
 
     /**
      * Calls #setIsDone recursively on all sub tasks of this task graph.
@@ -116,14 +114,14 @@ public:
      *
      * @param t a sub task of this task graph.
      */
-    TaskIterator getDependencies(Ptr<Task> t);
+    TaskIterator getDependencies(ptr<Task> t);
 
     /**
      * Returns the successor tasks of the given task.
      *
      * @param t a sub task of this task graph.
      */
-    TaskIterator getInverseDependencies(Ptr<Task> t);
+    TaskIterator getInverseDependencies(ptr<Task> t);
 
     /**
      * Adds a sub task to this task graph. Note that a task can be added to
@@ -132,7 +130,7 @@ public:
      * @param t the task to be added to this sub graph. This task can be a task
      *      graph itself.
      */
-    void addTask(Ptr<Task> t);
+    void addTask(ptr<Task> t);
 
     /**
      * Removes a sub task from this task graph. This sub task must not have any
@@ -140,7 +138,7 @@ public:
      *
      * @param t the task to be removed from this sub graph.
      */
-    void removeTask(Ptr<Task> t);
+    void removeTask(ptr<Task> t);
 
     /**
      * Adds a dependency between two sub tasks of this task graph.
@@ -148,7 +146,7 @@ public:
      * @param src a sub task of this graph that must be executed after dst.
      * @param dst a sub task of this graph that must be executed before src.
      */
-    void addDependency(Ptr<Task> src, Ptr<Task> dst);
+    void addDependency(ptr<Task> src, ptr<Task> dst);
 
     /**
      * Removes a dependency between two sub tasks of this task graph.
@@ -156,7 +154,7 @@ public:
      * @param src a sub task of this graph that must be executed after dst.
      * @param dst a sub task of this graph that must be executed before src.
      */
-    void removeDependency(Ptr<Task> src, Ptr<Task> dst);
+    void removeDependency(ptr<Task> src, ptr<Task> dst);
 
     /**
      * Removes all dependencies of the given subtask.
@@ -165,7 +163,7 @@ public:
      * @param src a sub task of this graph.
      * @param[out] deletedDependencies the dependencies that src had.
      */
-    void removeAndGetDependencies(Ptr<Task> src, set< Ptr<Task> >& deletedDependencies);
+    void removeAndGetDependencies(ptr<Task> src, set< ptr<Task> >& deletedDependencies);
 
     /**
      * Removes all the dependencies between the sub tasks of this task graph.
@@ -178,13 +176,13 @@ public:
      * has changed. Indeed a TaskGraph is a TaskListener that listens to state
      * changes in all its sub tasks.
      */
-    virtual void taskStateChanged(Ptr<Task> t, bool done, Task::reason r);
+    virtual void taskStateChanged(ptr<Task> t, bool done, Task::reason r);
 
     /**
      * Notifies the listeners of this task that the completion date of a sub task
      * without successors has changed.
      */
-    virtual void completionDateChanged(Ptr<Task> t, unsigned int date);
+    virtual void completionDateChanged(ptr<Task> t, unsigned int date);
 
 protected:
     /**
@@ -194,32 +192,30 @@ protected:
     void cleanup();
 
 private:
-    set< Ptr<Task> > allTasks; ///< all the tasks of this graph
+    set< ptr<Task> > allTasks; ///< all the tasks of this graph
 
-    set< Ptr<Task> > firstTasks; ///< the tasks without predecessors
+    set< ptr<Task> > firstTasks; ///< the tasks without predecessors
 
-    set< Ptr<Task> > lastTasks; ///< the tasks without successors
+    set< ptr<Task> > lastTasks; ///< the tasks without successors
 
-    set< Ptr<Task> > flattenedFirstTasks; ///< the primitive tasks without predecessors
+    set< ptr<Task> > flattenedFirstTasks; ///< the primitive tasks without predecessors
 
-    set< Ptr<Task> > flattenedLastTasks; ///< the primitive tasks without successors
+    set< ptr<Task> > flattenedLastTasks; ///< the primitive tasks without successors
 
     /**
      * The predecessors of the sub tasks of this graph.
      * Maps each task to its set of predecessors.
      */
-    map< Ptr<Task>, set< Ptr<Task> > > dependencies;
+    map< ptr<Task>, set< ptr<Task> > > dependencies;
 
     /**
      * The successors of the sub tasks of this graph.
      * Maps each task to its set of successors.
      */
-    map< Ptr<Task>, set< Ptr<Task> > > inverseDependencies;
+    map< ptr<Task>, set< ptr<Task> > > inverseDependencies;
 
     friend class MultithreadScheduler;
 };
-
-}
 
 }
 

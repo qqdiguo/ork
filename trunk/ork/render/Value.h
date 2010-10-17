@@ -36,16 +36,12 @@
 
 using namespace std;
 
-using namespace ork::math;
-
 namespace ork
-{
-
-namespace render
 {
 
 /**
  * An abstract value.
+ * @ingroup render
  */
 class ORK_API Value : public Object
 {
@@ -81,6 +77,7 @@ protected:
 
 /**
  * A Value holding a single number.
+ * @ingroup render
  */
 template<UniformType U, class T, const char *V>
 class ORK_API Value1 : public Value
@@ -149,26 +146,31 @@ extern const char value1b[];
 
 /**
  * A Value holding a single float value.
+ * @ingroup render
  */
 typedef Value1<VEC1F, GLfloat, value1f> Value1f;
 
 /**
  * A Value holding a single double value.
+ * @ingroup render
  */
 typedef Value1<VEC1D, GLdouble, value1d> Value1d;
 
 /**
  * A Value holding a single signed integer value.
+ * @ingroup render
  */
 typedef Value1<VEC1I, GLint, value1i> Value1i;
 
 /**
  * A Value holding a single unsigned integer value.
+ * @ingroup render
  */
 typedef Value1<VEC1UI, GLuint, value1ui> Value1ui;
 
 /**
  * A Value holding a single boolean value.
+ * @ingroup render
  */
 typedef Value1<VEC1B, bool, value1b> Value1b;
 
@@ -176,6 +178,7 @@ typedef Value1<VEC1B, bool, value1b> Value1b;
 
 /**
  * A Value holding a two vector value.
+ * @ingroup render
  */
 template<UniformType U, class T,  const char *V>
 class ORK_API Value2 : public Value
@@ -244,26 +247,31 @@ extern const char value2b[];
 
 /**
  * A Value holding a single precision two vector.
+ * @ingroup render
  */
 typedef Value2<VEC2F, GLfloat, value2f> Value2f;
 
 /**
  * A Value holding a double precision two vector.
+ * @ingroup render
  */
 typedef Value2<VEC2B, GLdouble, value2d> Value2d;
 
 /**
  * A Value holding a signed integer two vector.
+ * @ingroup render
  */
 typedef Value2<VEC2I, GLint, value2i> Value2i;
 
 /**
  * A Value holding an unsigned integer two vector.
+ * @ingroup render
  */
 typedef Value2<VEC2UI, GLuint, value2ui> Value2ui;
 
 /**
  * A Value holding a boolean two vector.
+ * @ingroup render
  */
 typedef Value2<VEC2B, bool, value2b> Value2b;
 
@@ -271,6 +279,7 @@ typedef Value2<VEC2B, bool, value2b> Value2b;
 
 /**
  * A Value holding a three vector value.
+ * @ingroup render
  */
 template<UniformType U, class T,  const char *V>
 class ORK_API Value3 : public Value
@@ -339,26 +348,31 @@ extern const char value3b[];
 
 /**
  * A Value holding a single precision three vector.
+ * @ingroup render
  */
 typedef Value3<VEC3F, GLfloat, value3f> Value3f;
 
 /**
  * A Value holding a double precision three vector.
+ * @ingroup render
  */
 typedef Value3<VEC3B, GLdouble, value3d> Value3d;
 
 /**
  * A Value holding a signed integer three vector.
+ * @ingroup render
  */
 typedef Value3<VEC3I, GLint, value3i> Value3i;
 
 /**
  * A Value holding an unsigned integer three vector.
+ * @ingroup render
  */
 typedef Value3<VEC3UI, GLuint, value3ui> Value3ui;
 
 /**
  * A Value holding a boolean three vector.
+ * @ingroup render
  */
 typedef Value3<VEC3B, bool, value3b> Value3b;
 
@@ -366,6 +380,7 @@ typedef Value3<VEC3B, bool, value3b> Value3b;
 
 /**
  * A Value holding a four vector value.
+ * @ingroup render
  */
 template<UniformType U, class T,  const char *V>
 class ORK_API Value4 : public Value
@@ -434,26 +449,31 @@ extern const char value4b[];
 
 /**
  * A Value holding a single precision four vector.
+ * @ingroup render
  */
 typedef Value4<VEC4F, GLfloat, value4f> Value4f;
 
 /**
  * A Value holding a double precision four vector.
+ * @ingroup render
  */
 typedef Value4<VEC4B, GLdouble, value4d> Value4d;
 
 /**
  * A Value holding a signed integer four vector.
+ * @ingroup render
  */
 typedef Value4<VEC4I, GLint, value4i> Value4i;
 
 /**
  * A Value holding an unsigned integer four vector.
+ * @ingroup render
  */
 typedef Value4<VEC4UI, GLuint, value4ui> Value4ui;
 
 /**
  * A Value holding a boolean four vector.
+ * @ingroup render
  */
 typedef Value4<VEC4B, bool, value4b> Value4b;
 
@@ -461,6 +481,7 @@ typedef Value4<VEC4B, bool, value4b> Value4b;
 
 /**
  * A Value holding a matrix value.
+ * @ingroup render
  */
 template<UniformType U, class T, int C, int R, const char *V>
 class ORK_API ValueMatrix : public Value
@@ -525,6 +546,10 @@ protected:
     T value[C * R];
 };
 
+/**
+ * A Value holding a 3x3 matrix value.
+ * @ingroup render
+ */
 template<UniformType U, class T, const char *V>
 class ValueMatrix3 : public ValueMatrix<U, T, 3, 3, V>
 {
@@ -563,6 +588,10 @@ public:
     }
 };
 
+/**
+ * A Value holding a 4x4 matrix value.
+ * @ingroup render
+ */
 template<UniformType U, class T, const char *V>
 class ValueMatrix4 : public ValueMatrix<U, T, 4, 4, V>
 {
@@ -639,91 +668,109 @@ extern const char valueMatrix4x3d[];
 
 /**
  * A Value holding a single precision 2x2 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT2F, GLfloat, 2, 2, valueMatrix2f> ValueMatrix2f;
 
 /**
  * A Value holding a single precision 3x3 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix3<MAT3F, GLfloat, valueMatrix3f> ValueMatrix3f;
 
 /**
  * A Value holding a single precision 4x4 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix4<MAT4F, GLfloat, valueMatrix4f> ValueMatrix4f;
 
 /**
  * A Value holding a single precision 2x3 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT2x3F, GLfloat, 2, 3, valueMatrix2x3f> ValueMatrix2x3f;
 
 /**
  * A Value holding a single precision 2x4 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT2x4F, GLfloat, 2, 4, valueMatrix2x4f> ValueMatrix2x4f;
 
 /**
  * A Value holding a single precision 3x2 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT3x2F, GLfloat, 3, 2, valueMatrix3x2f> ValueMatrix3x2f;
 
 /**
  * A Value holding a single precision 3x4 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT3x4F, GLfloat, 3, 4, valueMatrix3x4f> ValueMatrix3x4f;
 
 /**
  * A Value holding a single precision 4x2 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT4x2F, GLfloat, 4, 2, valueMatrix4x2f> ValueMatrix4x2f;
 
 /**
  * A Value holding a single precision 4x3 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT4x3F, GLfloat, 4, 3, valueMatrix4x3f> ValueMatrix4x3f;
 
 /**
  * A Value holding a double precision 2x2 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT2D, GLdouble, 2, 2, valueMatrix2d> ValueMatrix2d;
 
 /**
  * A Value holding a double precision 3x3 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix3<MAT3D, GLdouble, valueMatrix3d> ValueMatrix3d;
 
 /**
  * A Value holding a double precision 4x4 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix4<MAT4D, GLdouble, valueMatrix4d> ValueMatrix4d;
 
 /**
  * A Value holding a double precision 2x3 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT2x3D, GLdouble, 2, 3, valueMatrix2x3d> ValueMatrix2x3d;
 
 /**
  * A Value holding a double precision 2x4 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT2x4D, GLdouble, 2, 4, valueMatrix2x4d> ValueMatrix2x4d;
 
 /**
  * A Value holding a double precision 3x2 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT3x2D, GLdouble, 3, 2, valueMatrix3x2d> ValueMatrix3x2d;
 
 /**
  * A Value holding a double precision 3x4 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT3x4D, GLdouble, 3, 4, valueMatrix3x4d> ValueMatrix3x4d;
 
 /**
  * A Value holding a double precision 4x2 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT4x2D, GLdouble, 4, 2, valueMatrix4x2d> ValueMatrix4x2d;
 
 /**
  * A Value holding a double precision 4x3 matrix.
+ * @ingroup render
  */
 typedef ValueMatrix<MAT4x3D, GLdouble, 4, 3, valueMatrix4x3d> ValueMatrix4x3d;
 
@@ -731,6 +778,7 @@ typedef ValueMatrix<MAT4x3D, GLdouble, 4, 3, valueMatrix4x3d> ValueMatrix4x3d;
 
 /**
  * A Value holding a Texture value.
+ * @ingroup render
  */
 class ORK_API ValueSampler : public Value
 {
@@ -743,7 +791,7 @@ public:
     /**
      * Creates a ValueSampler.
      */
-    ValueSampler(UniformType type, const string &name, Ptr<Texture> value);
+    ValueSampler(UniformType type, const string &name, ptr<Texture> value);
 
     /**
      * Deletes this ValueSampler.
@@ -755,14 +803,14 @@ public:
     /**
      * Returns the current value of this ValueSampler.
      */
-    Ptr<Texture> get() const;
+    ptr<Texture> get() const;
 
     /**
      * Sets the value of this uniform.
      *
      * @param value the new value for this ValueSampler.
      */
-    void set(const Ptr<Texture> value);
+    void set(const ptr<Texture> value);
 
 private:
     /**
@@ -773,10 +821,8 @@ private:
     /**
      * The current value of this ValueSampler.
      */
-    Ptr<Texture> value;
+    ptr<Texture> value;
 };
-
-}
 
 }
 

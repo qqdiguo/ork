@@ -38,9 +38,6 @@ using namespace std;
 namespace ork
 {
 
-namespace render
-{
-
 class Program;
 
 /**
@@ -69,6 +66,8 @@ class Program;
  * A module can specify some initial values for its uniform variables, and
  * can also specify which output varying variable must be recorded in transform
  * feedback mode.
+ *
+ * @ingroup render
  */
 class ORK_API Module : public Object
 {
@@ -176,7 +175,7 @@ public:
      *
      * @param value an initial value for an uniform of this module.
      */
-    void addInitialValue(Ptr<Value> value);
+    void addInitialValue(ptr<Value> value);
 
 protected:
     /**
@@ -223,7 +222,7 @@ protected:
     /**
      * Swaps this module with the given one.
      */
-    virtual void swap(Ptr<Module> s);
+    virtual void swap(ptr<Module> s);
 
 private:
     /**
@@ -271,7 +270,7 @@ private:
     /**
      * The initial values for the uniforms of the shaders of this module.
      */
-    map<string, Ptr<Value> > initialValues;
+    map<string, ptr<Value> > initialValues;
 
     /**
      * Checks if a shader part has been correctly compiled.
@@ -292,8 +291,6 @@ private:
 
     friend class Program;
 };
-
-}
 
 }
 

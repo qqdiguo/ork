@@ -30,11 +30,9 @@
 namespace ork
 {
 
-namespace render
-{
-
 /**
  * A cube texture.
+ * @ingroup render
  */
 class ORK_API TextureCube : public Texture
 {
@@ -54,7 +52,7 @@ public:
      *      NEGATIVE_X, POSITIVE_Y, NEGATIVE_Y, POSITIVE_Z, NEGATIVE_Z.
      */
     TextureCube(int w, int h, TextureInternalFormat tf, TextureFormat f, PixelType t,
-        const Parameters &params, Buffer::Parameters s[6], Ptr<Buffer> pixels[6]);
+        const Parameters &params, Buffer::Parameters s[6], ptr<Buffer> pixels[6]);
 
     /**
      * Destroys this cube texture.
@@ -132,12 +130,10 @@ protected:
      *      NEGATIVE_X, POSITIVE_Y, NEGATIVE_Y, POSITIVE_Z, NEGATIVE_Z.
      */
     void init(int w, int h, TextureInternalFormat tf, TextureFormat f, PixelType t,
-        const Parameters &params, Buffer::Parameters s[6], Ptr<Buffer> pixels[6]);
+        const Parameters &params, Buffer::Parameters s[6], ptr<Buffer> pixels[6]);
 
-    virtual void swap(Ptr<Texture> t);
+    virtual void swap(ptr<Texture> t);
 };
-
-}
 
 }
 

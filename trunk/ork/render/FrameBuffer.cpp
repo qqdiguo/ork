@@ -48,9 +48,6 @@ inline void glEnable(GLenum p, bool b)
 namespace ork
 {
 
-namespace render
-{
-
 GLenum getMeshMode(MeshMode m);
 
 GLenum getCubeFace(CubeFace f);
@@ -415,7 +412,7 @@ FrameBuffer::~FrameBuffer()
     }
 }
 
-Ptr<FrameBuffer> FrameBuffer::getDefault()
+ptr<FrameBuffer> FrameBuffer::getDefault()
 {
     void* context;
 #if defined(WIN32) || defined(WIN64) || defined(_WIN32) || defined(_WIN64)
@@ -423,8 +420,8 @@ Ptr<FrameBuffer> FrameBuffer::getDefault()
 #else
     context = glXGetCurrentContext();
 #endif
-    Ptr<FrameBuffer> fb;
-    map< void*, Ptr<FrameBuffer> >::iterator i = DEFAULT->buffers.find(context);
+    ptr<FrameBuffer> fb;
+    map< void*, ptr<FrameBuffer> >::iterator i = DEFAULT->buffers.find(context);
     if (i == DEFAULT->buffers.end()) {
         fb = new FrameBuffer(true);
         DEFAULT->buffers.insert(make_pair(context, fb));
@@ -434,17 +431,17 @@ Ptr<FrameBuffer> FrameBuffer::getDefault()
     return fb;
 }
 
-Ptr<RenderBuffer> FrameBuffer::getRenderBuffer(BufferId b)
+ptr<RenderBuffer> FrameBuffer::getRenderBuffer(BufferId b)
 {
     return textures[getBufferId(b)].cast<RenderBuffer>();
 }
 
-Ptr<Texture> FrameBuffer::getTextureBuffer(BufferId b)
+ptr<Texture> FrameBuffer::getTextureBuffer(BufferId b)
 {
    return textures[getBufferId(b)].cast<Texture>();
 }
 
-void FrameBuffer::setRenderBuffer(BufferId b, const Ptr<RenderBuffer> t)
+void FrameBuffer::setRenderBuffer(BufferId b, const ptr<RenderBuffer> t)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -452,7 +449,7 @@ void FrameBuffer::setRenderBuffer(BufferId b, const Ptr<RenderBuffer> t)
     attachmentsChanged = true;
 }
 
-void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture1D> t, int level)
+void FrameBuffer::setTextureBuffer(BufferId b, const ptr<Texture1D> t, int level)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -461,7 +458,7 @@ void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture1D> t, int level
     attachmentsChanged = true;
 }
 
-void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture1DArray> t, int level, int layer)
+void FrameBuffer::setTextureBuffer(BufferId b, const ptr<Texture1DArray> t, int level, int layer)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -471,7 +468,7 @@ void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture1DArray> t, int 
     attachmentsChanged = true;
 }
 
-void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture2D> t, int level)
+void FrameBuffer::setTextureBuffer(BufferId b, const ptr<Texture2D> t, int level)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -480,7 +477,7 @@ void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture2D> t, int level
     attachmentsChanged = true;
 }
 
-void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<TextureRectangle> t, int level)
+void FrameBuffer::setTextureBuffer(BufferId b, const ptr<TextureRectangle> t, int level)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -489,7 +486,7 @@ void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<TextureRectangle> t, in
     attachmentsChanged = true;
 }
 
-void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture2DMultisample> t)
+void FrameBuffer::setTextureBuffer(BufferId b, const ptr<Texture2DMultisample> t)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -499,7 +496,7 @@ void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture2DMultisample> t
 }
 
 
-void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture2DArray> t, int level, int layer)
+void FrameBuffer::setTextureBuffer(BufferId b, const ptr<Texture2DArray> t, int level, int layer)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -509,7 +506,7 @@ void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture2DArray> t, int 
     attachmentsChanged = true;
 }
 
-void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture2DMultisampleArray> t, int layer)
+void FrameBuffer::setTextureBuffer(BufferId b, const ptr<Texture2DMultisampleArray> t, int layer)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -519,7 +516,7 @@ void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture2DMultisampleArr
     attachmentsChanged = true;
 }
 
-void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture3D> t, int level, int layer)
+void FrameBuffer::setTextureBuffer(BufferId b, const ptr<Texture3D> t, int level, int layer)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -529,7 +526,7 @@ void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<Texture3D> t, int level
     attachmentsChanged = true;
 }
 
-void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<TextureCube> t, int level, CubeFace cf)
+void FrameBuffer::setTextureBuffer(BufferId b, const ptr<TextureCube> t, int level, CubeFace cf)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -539,7 +536,7 @@ void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<TextureCube> t, int lev
     attachmentsChanged = true;
 }
 
-void FrameBuffer::setTextureBuffer(BufferId b, const Ptr<TextureCubeArray> t, int level, CubeFace cf)
+void FrameBuffer::setTextureBuffer(BufferId b, const ptr<TextureCubeArray> t, int level, CubeFace cf)
 {
     assert(framebufferId != 0);
     int i = getBufferId(b);
@@ -691,7 +688,7 @@ bool FrameBuffer::getSampleShading(GLfloat &minSamples)
     return parameters.sampleShading;
 }
 
-Ptr<Query> FrameBuffer::getOcclusionTest(QueryMode &occlusionMode)
+ptr<Query> FrameBuffer::getOcclusionTest(QueryMode &occlusionMode)
 {
     occlusionMode = parameters.occlusionMode;
     return parameters.occlusionQuery;
@@ -973,7 +970,7 @@ void FrameBuffer::setSampleShading(bool sampleShading, GLfloat minSamples)
     parametersChanged = true;
 }
 
-void FrameBuffer::setOcclusionTest(Ptr<Query> occlusionQuery, QueryMode occlusionMode)
+void FrameBuffer::setOcclusionTest(ptr<Query> occlusionQuery, QueryMode occlusionMode)
 {
     assert(occlusionQuery == NULL ||
         occlusionQuery->getType() == SAMPLES_PASSED ||
@@ -1220,7 +1217,7 @@ void FrameBuffer::clear(bool color, bool stencil, bool depth)
     assert(getError() == 0);
 }
 
-void FrameBuffer::draw(Ptr<Program> p, const MeshBuffers &mesh, MeshMode m, GLint first, GLsizei count, GLsizei primCount, GLint base)
+void FrameBuffer::draw(ptr<Program> p, const MeshBuffers &mesh, MeshMode m, GLint first, GLsizei count, GLsizei primCount, GLint base)
 {
     assert(TransformFeedback::TRANSFORM == NULL);
     set();
@@ -1233,7 +1230,7 @@ void FrameBuffer::draw(Ptr<Program> p, const MeshBuffers &mesh, MeshMode m, GLin
     endConditionalRender();
 }
 
-void FrameBuffer::multiDraw(Ptr<Program> p, const MeshBuffers &mesh, MeshMode m, GLint *firsts, GLsizei *counts, GLsizei primCount, GLint* bases)
+void FrameBuffer::multiDraw(ptr<Program> p, const MeshBuffers &mesh, MeshMode m, GLint *firsts, GLsizei *counts, GLsizei primCount, GLint* bases)
 {
     assert(TransformFeedback::TRANSFORM == NULL);
     set();
@@ -1246,7 +1243,7 @@ void FrameBuffer::multiDraw(Ptr<Program> p, const MeshBuffers &mesh, MeshMode m,
     endConditionalRender();
 }
 
-void FrameBuffer::drawIndirect(Ptr<Program> p, const MeshBuffers &mesh, MeshMode m, const Buffer &buf)
+void FrameBuffer::drawIndirect(ptr<Program> p, const MeshBuffers &mesh, MeshMode m, const Buffer &buf)
 {
     assert(TransformFeedback::TRANSFORM == NULL);
     set();
@@ -1259,7 +1256,7 @@ void FrameBuffer::drawIndirect(Ptr<Program> p, const MeshBuffers &mesh, MeshMode
     endConditionalRender();
 }
 
-void FrameBuffer::drawFeedback(Ptr<Program> p, MeshMode m, const TransformFeedback &tfb, int stream)
+void FrameBuffer::drawFeedback(ptr<Program> p, MeshMode m, const TransformFeedback &tfb, int stream)
 {
     assert(TransformFeedback::TRANSFORM == NULL);
     set();
@@ -1272,7 +1269,7 @@ void FrameBuffer::drawFeedback(Ptr<Program> p, MeshMode m, const TransformFeedba
     endConditionalRender();
 }
 
-void FrameBuffer::drawQuad(Ptr<Program> p)
+void FrameBuffer::drawQuad(ptr<Program> p)
 {
     if (QUAD == NULL) {
         Mesh<vec4f, unsigned int> *quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, GPU_STATIC);
@@ -1589,14 +1586,12 @@ GLenum FrameBuffer::getBuffer(BufferId b) const
     throw exception();
 }
 
-StaticPtr<FrameBuffer::FrameBufferMap> FrameBuffer::DEFAULT(new FrameBuffer::FrameBufferMap());
+static_ptr<FrameBuffer::FrameBufferMap> FrameBuffer::DEFAULT(new FrameBuffer::FrameBufferMap());
 
 FrameBuffer* FrameBuffer::CURRENT = NULL;
 
 FrameBuffer::Parameters FrameBuffer::PARAMETERS;
 
-StaticPtr< Mesh<vec4f, unsigned int> > FrameBuffer::QUAD;
-
-}
+static_ptr< Mesh<vec4f, unsigned int> > FrameBuffer::QUAD;
 
 }

@@ -30,11 +30,9 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 /**
  * An AbstractTask to set the attachments of a framebuffer.
+ * @ingroup scenegraph
  */
 class ORK_API SetTargetTask : public AbstractTask
 {
@@ -82,12 +80,12 @@ public:
      */
     virtual ~SetTargetTask();
 
-    virtual Ptr<Task> getTask(Ptr<Object> context);
+    virtual ptr<Task> getTask(ptr<Object> context);
 
     /**
      * Returns a shared offscreen framebuffer.
      */
-    static Ptr<FrameBuffer> getOffscreenBuffer();
+    static ptr<FrameBuffer> getOffscreenBuffer();
 
 protected:
     /**
@@ -109,18 +107,18 @@ protected:
      *
      * @param t a SetTargetTask.
      */
-    void swap(Ptr<SetTargetTask> t);
+    void swap(ptr<SetTargetTask> t);
 
 private:
     /**
      * An offscreen framebuffer.
      */
-    static StaticPtr<FrameBuffer> FRAME_BUFFER;
+    static static_ptr<FrameBuffer> FRAME_BUFFER;
 
     /**
      * An offscreen framebuffer for use with SetTargetTask.
      */
-    static StaticPtr<FrameBuffer> TARGET_BUFFER;
+    static static_ptr<FrameBuffer> TARGET_BUFFER;
 
     /**
      * The framebuffer attachments to be set.
@@ -136,10 +134,10 @@ private:
     /**
      * Returns an offscreen framebuffer for use with SetTargetTask.
      */
-    static Ptr<FrameBuffer> getTargetBuffer();
+    static ptr<FrameBuffer> getTargetBuffer();
 
     /**
-     * An ork::taskgraph::Task to set the attachments of a framebuffer.
+     * An ork::Task to set the attachments of a framebuffer.
      */
     class Impl : public Task
     {
@@ -147,12 +145,12 @@ private:
         /**
          * The SetTargetTask that created this task.
          */
-        Ptr<SetTargetTask> source;
+        ptr<SetTargetTask> source;
 
         /**
          * The textures to be set to the framebuffer attachment points.
          */
-        vector< Ptr<Texture> > textures;
+        vector< ptr<Texture> > textures;
 
         /**
          * Creates a new SetTargetTask::Impl.
@@ -161,7 +159,7 @@ private:
          * @param textures the textures to be set to the framebuffer attachment
          *      points.
          */
-        Impl(Ptr<SetTargetTask> source, vector< Ptr<Texture> > textures);
+        Impl(ptr<SetTargetTask> source, vector< ptr<Texture> > textures);
 
         /**
          * Deletes this SetTargetTask::Impl.
@@ -171,8 +169,6 @@ private:
         virtual bool run();
     };
 };
-
-}
 
 }
 

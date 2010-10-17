@@ -28,9 +28,6 @@
 namespace ork
 {
 
-namespace resource
-{
-
 ResourceFactory *ResourceFactory::INSTANCE = NULL;
 
 ResourceFactory *ResourceFactory::getInstance()
@@ -46,8 +43,8 @@ void ResourceFactory::addType(const string &type, createFunc f)
     types[type] = f;
 }
 
-Ptr<Object> ResourceFactory::create(Ptr<ResourceManager> manager, const string &name,
-        Ptr<ResourceDescriptor> desc, const TiXmlElement *e)
+ptr<Object> ResourceFactory::create(ptr<ResourceManager> manager, const string &name,
+        ptr<ResourceDescriptor> desc, const TiXmlElement *e)
 {
     e = e == NULL ? desc->descriptor : e;
     map<string, createFunc>::iterator i = types.find(e->ValueStr());
@@ -59,8 +56,6 @@ Ptr<Object> ResourceFactory::create(Ptr<ResourceManager> manager, const string &
         }
         throw exception();
     }
-}
-
 }
 
 }

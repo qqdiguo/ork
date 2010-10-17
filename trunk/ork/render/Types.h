@@ -157,9 +157,6 @@ typedef double GLclampd;
 namespace ork
 {
 
-namespace render
-{
-
 /**
  * A GPU buffer usage.
  */
@@ -622,8 +619,6 @@ enum QueryMode {
     REGION_WAIT, ///< &nbsp;
     REGION_NO_WAIT ///< &nbsp;
 };
-
-}
 
 }
 

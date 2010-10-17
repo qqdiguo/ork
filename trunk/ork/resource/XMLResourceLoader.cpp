@@ -42,9 +42,6 @@
 namespace ork
 {
 
-namespace resource
-{
-
 /**
  * Returns true if the given file name extension corresponds to an image file.
  *
@@ -522,7 +519,7 @@ string XMLResourceLoader::findResource(const string &name)
     return findFile(&desc, paths, name);
 }
 
-Ptr<ResourceDescriptor> XMLResourceLoader::loadResource(const string &name)
+ptr<ResourceDescriptor> XMLResourceLoader::loadResource(const string &name)
 {
     time_t stamp = 0;
     TiXmlElement *desc = NULL;
@@ -576,9 +573,9 @@ Ptr<ResourceDescriptor> XMLResourceLoader::loadResource(const string &name)
     return NULL;
 }
 
-Ptr<ResourceDescriptor> XMLResourceLoader::reloadResource(const string &name, Ptr<ResourceDescriptor> currentValue)
+ptr<ResourceDescriptor> XMLResourceLoader::reloadResource(const string &name, ptr<ResourceDescriptor> currentValue)
 {
-    Ptr<XMLResourceDescriptor> cur = currentValue.cast<XMLResourceDescriptor>();
+    ptr<XMLResourceDescriptor> cur = currentValue.cast<XMLResourceDescriptor>();
     time_t stamp = cur->stamp;
     TiXmlElement *desc = NULL;
     if (strncmp(name.c_str(), "renderbuffer", 12) != 0 &&
@@ -924,8 +921,6 @@ unsigned char* XMLResourceLoader::loadData(TiXmlElement *desc, unsigned int &siz
         }
     }
     return NULL;
-}
-
 }
 
 }

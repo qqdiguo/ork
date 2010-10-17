@@ -39,9 +39,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 GLenum getBufferUsage(BufferUsage u);
 
 GLenum getBufferAccess(BufferAccess a);
@@ -366,8 +363,6 @@ GLint GPUBuffer::bindToUniformBufferUnit(int programId) const
     UNIFORM_BUFFER_MANAGER->bind(GLuint(unit), this);
 
     return unit;
-}
-
 }
 
 }

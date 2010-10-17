@@ -29,12 +29,7 @@
 #include "ork/resource/ResourceLoader.h"
 #include "ork/resource/ResourceFactory.h"
 
-using namespace ork::core;
-
 namespace ork
-{
-
-namespace resource
 {
 
 /**
@@ -45,6 +40,8 @@ namespace resource
  * it automatically deletes them when they are unused (i.e. unreferenced).
  * Alternatively a manager can cache unused resources so that they can be loaded
  * quickly if they are needed again.
+ *
+ * @ingroup resource
  */
 class ORK_API ResourceManager : public Object
 {
@@ -55,7 +52,7 @@ public:
      * @param loader the object used to load the ResourceDescriptor.
      * @param cacheSize the size of the cache of unused resources.
      */
-    ResourceManager(Ptr<ResourceLoader> loader, unsigned int cacheSize = 0);
+    ResourceManager(ptr<ResourceLoader> loader, unsigned int cacheSize = 0);
 
     /**
      * Deletes this %resource manager. This deletes the cached unused resources,
@@ -66,7 +63,7 @@ public:
     /**
      * Returns the object used to load the ResourceDescriptor.
      */
-    Ptr<ResourceLoader> getLoader();
+    ptr<ResourceLoader> getLoader();
 
     /**
      * Loads the given %resource. This method first loads its descriptor with
@@ -78,7 +75,7 @@ public:
      * @return the %resource corresponding to the given name, or NULL if the %resource is not
      *      found.
      */
-    Ptr<Object> loadResource(const string &name);
+    ptr<Object> loadResource(const string &name);
 
     /**
      * Loads the given %resource. This method first loads its descriptor with
@@ -91,7 +88,7 @@ public:
      * @return the %resource corresponding to the given name, or NULL if the %resource is not
      *      found.
      */
-    Ptr<Object> loadResource(Ptr<ResourceDescriptor> desc, const TiXmlElement *f);
+    ptr<Object> loadResource(ptr<ResourceDescriptor> desc, const TiXmlElement *f);
 
     /**
      * Updates the already loaded resources if their descriptors have changed.
@@ -135,7 +132,7 @@ private:
     /**
      * The object used to load the ResourceDescriptor.
      */
-    Ptr<ResourceLoader> loader;
+    ptr<ResourceLoader> loader;
 
     /**
      * The resources currently managed by this manager. This map contains both
@@ -170,8 +167,6 @@ private:
      */
     unsigned int cacheSize;
 };
-
-}
 
 }
 

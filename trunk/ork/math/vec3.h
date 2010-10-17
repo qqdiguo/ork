@@ -34,11 +34,9 @@
 namespace ork
 {
 
-namespace math
-{
-
 /**
  * A 3D vector.
+ * @ingroup math
  */
 template <typename type> class vec3
 {
@@ -240,24 +238,28 @@ public:
 };
 
 /**
+ * A 3D vector with half float coordinates.
+ * @ingroup math
+ */
+typedef vec3<half> vec3h;
+
+/**
  * A 3D vector with float coordinates.
+ * @ingroup math
  */
 typedef vec3<float> vec3f;
 
 /**
  * A 3D vector with double coordinates.
+ * @ingroup math
  */
 typedef vec3<double> vec3d;
 
 /**
  * A 3D vector with int coordinates.
+ * @ingroup math
  */
 typedef vec3<int> vec3i;
-
-/**
- * A 3D vector with half float coordinates.
- */
-typedef vec3<half> vec3h;
 
 template <typename type>
 inline vec3<type>::vec3()
@@ -486,8 +488,6 @@ const vec3<type> vec3<type>::UNIT_Y(0, 1, 0);
 
 template <typename type>
 const vec3<type> vec3<type>::UNIT_Z(0, 0, 1);
-
-}
 
 }
 

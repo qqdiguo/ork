@@ -27,6 +27,12 @@
 #include <cstdio>
 #include <cassert>
 
+#ifdef USE_SHARED_PTR
+#include <tr1/memory>
+#else
+#include "ork/core/Atomic.h"
+#endif
+
 #ifndef NDEBUG
 #include <map>
 #include <set>
@@ -64,26 +70,26 @@ ORK_API void fseek64(FILE *f, long long offset, int origin);
 // Object and smart pointer classes
 // ---------------------------------------------------------------------------
 
-#include "Atomic.h"
-
 /**
+ * \defgroup ork ork
  * Provides the OpenGL Rendering Kernel (Ork).
  */
 namespace ork
 {
 
 /**
+ * @defgroup core core
+ * @ingroup ork
  * Provides basic smart pointer classes, and logger and timer utilities.
  */
-namespace core
-{
 
 /**
  * An object with a reference counter. The reference count is managed by
- * the Ptr and StaticPtr classes to count the number of references to this
+ * the ptr and static_ptr classes to count the number of references to this
  * object. When this counter becomes 0 the object is automatically
  * destroyed. Instances of this class or of derived classes must NOT be
  * explicitely destroyed with the delete operator.
+ * @ingroup core
  */
 class ORK_API Object
 {
@@ -106,36 +112,21 @@ public:
     const char* getClass() const;
 
     /**
-     * Increments the reference counter of this object.
+     * Returns a string representation of this object.
      */
-    inline void acquire()
-    {
-        atomic_increment(&references);
-    }
-
-    /**
-     * Decrements the reference counter of this object.
-     */
-    inline void release()
-    {
-        if (atomic_decrement(&references) == 1) {
-            doRelease();
-        }
-    }
+    virtual const char* toString();
 
     /**
      * Sets all static references to NULL.
      */
     static void exit();
 
-#ifdef KEEP_OBJECTS_REFERENCES
+#ifdef KEEP_OBJECT_REFERENCES
     /**
      * Returns a set containing all instances of a class, or NULL is non was created.
      */
     static set<Object*>* findAllInstances(const char* className);
 #endif
-
-    virtual const char* toString();
 
 protected:
     /**
@@ -147,23 +138,58 @@ protected:
         delete this;
     }
 
-public:
-    /**
+public: // in fact should be private, but then ptr could not access these members
+#ifdef USE_SHARED_PTR
+    /*
+     * A weak pointer to this object.
+     */
+    std::tr1::weak_ptr<Object> ref_this;
+
+    /*
+     * Calls the #doRelease method on the given object.
+     */
+    static void release(Object *o)
+    {
+        if (o != NULL) {
+            o->doRelease();
+        }
+    }
+#else
+    /*
+     * Increments the reference counter of this object.
+     */
+    inline void acquire()
+    {
+        atomic_increment(&references);
+    }
+
+    /*
+     * Decrements the reference counter of this object.
+     */
+    inline void release()
+    {
+        if (atomic_decrement(&references) == 1) {
+            doRelease();
+        }
+    }
+#endif
+
+    /*
      * A static reference to an object.
      */
-    class StaticRef
+    class static_ref
     {
     protected:
         /**
          * Link to the next static reference.
          */
-        StaticRef *next;
+        static_ref *next;
 
         /**
          * Creates a new static reference and adds it to the list of all
          * static references.
          */
-        StaticRef()
+        static_ref()
         {
             next = Object::statics;
             Object::statics = this;
@@ -172,7 +198,7 @@ public:
         /**
          * Destroys this static reference.
          */
-        virtual ~StaticRef()
+        virtual ~static_ref()
         {
         }
 
@@ -185,7 +211,6 @@ public:
     };
 
 private:
-
 #ifndef NDEBUG
     /**
      * The class of this object.
@@ -193,10 +218,12 @@ private:
     char *type;
 #endif
 
+#ifndef USED_SHARED_PTR
     /**
      * The number of references to this object.
      */
     int references;
+#endif
 
 #ifndef NDEBUG
     /**
@@ -208,10 +235,9 @@ private:
      * The number of objects currently allocated in memory, for each class.
      */
     static map<char*, int> *counts;
-
 #endif
 
-#ifdef KEEP_OBJECTS_REFERENCES
+#ifdef KEEP_OBJECT_REFERENCES
     /**
      * Reference to all objects created (auto-list)
      */
@@ -221,49 +247,85 @@ private:
     /**
      * The list of all static references.
      */
-    static StaticRef *statics;
+    static static_ref *statics;
 
-    friend class StaticRef;
+    friend class static_ref;
 };
 
 /**
- * A pointer to an Object.
+ * A strong pointer to an Object.
+ * @ingroup core
  */
-template <class T> class Ptr
+#ifdef USE_SHARED_PTR
+template <class T>
+class ptr : public std::tr1::shared_ptr<T>
 {
+private:
+    template<typename D>
+    inline ptr(T* target, D d) : std::tr1::shared_ptr<T>(target, d)
+    {
+        target->ref_this = std::tr1::weak_ptr<T>(*this);
+    }
+
 public:
     /**
      * Creates a pointer pointing to NULL.
      */
-    inline Ptr() : target(0)
+    inline ptr() : std::tr1::shared_ptr<T>()
     {
     }
 
     /**
      * Creates a pointer to the given object.
      */
-    inline Ptr(T *target) : target(target)
+    inline ptr(T *target) :
+        std::tr1::shared_ptr<T>(target == NULL ? std::tr1::shared_ptr<T>() :
+            target->ref_this.expired() ? ptr<T>(target, Object::release) :
+                std::tr1::dynamic_pointer_cast<T>(std::tr1::shared_ptr<Object>(target->ref_this)))
     {
-        if (target != 0) {
-            target->acquire();
-        }
-    }
-
-    /**
-     * Creates a pointer as a copy of the given pointer.
-     */
-    inline Ptr(const Ptr<T> &p) : target(p.target)
-    {
-        if (target != 0) {
-            target->acquire();
-        }
     }
 
     /**
      * Creates a pointer as a copy of the given pointer.
      */
     template<class U>
-    inline Ptr(const Ptr<U> p) : target(p == NULL ? NULL : &(*p))
+    inline ptr(const std::tr1::shared_ptr<U> &p) : std::tr1::shared_ptr<T>(p)
+    {
+    }
+
+    /**
+     * Creates a pointer as a copy of the given pointer.
+     */
+    template<class U>
+    inline ptr(const std::tr1::weak_ptr<U> &p) : std::tr1::shared_ptr<T>(p)
+    {
+    }
+
+    /**
+     * Casts this pointer to a pointer of the given type with dynamic_cast.
+     */
+    template <class U>
+    inline ptr<U> cast() const
+    {
+        return std::tr1::dynamic_pointer_cast<U>(*this);
+    }
+};
+#else
+template <class T>
+class ptr
+{
+public:
+    /**
+     * Creates a strong pointer pointing to NULL.
+     */
+    inline ptr() : target(0)
+    {
+    }
+
+    /**
+     * Creates a strong pointer to the given object.
+     */
+    inline ptr(T *target) : target(target)
     {
         if (target != 0) {
             target->acquire();
@@ -271,9 +333,30 @@ public:
     }
 
     /**
-     * Destroys this pointer.
+     * Creates a strong pointer as a copy of the given pointer.
      */
-    inline ~Ptr()
+    inline ptr(const ptr<T> &p) : target(p.get())
+    {
+        if (target != 0) {
+            target->acquire();
+        }
+    }
+
+    /**
+     * Creates a strong pointer as a copy of the given pointer.
+     */
+    template<class U>
+    inline ptr(const ptr<U> &p) : target(p.get())
+    {
+        if (target != 0) {
+            target->acquire();
+        }
+    }
+
+    /**
+     * Destroys this strong pointer.
+     */
+    inline ~ptr()
     {
         if (target != 0) {
             T* oldTarget = target;
@@ -283,9 +366,9 @@ public:
     }
 
     /**
-     * Assigns the given pointer to this pointer.
+     * Assigns the given pointer to this strong pointer.
      */
-    inline void operator=(const Ptr<T> &v)
+    inline void operator=(const ptr<T> &v)
     {
         // acquire must be done before release
         // to correctly handle self assignment cases
@@ -300,7 +383,7 @@ public:
     }
 
     /**
-     * Returns the target object of this pointer.
+     * Returns the target object of this strong pointer.
      */
     inline T *operator->() const
     {
@@ -309,7 +392,7 @@ public:
     }
 
     /**
-     * Returns the target object of this pointer.
+     * Returns the target object of this strong pointer.
      */
     inline T &operator*() const
     {
@@ -318,10 +401,18 @@ public:
     }
 
     /**
+     * Returns the target object of this strong pointer.
+     */
+    inline T *get() const
+    {
+        return target;
+    }
+
+    /**
      * Returns true if this pointer and the given pointer point to the same
      * object.
      */
-    inline bool operator==(const Ptr<T> &v) const
+    inline bool operator==(const ptr<T> &v) const
     {
         return target == v.target;
     }
@@ -330,7 +421,7 @@ public:
      * Returns true if this pointer and the given pointer point to different
      * objects.
      */
-    inline bool operator!=(const Ptr<T> &v) const
+    inline bool operator!=(const ptr<T> &v) const
     {
         return target != v.target;
     }
@@ -341,13 +432,13 @@ public:
      * this pointer is less than the address of the object pointed by the
      * given pointer.
      */
-    inline bool operator<(const Ptr<T> &v) const
+    inline bool operator<(const ptr<T> &v) const
     {
         return target < v.target;
     }
 
     /**
-     * Returns true if this pointer points to the given object.
+     * Returns true if this strong pointer points to the given object.
      */
     inline bool operator==(const T *target) const
     {
@@ -355,7 +446,7 @@ public:
     }
 
     /**
-     * Returns true if this pointer does not point to the given object.
+     * Returns true if this strong pointer does not point to the given object.
      */
     inline bool operator!=(const T *target) const
     {
@@ -363,81 +454,66 @@ public:
     }
 
     /**
-     * Casts this pointer to a pointer of the given type.
-     * Using dynamic_cast.
+     * Casts this strong pointer to a strong pointer of the given type.
      */
-    template <class U>
-    inline Ptr<U> cast() const
+    template<class U>
+    inline ptr<U> cast() const
     {
-        return Ptr<U>(dynamic_cast<U*>(target));
-    }
-
-    /**
-     * Casts this pointer to a pointer of the given type.
-     * Using static_cast.
-     */
-    template <class U>
-    inline Ptr<U> staticCast() const
-    {
-        return Ptr<U>(static_cast<U*>(target));
+        return ptr<U>(dynamic_cast<U*>(target));
     }
 
 protected:
     /**
-     * The object pointed by this pointer.
+     * The object pointed by this strong pointer.
      */
     T *target;
 };
+#endif
 
 /**
- * A static pointer to an Object. StaticPtr must be used instead of Ptr for
- * static variables.
+ * A static pointer to an Object.
+ * static_ptr must be used instead of ptr for static variables.
+ * @ingroup core
  */
-template <class T> class StaticPtr : public Ptr<T>, Object::StaticRef
+template <class T>
+class static_ptr : public ptr<T>, Object::static_ref
 {
 public:
     /**
-     * Creates a pointer pointing to NULL.
+     * Creates a static pointer pointing to NULL.
      */
-    inline StaticPtr() : Ptr<T>(), StaticRef()
+    inline static_ptr() : ptr<T>(), static_ref()
     {
     }
 
     /**
-     * Creates a pointer to the given object.
+     * Creates a static pointer to the given object.
      */
-    inline explicit StaticPtr(T *target) : Ptr<T>(target), StaticRef()
+    inline explicit static_ptr(T *target) : ptr<T>(target), static_ref()
     {
     }
 
     /**
-     * Destroys this pointer.
+     * Destroys this static pointer.
      */
-    inline ~StaticPtr()
+    inline ~static_ptr()
     {
     }
 
     /**
-     * Returns true if this pointer and the given pointer point to the same
-     * object.
+     * Assigns the given pointer value to this static pointer.
      */
-    inline void operator=(const Ptr<T> &v)
+    inline void operator=(const ptr<T> &v)
     {
-        Ptr<T>::operator=(v);
+        ptr<T>::operator=(v);
     }
 
 protected:
     virtual void erase()
     {
-        if (Ptr<T>::target != 0) {
-            T *t = Ptr<T>::target;
-            Ptr<T>::target = 0;
-            t->release();
-        }
+        operator=(NULL);
     }
 };
-
-}
 
 }
 

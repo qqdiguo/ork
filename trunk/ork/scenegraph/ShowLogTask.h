@@ -29,11 +29,9 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 /**
- * A ShowInfoTask sub class to display the ork::core::Logger messages.
+ * A ShowInfoTask sub class to display the ork::Logger messages.
+ * @ingroup scenegraph
  */
 class ORK_API ShowLogTask : public ShowInfoTask
 {
@@ -52,7 +50,7 @@ public:
      * @param fontHeight the used font height.
      * @param pos x,y position and maximum number of lines of text to display.
      */
-    ShowLogTask(Ptr<Font> f, Ptr<Program> p, float fontHeight, vec3i pos);
+    ShowLogTask(ptr<Font> f, ptr<Program> p, float fontHeight, vec3i pos);
 
     /**
      * Deletes this ShowLogTask.
@@ -73,12 +71,10 @@ protected:
      * @param fontHeight the used font height.
      * @param pos x,y position and maximum number of lines of text to display.
      */
-    virtual void init(Ptr<Font> f, Ptr<Program> p, float fontHeight, vec3i pos);
+    virtual void init(ptr<Font> f, ptr<Program> p, float fontHeight, vec3i pos);
 
-    virtual void draw(Ptr<Method> context);
+    virtual void draw(ptr<Method> context);
 };
-
-}
 
 }
 

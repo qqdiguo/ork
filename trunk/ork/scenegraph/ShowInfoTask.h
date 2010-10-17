@@ -30,17 +30,12 @@
 #include "ork/scenegraph/AbstractTask.h"
 #include "ork/util/Font.h"
 
-using namespace ork::render;
-using namespace ork::util;
-
 namespace ork
-{
-
-namespace scenegraph
 {
 
 /**
  * An AbstractTask to display the framerate and other information.
+ * @ingroup scenegraph
  */
 class ORK_API ShowInfoTask : public AbstractTask
 {
@@ -54,14 +49,14 @@ public:
      * @param size the font height.
      * @param pos x,y position and maximum number of lines of text to display.
      */
-    ShowInfoTask(Ptr<Font> font, Ptr<Program> p, int color, float size, vec3i pos);
+    ShowInfoTask(ptr<Font> font, ptr<Program> p, int color, float size, vec3i pos);
 
     /**
      * Deletes this ShowInfoTask.
      */
     virtual ~ShowInfoTask();
 
-    virtual Ptr<Task> getTask(Ptr<Object> context);
+    virtual ptr<Task> getTask(ptr<Object> context);
 
     /**
      * Adds an information to display. The information has a topic and replaces
@@ -78,7 +73,7 @@ protected:
     /**
      * The mesh used to draw character quads, in order to display text.
      */
-    static StaticPtr< Mesh<Font::Vertex, unsigned int> > fontMesh;
+    static static_ptr< Mesh<Font::Vertex, unsigned int> > fontMesh;
 
     /**
      * The current information messages, associated with their topic.
@@ -88,17 +83,17 @@ protected:
     /**
      * The program use to draw characters.
      */
-    Ptr<Program> fontProgram;
+    ptr<Program> fontProgram;
 
     /**
      * The uniform in #fontProgram used to control the font texture.
      */
-    Ptr<UniformSampler> fontU;
+    ptr<UniformSampler> fontU;
 
     /**
      * The Font used to display Text.
      */
-    Ptr<Font> font;
+    ptr<Font> font;
 
     /**
      * The font color in RGBA8 format.
@@ -129,14 +124,14 @@ protected:
      * @param size the font height.
      * @param pos x,y position and maximum number of lines of text to display.
      */
-    virtual void init(Ptr<Font> font, Ptr<Program> p, int color, float size, vec3i pos);
+    virtual void init(ptr<Font> font, ptr<Program> p, int color, float size, vec3i pos);
 
     /**
      * Swaps this ShowInfoTask with another one.
      *
      * @param t a ShowInfoTask.
      */
-    virtual void swap(Ptr<ShowInfoTask> t);
+    virtual void swap(ptr<ShowInfoTask> t);
 
     /**
      * Draws a line of text.
@@ -154,7 +149,7 @@ protected:
      *
      * @param context the method to which this task belongs.
      */
-    virtual void draw(Ptr<Method> context);
+    virtual void draw(ptr<Method> context);
 
 private:
     /**
@@ -185,7 +180,7 @@ private:
          * @param context the method to which 'source' belongs.
          * @param source the ShowInfoTask that created this task.
          */
-        Impl(Ptr<Method> context, Ptr<ShowInfoTask> source);
+        Impl(ptr<Method> context, ptr<ShowInfoTask> source);
 
         /**
          * Deletes this ShowInfoTask::Impl.
@@ -201,16 +196,14 @@ private:
         /**
          * The method to which #source belongs.
          */
-        Ptr<Method> context;
+        ptr<Method> context;
 
         /**
          * The ShowInfoTask that created this task.
          */
-        Ptr<ShowInfoTask> source;
+        ptr<ShowInfoTask> source;
     };
 };
-
-}
 
 }
 

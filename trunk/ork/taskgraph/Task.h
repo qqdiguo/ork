@@ -32,16 +32,15 @@
 #include "ork/core/Object.h"
 
 using namespace std;
-using namespace ork::core;
 
 namespace ork
 {
 
 /**
+ * @defgroup taskgraph taskgraph
+ * @ingroup ork
  * Provides a task graph description and scheduling framework.
  */
-namespace taskgraph
-{
 
 class TaskListener;
 
@@ -61,6 +60,8 @@ class TaskListener;
  * executed with t1.begin, t1.run, t2.run, t3.run and t3.end instead of t1.begin,
  * t1.run, t1.end, t2.begin, t2.run, t2.end, t3.begin, t3.run, and t3.end, which
  * saves two context switches.
+ *
+ * @ingroup taskgraph
  */
 class ORK_API Task : public Object
 {
@@ -134,7 +135,7 @@ public:
      *      avoid initializing several times the same task (for tasks that
      *      belong to several task graphs).
      */
-    virtual void init(set< Ptr<Task> > &initialized);
+    virtual void init(set<Task*> &initialized);
 
     /**
      * Sets the execution context for this task. All tasks that share the same
@@ -320,7 +321,7 @@ public:
      * @param done the new execution state.
      * @param r if done is false, the reason why the task must be reexecuted.
      */
-    virtual void taskStateChanged(Ptr<Task> t, bool done, Task::reason r) = 0;
+    virtual void taskStateChanged(ptr<Task> t, bool done, Task::reason r) = 0;
 
     /**
      * Notifies this listener that the completion date of the given task has
@@ -329,10 +330,8 @@ public:
      * @param t the task whose completion date has changed.
      * @param date the new completion date.
      */
-    virtual void completionDateChanged(Ptr<Task> t, unsigned int date) = 0;
+    virtual void completionDateChanged(ptr<Task> t, unsigned int date) = 0;
 };
-
-}
 
 }
 

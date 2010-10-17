@@ -29,12 +29,11 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 /**
  * An AbstractTask to draw a mesh. The mesh is drawn using the current
  * framebuffer and the current program.
+ *
+ * @ingroup scenegraph
  */
 class ORK_API DrawMeshTask : public AbstractTask
 {
@@ -54,7 +53,7 @@ public:
      */
     virtual ~DrawMeshTask();
 
-    virtual Ptr<Task> getTask(Ptr<Object> context);
+    virtual ptr<Task> getTask(ptr<Object> context);
 
 protected:
     /**
@@ -77,7 +76,7 @@ protected:
      *
      * @param t a DrawMeshTask.
      */
-    void swap(Ptr<DrawMeshTask> t);
+    void swap(ptr<DrawMeshTask> t);
 
 private:
     /**
@@ -93,7 +92,7 @@ private:
     int count;
 
     /**
-     * A ork::taskgraph::Task to draw a mesh.
+     * A ork::Task to draw a mesh.
      */
     class Impl : public Task
     {
@@ -101,7 +100,7 @@ private:
         /**
          * The mesh that must be drawn.
          */
-        Ptr<MeshBuffers> m;
+        ptr<MeshBuffers> m;
 
         /**
          * The number of time #m must be drawn.
@@ -114,7 +113,7 @@ private:
          * @param m the mesh to be drawn.
          * @param count the number of time the mesh must be drawn.
          */
-        Impl(Ptr<MeshBuffers> m, int count);
+        Impl(ptr<MeshBuffers> m, int count);
 
         /**
          * Deletes this DrawMeshTask::Impl task.
@@ -124,8 +123,6 @@ private:
         virtual bool run();
     };
 };
-
-}
 
 }
 

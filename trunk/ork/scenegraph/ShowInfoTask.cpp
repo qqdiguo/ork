@@ -27,8 +27,11 @@
 #include "ork/resource/ResourceTemplate.h"
 #include "ork/scenegraph/SceneManager.h"
 
-void initInfoTask(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e,
-    Ptr<Font> &f, Ptr<Program> &p, int &c, float &size, vec3i &pos)
+namespace ork
+{
+
+void initInfoTask(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e,
+    ptr<Font> &f, ptr<Program> &p, int &c, float &size, vec3i &pos)
 {
     e = e == NULL ? desc->descriptor : e;
     Resource::checkParameters(desc, e, "x,y,maxLines,font,fontSize,fontColor,fontProgram,");
@@ -79,13 +82,7 @@ void initInfoTask(Ptr<ResourceManager> manager, const string &name, Ptr<Resource
     pos = vec3i(x, y, maxLines);
 }
 
-namespace ork
-{
-
-namespace scenegraph
-{
-
-StaticPtr< Mesh<Font::Vertex, unsigned int> > ShowInfoTask::fontMesh;
+static_ptr< Mesh<Font::Vertex, unsigned int> > ShowInfoTask::fontMesh;
 
 map<string, string> ShowInfoTask::infos;
 
@@ -93,13 +90,13 @@ ShowInfoTask::ShowInfoTask() : AbstractTask("ShowInfoTask")
 {
 }
 
-ShowInfoTask::ShowInfoTask(Ptr<Font> f, Ptr<Program> p, int color, float size, vec3i pos) :
+ShowInfoTask::ShowInfoTask(ptr<Font> f, ptr<Program> p, int color, float size, vec3i pos) :
     AbstractTask("ShowInfoTask")
 {
     init(f, p, color, size, pos);
 }
 
-void ShowInfoTask::init(Ptr<Font> f, Ptr<Program> p, int color, float size, vec3i pos)
+void ShowInfoTask::init(ptr<Font> f, ptr<Program> p, int color, float size, vec3i pos)
 {
     fps = 0;
     frames = 0;
@@ -121,7 +118,7 @@ ShowInfoTask::~ShowInfoTask()
 {
 }
 
-Ptr<Task> ShowInfoTask::getTask(Ptr<Object> context)
+ptr<Task> ShowInfoTask::getTask(ptr<Object> context)
 {
     return new Impl(context.cast<Method>(), this);
 }
@@ -133,16 +130,16 @@ void ShowInfoTask::setInfo(const string &topic, const string &info)
 
 void ShowInfoTask::drawLine(const vec4f &vp, float xs, float ys, int color, const string &s)
 {
-    font->addLine(vp, xs, ys, s, fontHeight, color, &(*fontMesh));
+    font->addLine(vp, xs, ys, s, fontHeight, color, fontMesh);
 }
 
-void ShowInfoTask::draw(Ptr<Method> context)
+void ShowInfoTask::draw(ptr<Method> context)
 {
     if (Logger::DEBUG_LOGGER != NULL) {
         Logger::DEBUG_LOGGER->log("SCENEGRAPH", "ShowInfo");
     }
 
-    Ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
+    ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
     fb->setBlend(true, ADD, SRC_ALPHA, ONE_MINUS_SRC_ALPHA, ADD, ZERO, ONE);
 
     vec4f vp = fb->getViewport().cast<float>();
@@ -191,7 +188,7 @@ void ShowInfoTask::draw(Ptr<Method> context)
 
 }
 
-void ShowInfoTask::swap(Ptr<ShowInfoTask> t)
+void ShowInfoTask::swap(ptr<ShowInfoTask> t)
 {
     std::swap(fontProgram, t->fontProgram);
     std::swap(fontU, t->fontU);
@@ -204,7 +201,7 @@ void ShowInfoTask::swap(Ptr<ShowInfoTask> t)
     std::swap(start, t->start);
 }
 
-ShowInfoTask::Impl::Impl(Ptr<Method> context, Ptr<ShowInfoTask> source) :
+ShowInfoTask::Impl::Impl(ptr<Method> context, ptr<ShowInfoTask> source) :
     Task("ShowInfo", true, 0), context(context), source(source)
 {
 }
@@ -229,11 +226,11 @@ const type_info *ShowInfoTask::Impl::getTypeInfo()
 class ShowInfoTaskResource : public ResourceTemplate<40, ShowInfoTask>
 {
 public:
-    ShowInfoTaskResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    ShowInfoTaskResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, ShowInfoTask>(manager, name, desc)
     {
-        Ptr<Font> f;
-        Ptr<Program> p;
+        ptr<Font> f;
+        ptr<Program> p;
         int c;
         vec3i pos;
         float size;
@@ -247,7 +244,5 @@ extern const char showInfo[] = "showInfo";
 static ResourceFactory::Type<showInfo, ShowInfoTaskResource> ShowInfoTaskType;
 
 /// @endcond
-
-}
 
 }

@@ -27,16 +27,13 @@
 #include "ork/taskgraph/Task.h"
 
 using namespace std;
-using namespace ork::core;
 
 namespace ork
 {
 
-namespace taskgraph
-{
-
 /**
  * An object that can create Task.
+ * @ingroup taskgraph
  */
 class ORK_API TaskFactory : public Object
 {
@@ -59,10 +56,8 @@ public:
      * @param context an optional parameter to control the task creation.
      * @return the created task.
      */
-    virtual Ptr<Task> getTask(Ptr<Object> context) = 0;
+    virtual ptr<Task> getTask(ptr<Object> context) = 0;
 };
-
-}
 
 }
 

@@ -25,7 +25,7 @@
 
 #include "ork/render/FrameBuffer.h"
 
-using namespace ork::render;
+using namespace ork;
 
 const string LAYER_INSTANCING = "\
     #ifdef _VERTEX_\n\
@@ -91,11 +91,11 @@ const char* DRAW_INSTANCING = "\
 
 TEST(texture1DAttachment)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture1D(32, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST), Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 32, 1));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
     fb->drawQuad(p);
     int tPixels[4 * 32];
     int fbPixels[4 * 32];
@@ -107,11 +107,11 @@ TEST(texture1DAttachment)
 
 TEST(texture1DArrayAttachmentOneLayer)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture1DArray(32, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST), Buffer::Parameters(), CPUBuffer(NULL)), 0, 3);
     fb->setViewport(vec4<GLint>(0, 0, 32, 1));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
     fb->drawQuad(p);
     int tPixels[4 * 32 * 8];
     int fbPixels[4 * 32];
@@ -124,11 +124,11 @@ TEST(texture1DArrayAttachmentOneLayer)
 
 TEST(texture1DArrayAttachmentAllLayers)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture1DArray(32, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, -1);
     fb->setViewport(vec4<GLint>(0, 0, 32, 1));
-    Ptr<Program> p = new Program(new Module(330, (LAYER_INSTANCING + FRAGMENT_SHADER).c_str()));
+    ptr<Program> p = new Program(new Module(330, (LAYER_INSTANCING + FRAGMENT_SHADER).c_str()));
     fb->drawQuad(p);
     int tPixels[4 * 32 * 8];
     int fbPixels[4 * 32];
@@ -141,11 +141,11 @@ TEST(texture1DArrayAttachmentAllLayers)
 
 TEST(texture2DAttachment)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(32, 32, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 32, 32));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
     fb->drawQuad(p);
     int tPixels[4 * 32 * 32];
     int fbPixels[4 * 32 * 32];
@@ -157,11 +157,11 @@ TEST(texture2DAttachment)
 
 TEST(textureRectangleAttachment)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new TextureRectangle(32, 32, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 32, 32));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
     fb->drawQuad(p);
     int tPixels[4 * 32 * 32];
     int fbPixels[4 * 32 * 32];
@@ -173,11 +173,11 @@ TEST(textureRectangleAttachment)
 
 TEST(texture2DMultisampleAttachment)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2DMultisample(32, 32, 4, RGBA32F, true));
     fb->setViewport(vec4<GLint>(0, 0, 32, 32));
     fb->setMultisample(true);
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER_FLOAT));
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER_FLOAT));
     fb->drawQuad(p);
     fb->setMultisample(false);
     p = new Program(new Module(330, NULL, "\
@@ -198,11 +198,11 @@ TEST(texture2DMultisampleAttachment)
 
 TEST(texture2DArrayAttachmentOneLayer)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2DArray(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, 3);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
     fb->drawQuad(p);
     int tPixels[4 * 8 * 8 * 8];
     int fbPixels[4 * 8 * 8];
@@ -215,11 +215,11 @@ TEST(texture2DArrayAttachmentOneLayer)
 
 TEST(texture2DArrayAttachmentAllLayers)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2DArray(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, -1);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, (LAYER_INSTANCING + FRAGMENT_SHADER).c_str()));
+    ptr<Program> p = new Program(new Module(330, (LAYER_INSTANCING + FRAGMENT_SHADER).c_str()));
     fb->drawQuad(p);
     int tPixels[4 * 8 * 8 * 8];
     int fbPixels[4 * 8 * 8];
@@ -232,11 +232,11 @@ TEST(texture2DArrayAttachmentAllLayers)
 
 TEST(texture2DMultisampleArrayAttachmentOneLayer)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2DMultisampleArray(8, 8, 8, 4, RGBA32F, true), 3);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
     fb->setMultisample(true);
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER_FLOAT));
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER_FLOAT));
     fb->drawQuad(p);
     fb->setMultisample(false);
     p = new Program(new Module(330, NULL, "\
@@ -257,11 +257,11 @@ TEST(texture2DMultisampleArrayAttachmentOneLayer)
 
 TEST(texture2DMultisampleArrayAttachmentAllLayers)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2DMultisampleArray(8, 8, 8, 4, RGBA32F, true), -1);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
     fb->setMultisample(true);
-    Ptr<Program> p = new Program(new Module(330, (LAYER_INSTANCING + FRAGMENT_SHADER_FLOAT).c_str()));
+    ptr<Program> p = new Program(new Module(330, (LAYER_INSTANCING + FRAGMENT_SHADER_FLOAT).c_str()));
     fb->drawQuad(p);
     fb->setMultisample(false);
     p = new Program(new Module(330, NULL, "\
@@ -282,11 +282,11 @@ TEST(texture2DMultisampleArrayAttachmentAllLayers)
 
 TEST(texture3DAttachmentOneLayer)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture3D(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, 3);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
     fb->drawQuad(p);
     int tPixels[4 * 8 * 8 * 8];
     int fbPixels[4 * 8 * 8];
@@ -299,11 +299,11 @@ TEST(texture3DAttachmentOneLayer)
 
 TEST(texture3DAttachmentAllLayers)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture3D(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, -1);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, (LAYER_INSTANCING + FRAGMENT_SHADER).c_str()));
+    ptr<Program> p = new Program(new Module(330, (LAYER_INSTANCING + FRAGMENT_SHADER).c_str()));
     fb->drawQuad(p);
     int tPixels[4 * 8 * 8 * 8];
     int fbPixels[4 * 8 * 8];
@@ -324,12 +324,12 @@ TEST(texture3DAttachmentAllLayers)
 
 TEST(draw)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -347,12 +347,12 @@ TEST(draw)
 
 TEST(drawInstancing)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture3D(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, -1);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -371,12 +371,12 @@ TEST(drawInstancing)
 
 TEST(drawPartDirect)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -384,7 +384,7 @@ TEST(drawPartDirect)
     quad->addVertex(vec4f(-1, 1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
     quad->addVertex(vec4f(1, 1, 0, 1));
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     fb->draw(p, *m, TRIANGLES, 0, 3);
     int tPixels[4 * 8 * 8];
@@ -400,12 +400,12 @@ TEST(drawPartDirect)
 
 TEST(drawPartInstancingDirect)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture3D(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, -1);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -413,7 +413,7 @@ TEST(drawPartInstancingDirect)
     quad->addVertex(vec4f(-1, 1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
     quad->addVertex(vec4f(1, 1, 0, 1));
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     fb->draw(p, *m, TRIANGLES, 0, 3, 8);
     int tPixels[4 * 8 * 8 * 8];
@@ -430,12 +430,12 @@ TEST(drawPartInstancingDirect)
 
 TEST(drawPartIndices)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -447,7 +447,7 @@ TEST(drawPartIndices)
     quad->addIndice(2);
     quad->addIndice(1);
     quad->addIndice(3);
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     fb->draw(p, *m, TRIANGLES, 3, 3);
     int tPixels[4 * 8 * 8];
@@ -463,12 +463,12 @@ TEST(drawPartIndices)
 
 TEST(drawPartInstancingIndices)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture3D(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, -1);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -480,7 +480,7 @@ TEST(drawPartInstancingIndices)
     quad->addIndice(2);
     quad->addIndice(1);
     quad->addIndice(3);
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     fb->draw(p, *m, TRIANGLES, 3, 3, 8);
     int tPixels[4 * 8 * 8 * 8];
@@ -497,12 +497,12 @@ TEST(drawPartInstancingIndices)
 
 TEST(drawPartIndicesWithBase)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -514,7 +514,7 @@ TEST(drawPartIndicesWithBase)
     quad->addIndice(2);
     quad->addIndice(1);
     quad->addIndice(3);
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     fb->draw(p, *m, TRIANGLES, 0, 3, 1, 1);
     int tPixels[4 * 8 * 8];
@@ -530,12 +530,12 @@ TEST(drawPartIndicesWithBase)
 
 TEST(drawPartInstancingIndicesWithBase)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture3D(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, -1);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -547,7 +547,7 @@ TEST(drawPartInstancingIndicesWithBase)
     quad->addIndice(2);
     quad->addIndice(1);
     quad->addIndice(3);
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     fb->draw(p, *m, TRIANGLES, 0, 3, 8, 1);
     int tPixels[4 * 8 * 8 * 8];
@@ -564,12 +564,12 @@ TEST(drawPartInstancingIndicesWithBase)
 
 TEST(multiDrawInstancingDirect)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(0, -1, 0, 1));
@@ -595,7 +595,7 @@ TEST(multiDrawInstancingDirect)
     quad->addVertex(vec4f(0, 1, 0, 1));
     quad->addVertex(vec4f(1, 0, 0, 1));
     quad->addVertex(vec4f(1, 1, 0, 1));
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     int firsts[2] = { 0, 18 };
     int counts[2] = { 6, 6 };
@@ -619,12 +619,12 @@ TEST(multiDrawInstancingDirect)
 
 TEST(multiDrawInstancingIndices)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(0, -1, 0, 1));
@@ -659,7 +659,7 @@ TEST(multiDrawInstancingIndices)
     quad->addIndice(7);
     quad->addIndice(5);
     quad->addIndice(8);
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     int firsts[2] = { 0, 18 };
     int counts[2] = { 6, 6 };
@@ -683,12 +683,12 @@ TEST(multiDrawInstancingIndices)
 
 TEST(multiDrawInstancingIndicesWithBase)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(0, -1, 0, 1));
@@ -723,7 +723,7 @@ TEST(multiDrawInstancingIndicesWithBase)
     quad->addIndice(7);
     quad->addIndice(5);
     quad->addIndice(8);
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     int firsts[2] = { 0, 18 };
     int counts[2] = { 6, 6 };
@@ -748,12 +748,12 @@ TEST(multiDrawInstancingIndicesWithBase)
 
 TEST4(drawIndirectInstancingDirect)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture3D(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, -1);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -761,7 +761,7 @@ TEST4(drawIndirectInstancingDirect)
     quad->addVertex(vec4f(-1, 1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
     quad->addVertex(vec4f(1, 1, 0, 1));
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     int buf[4] = { 3, 8, 0, 0};
     fb->drawIndirect(p, *m, TRIANGLES, CPUBuffer(buf));
@@ -779,12 +779,12 @@ TEST4(drawIndirectInstancingDirect)
 
 TEST4(drawIndirectInstancingIndices)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture3D(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, -1);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -796,7 +796,7 @@ TEST4(drawIndirectInstancingIndices)
     quad->addIndice(2);
     quad->addIndice(1);
     quad->addIndice(3);
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     int buf[5] = { 3, 8, 3, 0, 0 };
     fb->drawIndirect(p, *m, TRIANGLES, CPUBuffer(buf));
@@ -814,12 +814,12 @@ TEST4(drawIndirectInstancingIndices)
 
 TEST4(drawIndirectInstancingIndicesWithBase)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture3D(8, 8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0, -1);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, DRAW_INSTANCING));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLES, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -831,7 +831,7 @@ TEST4(drawIndirectInstancingIndicesWithBase)
     quad->addIndice(2);
     quad->addIndice(1);
     quad->addIndice(3);
-    Ptr<MeshBuffers> m = quad->getBuffers();
+    ptr<MeshBuffers> m = quad->getBuffers();
     fb->clear(true, true, true);
     int buf[5] = { 3, 8, 0, 1, 0 };
     fb->drawIndirect(p, *m, TRIANGLES, CPUBuffer(buf));
@@ -849,12 +849,12 @@ TEST4(drawIndirectInstancingIndicesWithBase)
 
 TEST(primitiveRestart)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, GLubyte> > quad = new Mesh<vec4f, GLubyte>(TRIANGLE_STRIP, GPU_STATIC);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, GLubyte> > quad = new Mesh<vec4f, GLubyte>(TRIANGLE_STRIP, GPU_STATIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(0, -1, 0, 1));
@@ -886,12 +886,12 @@ TEST(primitiveRestart)
 
 TEST(cpuMeshModificationDirect)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, CPU);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, CPU);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -916,12 +916,12 @@ TEST(cpuMeshModificationDirect)
 
 TEST(cpuMeshModificationIndices)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, CPU);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, CPU);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -950,12 +950,12 @@ TEST(cpuMeshModificationIndices)
 
 TEST(gpuMeshModificationDirect)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, GPU_DYNAMIC);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, GPU_DYNAMIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));
@@ -980,12 +980,12 @@ TEST(gpuMeshModificationDirect)
 
 TEST(gpuMeshModificationIndices)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setTextureBuffer(COLOR0, new Texture2D(8, 8, RGBA8I, RGBA_INTEGER, INT,
         Texture::Parameters().mag(NEAREST),  Buffer::Parameters(), CPUBuffer(NULL)), 0);
     fb->setViewport(vec4<GLint>(0, 0, 8, 8));
-    Ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
-    Ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, GPU_DYNAMIC);
+    ptr<Program> p = new Program(new Module(330, FRAGMENT_SHADER));
+    ptr< Mesh<vec4f, unsigned int> > quad = new Mesh<vec4f, unsigned int>(TRIANGLE_STRIP, GPU_DYNAMIC);
     quad->addAttributeType(0, 4, A32F, false);
     quad->addVertex(vec4f(-1, -1, 0, 1));
     quad->addVertex(vec4f(1, -1, 0, 1));

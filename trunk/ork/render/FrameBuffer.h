@@ -47,21 +47,21 @@
 
 using namespace std;
 
-using namespace ork::math;
-
 namespace ork
 {
 
 /**
+ * @defgroup render render
+ * @ingroup ork
  * Provides the %core classes for 3D rendering.
  */
-namespace render
-{
 
 /**
  * A framebuffer, either the default one or a frame buffer object. Each
  * framebuffer has its own state, made of attachments and fixed functions
  * parameters.
+ *
+ * @ingroup render
  */
 class ORK_API FrameBuffer : public Object
 {
@@ -121,11 +121,12 @@ public:
          * The stencil value used to refill the stencilbuffer when calling glClear.
          */
         GLint clearStencil;
-       /**
-        * A unique ID incremented each time clearColor, clearDepth or clearStencil
-        * change.
-        */
-       int clearId;
+
+        /**
+         * A unique ID incremented each time clearColor, clearDepth or clearStencil
+         * change.
+         */
+        int clearId;
 
         // -------------
 
@@ -271,7 +272,7 @@ public:
          * Occlusion queries use query objects to track the number of fragments
          * or samples that pass the depth test.
          */
-        Ptr<Query> occlusionQuery;
+        ptr<Query> occlusionQuery;
 
         /**
          * Defines the comparison mode used for the depth tests when using occlusion
@@ -524,7 +525,7 @@ public:
     /**
      * Returns the default, onscreen framebuffer.
      */
-    static Ptr<FrameBuffer> getDefault();
+    static ptr<FrameBuffer> getDefault();
 
     /**
      * Returns the render buffer attached to the given attachment point.
@@ -534,7 +535,7 @@ public:
      *       point (either because nothing is attached, or because a texture
      *       is attached).
      */
-    Ptr<RenderBuffer> getRenderBuffer(BufferId b);
+    ptr<RenderBuffer> getRenderBuffer(BufferId b);
 
     /**
      * Returns the texture attached to the given attachment point.
@@ -544,7 +545,7 @@ public:
      *       point (either because nothing is attached, or because a render
      *       buffer is attached).
      */
-    Ptr<Texture> getTextureBuffer(BufferId b);
+    ptr<Texture> getTextureBuffer(BufferId b);
 
     /**
      * Sets an attachment of this framebuffer using a render buffer.
@@ -552,7 +553,7 @@ public:
      * @param b an attachment point.
      * @param t the render buffer to be bound to this attachment point.
      */
-    void setRenderBuffer(BufferId b, const Ptr<RenderBuffer> t);
+    void setRenderBuffer(BufferId b, const ptr<RenderBuffer> t);
 
     /**
      * Sets an attachment of this framebuffer using a texture.
@@ -561,43 +562,7 @@ public:
      * @param t the texture to be bound to this attachment point.
      * @param level the LOD level to be attached.
      */
-    void setTextureBuffer(BufferId b, const Ptr<Texture1D> t, int level);
-
-    /**
-     * Sets an attachment of this framebuffer using a texture.
-     *
-     * @param b an attachment point.
-     * @param t the texture to be bound to this attachment point.
-     * @param level the LOD level to be attached.
-     * @param layer the layer to be attached (-1 to attach all layers).
-     */
-    void setTextureBuffer(BufferId b, const Ptr<Texture1DArray> t, int level, int layer);
-
-    /**
-     * Sets an attachment of this framebuffer using a texture.
-     *
-     * @param b an attachment point.
-     * @param t the texture to be bound to this attachment point.
-     * @param level the LOD level to be attached.
-     */
-    void setTextureBuffer(BufferId b, const Ptr<Texture2D> t, int level);
-
-    /**
-     * Sets an attachment of this framebuffer using a texture.
-     *
-     * @param b an attachment point.
-     * @param t the texture to be bound to this attachment point.
-     * @param level the LOD level to be attached.
-     */
-    void setTextureBuffer(BufferId b, const Ptr<TextureRectangle> t, int level);
-
-    /**
-     * Sets an attachment of this framebuffer using a texture.
-     *
-     * @param b an attachment point.
-     * @param t the texture to be bound to this attachment point.
-     */
-    void setTextureBuffer(BufferId b, const Ptr<Texture2DMultisample> t);
+    void setTextureBuffer(BufferId b, const ptr<Texture1D> t, int level);
 
     /**
      * Sets an attachment of this framebuffer using a texture.
@@ -607,7 +572,43 @@ public:
      * @param level the LOD level to be attached.
      * @param layer the layer to be attached (-1 to attach all layers).
      */
-    void setTextureBuffer(BufferId b, const Ptr<Texture2DArray> t, int level, int layer);
+    void setTextureBuffer(BufferId b, const ptr<Texture1DArray> t, int level, int layer);
+
+    /**
+     * Sets an attachment of this framebuffer using a texture.
+     *
+     * @param b an attachment point.
+     * @param t the texture to be bound to this attachment point.
+     * @param level the LOD level to be attached.
+     */
+    void setTextureBuffer(BufferId b, const ptr<Texture2D> t, int level);
+
+    /**
+     * Sets an attachment of this framebuffer using a texture.
+     *
+     * @param b an attachment point.
+     * @param t the texture to be bound to this attachment point.
+     * @param level the LOD level to be attached.
+     */
+    void setTextureBuffer(BufferId b, const ptr<TextureRectangle> t, int level);
+
+    /**
+     * Sets an attachment of this framebuffer using a texture.
+     *
+     * @param b an attachment point.
+     * @param t the texture to be bound to this attachment point.
+     */
+    void setTextureBuffer(BufferId b, const ptr<Texture2DMultisample> t);
+
+    /**
+     * Sets an attachment of this framebuffer using a texture.
+     *
+     * @param b an attachment point.
+     * @param t the texture to be bound to this attachment point.
+     * @param level the LOD level to be attached.
+     * @param layer the layer to be attached (-1 to attach all layers).
+     */
+    void setTextureBuffer(BufferId b, const ptr<Texture2DArray> t, int level, int layer);
 
     /**
      * Sets an attachment of this framebuffer using a texture.
@@ -616,7 +617,7 @@ public:
      * @param t the texture to be bound to this attachment point.
      * @param layer the layer to be attached (-1 to attach all layers).
      */
-    void setTextureBuffer(BufferId b, const Ptr<Texture2DMultisampleArray> t, int layer);
+    void setTextureBuffer(BufferId b, const ptr<Texture2DMultisampleArray> t, int layer);
 
     /**
      * Sets an attachment of this framebuffer using a texture.
@@ -626,7 +627,7 @@ public:
      * @param level the LOD level to be attached.
      * @param layer the z slice to be attached (-1 to attach all the slices).
      */
-    void setTextureBuffer(BufferId b, const Ptr<Texture3D> t, int level, int layer);
+    void setTextureBuffer(BufferId b, const ptr<Texture3D> t, int level, int layer);
 
     /**
      * Sets an attachment of this framebuffer using a texture.
@@ -636,7 +637,7 @@ public:
      * @param level the LOD level to be attached.
      * @param cf the cube face to be attached (-1 to attach all the faces).
      */
-    void setTextureBuffer(BufferId b, const Ptr<TextureCube> t, int level, CubeFace cf);
+    void setTextureBuffer(BufferId b, const ptr<TextureCube> t, int level, CubeFace cf);
 
     /**
      * Sets an attachment of this framebuffer using a texture.
@@ -647,7 +648,7 @@ public:
      * @param cf the cube face to be attached (all the layers for this face
      *      will be attached at once).
      */
-    void setTextureBuffer(BufferId b, const Ptr<TextureCubeArray> t, int level, CubeFace cf);
+    void setTextureBuffer(BufferId b, const ptr<TextureCubeArray> t, int level, CubeFace cf);
 
     /**
      * Sets the read buffer for #readPixels and #copyPixels methods.
@@ -783,7 +784,7 @@ public:
     /**
      * Returns the occlusion test and its mode.
      */
-    Ptr<Query> getOcclusionTest(QueryMode &occlusionMode);
+    ptr<Query> getOcclusionTest(QueryMode &occlusionMode);
 
     /**
      * Returns True if Scissor test is enabled.
@@ -1041,7 +1042,7 @@ public:
     /**
      * Adds an occlusion query.
      */
-    void setOcclusionTest(Ptr<Query> occlusionQuery, QueryMode occlusionMode);
+    void setOcclusionTest(ptr<Query> occlusionQuery, QueryMode occlusionMode);
 
     /**
      * Enables or disables scissor test.
@@ -1226,7 +1227,7 @@ public:
      * @param primCount the number of times this mesh must be instanced.
      */
     template<class vertex, class index>
-    void draw(Ptr<Program> p, const Mesh<vertex, index> &mesh, int primCount = 1);
+    void draw(ptr<Program> p, const Mesh<vertex, index> &mesh, int primCount = 1);
 
     /**
      * Draws a part of a mesh one or more times.
@@ -1242,7 +1243,7 @@ public:
      *      geometry instancing).
      * @param base the base vertex to use. Only used for meshes with indices.
      */
-    void draw(Ptr<Program> p, const MeshBuffers &mesh, MeshMode m, GLint first, GLsizei count, GLsizei primCount = 1, GLint base = 0);
+    void draw(ptr<Program> p, const MeshBuffers &mesh, MeshMode m, GLint first, GLsizei count, GLsizei primCount = 1, GLint base = 0);
 
     /**
      * Draws several parts of a mesh. Each part is specified with a first
@@ -1259,7 +1260,7 @@ public:
      * @param primCount the number of parts of this mesh to draw.
      * @param bases the base vertices to use. Only used for meshes with indices.
      */
-    void multiDraw(Ptr<Program> p, const MeshBuffers &mesh, MeshMode m, GLint *firsts, GLsizei *counts, GLsizei primCount, GLint* bases = 0);
+    void multiDraw(ptr<Program> p, const MeshBuffers &mesh, MeshMode m, GLint *firsts, GLsizei *counts, GLsizei primCount, GLint* bases = 0);
 
     /**
      * Draws a part of a mesh one or more times.
@@ -1272,7 +1273,7 @@ public:
      *      'first' and 'base' parameters, in this order, followed by '0',
      *      as 32 bit integers.
      */
-    void drawIndirect(Ptr<Program> p, const MeshBuffers &mesh, MeshMode m, const Buffer &buf);
+    void drawIndirect(ptr<Program> p, const MeshBuffers &mesh, MeshMode m, const Buffer &buf);
 
     /**
      * Draws the mesh resulting from a transform feedback session.
@@ -1283,14 +1284,14 @@ public:
      * @param tfb a TransformFeedback containing the results of a transform feedback session.
      * @param stream the stream to draw.
      */
-    void drawFeedback(Ptr<Program> p, MeshMode m, const TransformFeedback &tfb, int stream = 0);
+    void drawFeedback(ptr<Program> p, MeshMode m, const TransformFeedback &tfb, int stream = 0);
 
     /**
      * Draws a quad mesh. This mesh has a position attribute made of four
      * floats. xy coordinates vary between -1 and 1, while zw coordinates
      * vary between 0 and 1.
      */
-    void drawQuad(Ptr<Program> p);
+    void drawQuad(ptr<Program> p);
 
     /**
      * Reads pixels from the attached color buffers into the given buffer.
@@ -1453,7 +1454,7 @@ private:
         {
         }
 
-        map< void*, Ptr<FrameBuffer> > buffers;
+        map< void*, ptr<FrameBuffer> > buffers;
     };
 
     /**
@@ -1464,7 +1465,7 @@ private:
     /**
      * The attachments of this framebuffer.
      */
-    Ptr<Object> textures[6];
+    ptr<Object> textures[6];
 
     /**
      * The levels specified for each attachments of this framebuffer.
@@ -1516,7 +1517,7 @@ private:
     /**
      * The default, onscreen framebuffer (one per OpenGL context).
      */
-    static StaticPtr<FrameBufferMap> DEFAULT;
+    static static_ptr<FrameBufferMap> DEFAULT;
 
     /**
      * The current framebuffer.
@@ -1531,7 +1532,7 @@ private:
     /**
      * A quad mesh.
      */
-    static StaticPtr< Mesh<vec4f, unsigned int> > QUAD;
+    static static_ptr< Mesh<vec4f, unsigned int> > QUAD;
 
     /**
      * Creates a new framebuffer.
@@ -1574,7 +1575,7 @@ private:
 };
 
 template<class vertex, class index>
-inline void FrameBuffer::draw(Ptr<Program> p, const Mesh<vertex, index> &mesh, int primCount)
+inline void FrameBuffer::draw(ptr<Program> p, const Mesh<vertex, index> &mesh, int primCount)
 {
     assert(TransformFeedback::TRANSFORM == NULL);
     set();
@@ -1582,8 +1583,6 @@ inline void FrameBuffer::draw(Ptr<Program> p, const Mesh<vertex, index> &mesh, i
     beginConditionalRender();
     mesh.getBuffers()->draw(mesh.getMode(), 0, mesh.getIndiceCount() == 0 ? mesh.getVertexCount() : mesh.getIndiceCount(), primCount, 0);
     endConditionalRender();
-}
-
 }
 
 }

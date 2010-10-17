@@ -29,11 +29,9 @@
 namespace ork
 {
 
-namespace render
-{
-
 /**
  * A 2D array texture with multiple samples per pixel.
+ * @ingroup render
  */
 class ORK_API Texture2DMultisampleArray : public Texture
 {
@@ -96,8 +94,6 @@ protected:
      */
     int samples;
 };
-
-}
 
 }
 

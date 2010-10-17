@@ -31,8 +31,7 @@
 
 #include "examples/Main.h"
 
-using namespace ork::render;
-using namespace ork::ui;
+using namespace ork;
 
 struct P3_N3_UV_C {
 
@@ -54,16 +53,16 @@ struct P3_N3_UV_C {
 class RenderExample : public GlutWindow
 {
 public:
-    Ptr< Mesh<P3_N3_UV_C, unsigned int> > cube;
-    Ptr< Mesh<P3_N3_UV_C, unsigned int> > plane;
-    Ptr<Program> p1;
-    Ptr<Program> p2;
-    Ptr<Uniform3f> worldCamera;
-    Ptr<UniformMatrix4f> localToWorld1;
-    Ptr<UniformMatrix4f> localToScreen1;
-    Ptr<UniformMatrix4f> localToWorld2;
-    Ptr<UniformMatrix4f> localToScreen2;
-    Ptr<FrameBuffer> fb;
+    ptr< Mesh<P3_N3_UV_C, unsigned int> > cube;
+    ptr< Mesh<P3_N3_UV_C, unsigned int> > plane;
+    ptr<Program> p1;
+    ptr<Program> p2;
+    ptr<Uniform3f> worldCamera;
+    ptr<UniformMatrix4f> localToWorld1;
+    ptr<UniformMatrix4f> localToScreen1;
+    ptr<UniformMatrix4f> localToWorld2;
+    ptr<UniformMatrix4f> localToScreen2;
+    ptr<FrameBuffer> fb;
     float fov;
     float alpha;
     float theta;
@@ -139,7 +138,7 @@ public:
         plane->addVertex(P3_N3_UV_C(-10, -10, 0, 0, 0, +1, 0, 1, 248, 166, 10, 0));
         plane->addVertex(P3_N3_UV_C(-10, +10, 0, 0, 0, +1, 0, 0, 248, 166, 10, 0));
 
-        Ptr<Texture> logoTexture;
+        ptr<Texture> logoTexture;
         int w;
         int h;
         int channels;
@@ -152,18 +151,18 @@ public:
             logoTexture = new Texture2D(w, h, RGBA8, RGBA, UNSIGNED_BYTE, Texture::Parameters(), Buffer::Parameters(), CPUBuffer(logo));
         }
 
-        Ptr<Module> camera = new Module(330, (char*) load(dir + "/shaders/camera.glsl", size));
-        Ptr<Module> spotlight = new Module(330, (char*) load(dir + "/shaders/spotlight.glsl", size));
-        Ptr<Module> plastic = new Module(330, (char*) load(dir + "/shaders/plasticVS.glsl", size), (char*) load(dir + "/shaders/plasticFS.glsl", size));
-        Ptr<Module> texturedPlastic = new Module(330, (char*) load(dir + "/shaders/texturedPlastic.glsl", size));
+        ptr<Module> camera = new Module(330, (char*) load(dir + "/shaders/camera.glsl", size));
+        ptr<Module> spotlight = new Module(330, (char*) load(dir + "/shaders/spotlight.glsl", size));
+        ptr<Module> plastic = new Module(330, (char*) load(dir + "/shaders/plasticVS.glsl", size), (char*) load(dir + "/shaders/plasticFS.glsl", size));
+        ptr<Module> texturedPlastic = new Module(330, (char*) load(dir + "/shaders/texturedPlastic.glsl", size));
 
-        vector< Ptr<Module> > modules1;
+        vector< ptr<Module> > modules1;
         modules1.push_back(camera);
         modules1.push_back(spotlight);
         modules1.push_back(plastic);
         p1 = new Program(modules1);
 
-        vector< Ptr<Module> > modules2;
+        vector< ptr<Module> > modules2;
         modules2.push_back(camera);
         modules2.push_back(spotlight);
         modules2.push_back(texturedPlastic);
@@ -248,10 +247,10 @@ public:
         return true;
     }
 
-    static StaticPtr<Window> app;
+    static static_ptr<Window> app;
 };
 
-StaticPtr<Window> RenderExample::app;
+static_ptr<Window> RenderExample::app;
 
 int renderExample(int argc, char* argv[])
 {

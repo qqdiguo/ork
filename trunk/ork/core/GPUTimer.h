@@ -29,13 +29,11 @@
 namespace ork
 {
 
-namespace core
-{
-
 /**
  * A timer to measure time and time intervals on GPU. Since GPU computations
  * are asynchroneous, we can't just use CPU time to check the duration of
  * an operation.
+ * @ingroup core
  */
 class ORK_API GPUTimer : public Timer
 {
@@ -75,8 +73,6 @@ protected:
 
     void getQueryResult(); ///< Returns the result of the query #query.
 };
-
-}
 
 }
 

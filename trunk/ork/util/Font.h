@@ -32,30 +32,24 @@
 #include <string>
 #include <vector>
 
-using namespace ork::math;
-using namespace ork::render;
-
 namespace ork
 {
 
 /**
+ * @defgroup util util
+ * @ingroup ork
  * Provides utility classes.
  */
-namespace util
-{
 
 /**
+ * Helper class to draw text in a given font.
  * A Font allows to easily write a line of text directly in a FrameBuffer
  * at a given position. It has a texture containing ascii chars, and knows
  * which can be displayed. Any character outside its range will be displayed
  * as a blank character defined in the texture (for example a square, or a
  * question mark).
- * It is used with the Font#DrawLine() or Font#DrawCenteredLine() methods,
- * which accumulate in a FontMesh a line of text at a given position.
- * LIMITATIONS : can't exceeed 256 different characters / can't do Unicode,
- *               just 8-bits encodings
- *               Coloured text is supported if you use a ColorFontMesh, and
- *               ignored if you use a SolidFontMesh.
+ *
+ * @ingroup util
  */
 class ORK_API Font : public Object
 {
@@ -89,7 +83,7 @@ public:
      * @param charWidths an array of (maxChar - minChar + 1) character widths in texel
      *      NOTE: charWidth does NOT give texture coordinates, it gives spaces between characters.
      */
-    Font(Ptr<Texture2D> fontTex, int nCols, int nRows, int minChar, int maxChar, int invalidChar, bool fixedWidth, std::vector<int> charWidths);
+    Font(ptr<Texture2D> fontTex, int nCols, int nRows, int minChar, int maxChar, int invalidChar, bool fixedWidth, std::vector<int> charWidths);
 
     /**
      * Deletes this Font.
@@ -99,7 +93,7 @@ public:
     /**
      * Returns the texture containing the image of this font.
      */
-    Ptr<Texture2D> getImage() const;
+    ptr<Texture2D> getImage() const;
 
     /**
      * Returns the width of a character tile.
@@ -143,7 +137,7 @@ public:
      * @param textMesh the mesh to write into.
      */
     vec2f addLine(const vec4f &viewport, float xs, float ys, const string &line, float height,
-            int color, Ptr< Mesh<Vertex, unsigned int> > textMesh);
+            int color, ptr< Mesh<Vertex, unsigned int> > textMesh);
 
     /**
      * Add a given line of text in a given Mesh centered at a given
@@ -158,14 +152,14 @@ public:
      * @param textMesh the mesh to write into.
      */
     vec2f addCenteredLine(const vec4f &viewport, float xs, float ys, const string &line, float height,
-            int color, Ptr< Mesh<Vertex, unsigned int> > textMesh);
+            int color, ptr< Mesh<Vertex, unsigned int> > textMesh);
 
 protected:
     /**
      * The Texture2D which contains the images of the font.
      * This texture is splitted in rows and colums which form "tiles".
      */
-    Ptr<Texture2D> fontTex;
+    ptr<Texture2D> fontTex;
 
     /**
      * The number of character columns in the texture.
@@ -227,7 +221,7 @@ protected:
      * @param charWidths an array of (maxChar - minChar + 1) character widths in texel
      *      NOTE: charWidth does NOT give texture coordinates, it gives spaces between characters.
      */
-    virtual void init(Ptr<Texture2D> fontTex, int nCols, int nRows, int minChar, int maxChar, int invalidChar, bool fixedWidth, std::vector<int> charWidths);
+    virtual void init(ptr<Texture2D> fontTex, int nCols, int nRows, int minChar, int maxChar, int invalidChar, bool fixedWidth, std::vector<int> charWidths);
 
     /**
      * Get the tile index for this character.
@@ -235,10 +229,8 @@ protected:
      */
     int charCount(char c) const;
 
-    virtual void swap(Ptr<Font> t);
+    virtual void swap(ptr<Font> t);
 };
-
-}
 
 }
 

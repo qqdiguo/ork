@@ -25,38 +25,33 @@
 
 #include "ork/render/FrameBuffer.h"
 
-using namespace ork::render;
-
 namespace ork
-{
-
-namespace scenegraph
 {
 
 FrameBuffer* SceneManager::CURRENTFB = NULL;
 Program* SceneManager::CURRENTPROG = NULL;
 
-Ptr<FrameBuffer> SceneManager::getCurrentFrameBuffer()
+ptr<FrameBuffer> SceneManager::getCurrentFrameBuffer()
 {
     if (CURRENTFB == NULL) {
-        CURRENTFB = &(*FrameBuffer::getDefault());
+        CURRENTFB = FrameBuffer::getDefault().get();
     }
     return CURRENTFB;
 }
 
-Ptr<Program> SceneManager::getCurrentProgram()
+ptr<Program> SceneManager::getCurrentProgram()
 {
     return CURRENTPROG;
 }
 
-void SceneManager::setCurrentFrameBuffer(Ptr<FrameBuffer> fb)
+void SceneManager::setCurrentFrameBuffer(ptr<FrameBuffer> fb)
 {
-    CURRENTFB = &*fb;
+    CURRENTFB = fb.get();
 }
 
-void SceneManager::setCurrentProgram(Ptr<Program> prog)
+void SceneManager::setCurrentProgram(ptr<Program> prog)
 {
-    CURRENTPROG = &*prog;
+    CURRENTPROG = prog.get();
 }
 
 SceneManager::SceneManager()
@@ -75,12 +70,12 @@ SceneManager::~SceneManager()
     resourceManager->close();
 }
 
-Ptr<SceneNode> SceneManager::getRoot()
+ptr<SceneNode> SceneManager::getRoot()
 {
     return root;
 }
 
-void SceneManager::setRoot(Ptr<SceneNode> root)
+void SceneManager::setRoot(ptr<SceneNode> root)
 {
     if (this->root != NULL) {
         this->root->setOwner(NULL);
@@ -90,7 +85,7 @@ void SceneManager::setRoot(Ptr<SceneNode> root)
     this->camera = NULL;
 }
 
-Ptr<SceneNode> SceneManager::getCameraNode()
+ptr<SceneNode> SceneManager::getCameraNode()
 {
     if (camera == NULL || camera->owner != this) {
         camera = NULL;
@@ -130,36 +125,36 @@ SceneManager::NodeIterator SceneManager::getNodes(const string &flag)
     return SceneManager::NodeIterator(flag, nodeMap);
 }
 
-Ptr<SceneNode> SceneManager::getNodeVar(const string &name)
+ptr<SceneNode> SceneManager::getNodeVar(const string &name)
 {
-    map<string, Ptr<SceneNode> >::iterator i = nodeVariables.find(name);
+    map<string, ptr<SceneNode> >::iterator i = nodeVariables.find(name);
     if (i != nodeVariables.end()) {
         return i->second;
     }
     return NULL;
 }
 
-void SceneManager::setNodeVar(const string &name, Ptr<SceneNode> node)
+void SceneManager::setNodeVar(const string &name, ptr<SceneNode> node)
 {
     nodeVariables[name] = node;
 }
 
-Ptr<ResourceManager> SceneManager::getResourceManager()
+ptr<ResourceManager> SceneManager::getResourceManager()
 {
     return resourceManager;
 }
 
-void SceneManager::setResourceManager(Ptr<ResourceManager> resourceManager)
+void SceneManager::setResourceManager(ptr<ResourceManager> resourceManager)
 {
     this->resourceManager = resourceManager;
 }
 
-Ptr<Scheduler> SceneManager::getScheduler()
+ptr<Scheduler> SceneManager::getScheduler()
 {
     return scheduler;
 }
 
-void SceneManager::setScheduler(Ptr<Scheduler> scheduler)
+void SceneManager::setScheduler(ptr<Scheduler> scheduler)
 {
     this->scheduler = scheduler;
 }
@@ -278,9 +273,9 @@ void SceneManager::update(double t, double dt)
 void SceneManager::draw()
 {
     if (camera != NULL) {
-        Ptr<Method> m = camera->getMethod(cameraMethod);
+        ptr<Method> m = camera->getMethod(cameraMethod);
         if (m != NULL) {
-            Ptr<Task> newTask = NULL;
+            ptr<Task> newTask = NULL;
             try {
                 newTask = m->getTask();
             } catch (...) {
@@ -336,7 +331,7 @@ SceneManager::visibility SceneManager::getVisibility(const vec4d &clip, const bo
     return PARTIALLY_VISIBLE;
 }
 
-void SceneManager::computeVisibility(Ptr<SceneNode> n, visibility v)
+void SceneManager::computeVisibility(ptr<SceneNode> n, visibility v)
 {
     if (v == PARTIALLY_VISIBLE) {
         v = getVisibility(n->getWorldBounds());
@@ -353,7 +348,7 @@ void SceneManager::clearNodeMap()
     nodeMap.clear();
 }
 
-void SceneManager::buildNodeMap(Ptr<SceneNode> node)
+void SceneManager::buildNodeMap(ptr<SceneNode> node)
 {
     SceneNode::FlagIterator i = node->getFlags();
     while (i.hasNext()) {
@@ -363,8 +358,6 @@ void SceneManager::buildNodeMap(Ptr<SceneNode> node)
     for (unsigned int i = 0; i < n; ++i) {
         buildNodeMap(node->getChild(i));
     }
-}
-
 }
 
 }

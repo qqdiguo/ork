@@ -32,9 +32,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 RenderBuffer::RenderBuffer(RenderBufferFormat type, int width, int height, int samples) : Object("RenderBuffer")
 {
     int format = 0;
@@ -287,8 +284,6 @@ RenderBuffer::~RenderBuffer()
 GLuint RenderBuffer::getId() const
 {
     return bufferId;
-}
-
 }
 
 }

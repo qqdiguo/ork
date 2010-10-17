@@ -27,54 +27,27 @@
 namespace ork
 {
 
-namespace math
-{
-
 // You can use these conversions directly, but it's far better to use the half type
 
 /**
  * Converts a float to its half-float representation.
  * Expect inaccuracies and infinities to occur.
+ * @ingroup math
  */
 ORK_API unsigned short floatToHalf(float x);
 
 /**
  * Converts a half-float representation back to a float.
+ * @ingroup math
  */
 ORK_API float halfToFloat(unsigned short h);
 
 /**
  *
- * A 16-bit floating point number (1 sign bit, 5 biased exponent bit, 10 mantissa bits).
+ * A 16-bit floating point number. Contains 1 sign bit, 5 biased exponent bit, and
+ * 10 mantissa bits.
  *
- *
- *
- * Usage:
- *
- *     - To convert from float:
- *          half x = 45.f;
- *          half y(12);
- *          half z = half(12);
- *
- *     - To convert back to float:
- *
- *          float f = x;
- *
- *     - Arithmetic operations:
- *
- *          half zero = 0.f;
- *          half one = 1.f;
- *          half two = 2.f;
- *          half three = one + two * one;
- *
- *
- *          half four = one / two * 8.f; // ambiguous
- *          half four = one / two * (half)8.f;
- *
- *      - vectors: vec2h, vec3h, vec4h
- *
- * Support for detecting NaNs, infinities and denormals.
- *
+ * @ingroup math
  */
 struct half
 {
@@ -250,8 +223,6 @@ inline int half::mantissa() const
 inline bool isNaN(half x)
 {
     return x.isNaN();
-}
-
 }
 
 }

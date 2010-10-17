@@ -29,9 +29,6 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 SetProgramTask::SetProgramTask() : AbstractTask("SetProgramTask")
 {
 }
@@ -52,19 +49,19 @@ SetProgramTask::~SetProgramTask()
 {
 }
 
-Ptr<Task> SetProgramTask::getTask(Ptr<Object> context)
+ptr<Task> SetProgramTask::getTask(ptr<Object> context)
 {
     string name;
-    Ptr<SceneNode> n = context.cast<Method>()->getOwner();
-    Ptr<SceneManager> m = n->getOwner();
-    Ptr<Program> p;
+    ptr<SceneNode> n = context.cast<Method>()->getOwner();
+    ptr<SceneManager> m = n->getOwner();
+    ptr<Program> p;
     try {
         for (unsigned int i = 0; i < modules.size(); ++i) {
-            Ptr<SceneNode> target = modules[i].getTarget(n);
+            ptr<SceneNode> target = modules[i].getTarget(n);
             if (target == NULL) {
                 name = name + modules[i].name + ";";
             } else {
-                Ptr<Module> s = target->getModule(modules[i].name);
+                ptr<Module> s = target->getModule(modules[i].name);
                 name = name + dynamic_cast<Resource*>(&(*s))->getName() + ";";
             }
         }
@@ -79,12 +76,12 @@ Ptr<Task> SetProgramTask::getTask(Ptr<Object> context)
     return new Impl(p, setUniforms ? n : NULL);
 }
 
-void SetProgramTask::swap(Ptr<SetProgramTask> t)
+void SetProgramTask::swap(ptr<SetProgramTask> t)
 {
     std::swap(modules, t->modules);
 }
 
-SetProgramTask::Impl::Impl(Ptr<Program> p, Ptr<SceneNode> n) :
+SetProgramTask::Impl::Impl(ptr<Program> p, ptr<SceneNode> n) :
     Task("SetProgram", true, 0), p(p), n(n)
 {
 }
@@ -103,8 +100,8 @@ bool SetProgramTask::Impl::run()
         if (n != NULL) {
             SceneNode::ValueIterator i = n->getValues();
             while (i.hasNext()) {
-                Ptr<Value> v = i.next();
-                Ptr<Uniform> u = p->getUniform(v->getName());
+                ptr<Value> v = i.next();
+                ptr<Uniform> u = p->getUniform(v->getName());
                 if (u != NULL) {
                     u->setValue(v);
                 }
@@ -120,7 +117,7 @@ bool SetProgramTask::Impl::run()
 class SetProgramTaskResource : public ResourceTemplate<40, SetProgramTask>
 {
 public:
-    SetProgramTaskResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    SetProgramTaskResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, SetProgramTask>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -161,7 +158,5 @@ extern const char setProgram[] = "setProgram";
 static ResourceFactory::Type<setProgram, SetProgramTaskResource> SetProgramTaskType;
 
 /// @endcond
-
-}
 
 }

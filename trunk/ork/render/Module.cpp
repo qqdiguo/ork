@@ -30,12 +30,7 @@
 #include "ork/resource/ResourceTemplate.h"
 #include "ork/render/FrameBuffer.h"
 
-using namespace ork::resource;
-
 namespace ork
-{
-
-namespace render
 {
 
 Module::Module() : Object("Module")
@@ -311,12 +306,12 @@ void Module::addFeedbackVarying(const string &name)
     feedbackVaryings.push_back(name);
 }
 
-void Module::addInitialValue(Ptr<Value> value)
+void Module::addInitialValue(ptr<Value> value)
 {
     initialValues.insert(make_pair(value->getName(), value));
 }
 
-void Module::swap(Ptr<Module> s)
+void Module::swap(ptr<Module> s)
 {
     std::swap(vertexShaderId, s->vertexShaderId);
     std::swap(tessControlShaderId, s->tessControlShaderId);
@@ -337,7 +332,7 @@ void Module::printLog(int shaderId, int nlines, const char** lines, bool error)
 {
     GLint logLength;
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logLength);
-    Ptr<Logger> logger = error ? Logger::ERROR_LOGGER : Logger::WARNING_LOGGER;
+    ptr<Logger> logger = error ? Logger::ERROR_LOGGER : Logger::WARNING_LOGGER;
     if (logger != NULL && logLength > 1) {
         ostringstream msg;
         int l = 1;
@@ -371,7 +366,7 @@ void Module::printLog(int shaderId, int nlines, const char** lines, bool error)
 class ModuleResource : public ResourceTemplate<20, Module>
 {
 public:
-    ModuleResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    ModuleResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<20, Module>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -388,7 +383,7 @@ public:
                     string n = f->Attribute("name");
 
                     string type = f->Value();
-                    Ptr<Value> v;
+                    ptr<Value> v;
                     if (strncmp(type.c_str(), "uniform1", 8) == 0) {
                         checkParameters(desc, f, "name,x,");
                         float x = 0.f;
@@ -706,7 +701,7 @@ public:
                         }
                     } else if (strncmp(type.c_str(), "uniformSampler", 14) == 0) {
                         checkParameters(desc, f, "name,texture,");
-                        Ptr<Texture> t = manager->loadResource(f->Attribute("texture")).cast<Texture>();
+                        ptr<Texture> t = manager->loadResource(f->Attribute("texture")).cast<Texture>();
                         if (t == NULL) {
                             if (Logger::ERROR_LOGGER != NULL) {
                                 log(Logger::ERROR_LOGGER, desc, e, "Cannot find '" + string(f->Attribute("texture")) + "' texture");
@@ -796,7 +791,5 @@ extern const char module[] = "module";
 static ResourceFactory::Type<module, ModuleResource> ModuleType;
 
 /// @endcond
-
-}
 
 }

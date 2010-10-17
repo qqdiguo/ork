@@ -29,17 +29,12 @@
 #include "ork/core/Object.h"
 #include "ork/render/Types.h"
 
-using namespace ork::math;
-using namespace ork::core;
-
 namespace ork
-{
-
-namespace render
 {
 
 /**
  * An abstract data buffer.
+ * @ingroup render
  */
 class ORK_API Buffer : public Object
 {
@@ -249,8 +244,6 @@ private:
 
     friend class TextureRectangle;
 };
-
-}
 
 }
 

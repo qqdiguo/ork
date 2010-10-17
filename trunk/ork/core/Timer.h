@@ -27,11 +27,9 @@
 namespace ork
 {
 
-namespace core
-{
-
 /**
  * A timer to measure time and time intervals.
+ * @ingroup core
  */
 class ORK_API Timer
 {
@@ -150,8 +148,6 @@ protected:
      */
     double getCurrentTime();
 };
-
-}
 
 }
 

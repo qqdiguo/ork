@@ -25,11 +25,11 @@
 
 #include "ork/render/FrameBuffer.h"
 
-using namespace ork::render;
+using namespace ork;
 
-Ptr<FrameBuffer> getFrameBuffer(RenderBuffer::RenderBufferFormat f, int w, int h)
+ptr<FrameBuffer> getFrameBuffer(RenderBuffer::RenderBufferFormat f, int w, int h)
 {
-    Ptr<FrameBuffer> fb = new FrameBuffer();
+    ptr<FrameBuffer> fb = new FrameBuffer();
     fb->setRenderBuffer(COLOR0, new RenderBuffer(f, w, h));
     fb->setViewport(vec4<GLint>(0, 0, w, h));
     return fb;
@@ -41,8 +41,8 @@ Ptr<FrameBuffer> getFrameBuffer(RenderBuffer::RenderBufferFormat f, int w, int h
 
 TEST(testUniform1f)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform float u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u, 0.0, 0.0, 0.0); }\n"));
@@ -55,8 +55,8 @@ TEST(testUniform1f)
 
 TEST(testUniform2f)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RG32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RG32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform vec2 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u, 0.0, 0.0); }\n"));
@@ -69,8 +69,8 @@ TEST(testUniform2f)
 
 TEST(testUniform3f)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform vec3 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u, 0.0); }\n"));
@@ -83,8 +83,8 @@ TEST(testUniform3f)
 
 TEST(testUniform4f)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform vec4 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = u; }\n"));
@@ -97,8 +97,8 @@ TEST(testUniform4f)
 
 TEST4(testUniform1d)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(400, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32F, 1, 1);
+    ptr<Program> p = new Program(new Module(400, NULL, "\
         uniform double u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(float(u), 0.0, 0.0, 0.0); }\n"));
@@ -111,8 +111,8 @@ TEST4(testUniform1d)
 
 TEST4(testUniform2d)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RG32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(400, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RG32F, 1, 1);
+    ptr<Program> p = new Program(new Module(400, NULL, "\
         uniform dvec2 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u, 0.0, 0.0); }\n"));
@@ -125,8 +125,8 @@ TEST4(testUniform2d)
 
 TEST4(testUniform3d)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(400, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB32F, 1, 1);
+    ptr<Program> p = new Program(new Module(400, NULL, "\
         uniform dvec3 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u, 0.0); }\n"));
@@ -139,8 +139,8 @@ TEST4(testUniform3d)
 
 TEST4(testUniform4d)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(400, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
+    ptr<Program> p = new Program(new Module(400, NULL, "\
         uniform dvec4 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u); }\n"));
@@ -153,8 +153,8 @@ TEST4(testUniform4d)
 
 TEST(testUniform1i)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32I, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform int u;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { color = ivec4(u, 0, 0, 0); }\n"));
@@ -167,8 +167,8 @@ TEST(testUniform1i)
 
 TEST(testUniform2i)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RG32I, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RG32I, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform ivec2 u;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { color = ivec4(u, 0, 0); }\n"));
@@ -181,8 +181,8 @@ TEST(testUniform2i)
 
 TEST(testUniform3i)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB32I, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB32I, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform ivec3 u;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { color = ivec4(u, 0); }\n"));
@@ -195,8 +195,8 @@ TEST(testUniform3i)
 
 TEST(testUniform4i)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32I, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32I, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform ivec4 u;\n\
         layout(location=0) out ivec4 color;\n\
         void main() { color = u; }\n"));
@@ -209,8 +209,8 @@ TEST(testUniform4i)
 
 TEST(testUniform1b)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform bool u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(float(u), 0, 0, 0); }\n"));
@@ -223,8 +223,8 @@ TEST(testUniform1b)
 
 TEST(testUniform2b)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RG32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RG32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform bvec2 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u, 0, 0); }\n"));
@@ -237,8 +237,8 @@ TEST(testUniform2b)
 
 TEST(testUniform3b)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform bvec3 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u, 0); }\n"));
@@ -251,8 +251,8 @@ TEST(testUniform3b)
 
 TEST(testUniform4b)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform bvec4 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u); }\n"));
@@ -269,8 +269,8 @@ TEST(testUniform4b)
 
 TEST(testUniformMatrix3f)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGB32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform mat3 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color.rgb = u * vec3(1.0); }\n"));
@@ -283,8 +283,8 @@ TEST(testUniformMatrix3f)
 
 TEST(testUniformMatrix4f)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform mat4 u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = u * vec4(1.0); }\n"));
@@ -303,8 +303,8 @@ TEST(testUniformMatrix4f)
 
 TEST(testStructure1)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform struct { bool a; float b; int i; mat2 m; } u;\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(float(u.a), u.b, float(u.i), dot(u.m * vec2(1.0), vec2(1.0))); }\n"));
@@ -325,8 +325,8 @@ TEST(testStructure1)
 
 TEST(testArray1b)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform bool u[4];\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(float(u[0]), float(u[1]), float(u[2]), float(u[3])); }\n"));
@@ -342,8 +342,8 @@ TEST(testArray1b)
 
 TEST(testArray1f)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform float u[4];\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u[0], u[1], u[2], u[3]); }\n"));
@@ -359,8 +359,8 @@ TEST(testArray1f)
 
 TEST(testArray1i)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform int u[4];\n\
         layout(location=0) out vec4 color;\n\
         void main() { color = vec4(u[0], u[1], u[2], u[3]); }\n"));
@@ -380,8 +380,8 @@ TEST(testArray1i)
 
 TEST(testStructureArray1)
 {
-    Ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
-    Ptr<Program> p = new Program(new Module(330, NULL, "\
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RGBA32F, 1, 1);
+    ptr<Program> p = new Program(new Module(330, NULL, "\
         struct s { bool a; float b; int i; mat2 m; };\n\
         uniform s u[4];\n\
         layout(location=0) out vec4 color;\n\

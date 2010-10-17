@@ -50,9 +50,6 @@
 namespace ork
 {
 
-namespace ui
-{
-
 void CALLBACK debugCallback(unsigned int source, unsigned int type,
     unsigned int id, unsigned int severity,
     int length, const char* message, void* userParam)
@@ -305,8 +302,6 @@ void GlutWindow::specialKeyUpFunc(int k, int x, int y)
 void GlutWindow::focusFunc(int focus)
 {
     INSTANCES[glutGetWindow()]->damaged = (focus != 0);
-}
-
 }
 
 }

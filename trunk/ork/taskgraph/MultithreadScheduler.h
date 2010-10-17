@@ -33,9 +33,6 @@
 namespace ork
 {
 
-namespace taskgraph
-{
-
 /**
  * A Scheduler that can use multiple threads. This scheduler can work with one
  * or more threads, and it can try to follow a fixed framerate (i.e. a number
@@ -46,6 +43,8 @@ namespace taskgraph
  * rate is specified, this scheduler supports prefetching of tasks of any kind.
  * Otherwise, if several threads are used, prefetching of cpu tasks is supported,
  * but not prefetching of gpu tasks.
+ *
+ * @ingroup taskgraph
  */
 class ORK_API MultithreadScheduler : public Scheduler
 {
@@ -86,11 +85,11 @@ public:
      */
     virtual bool supportsPrefetch(bool gpuTasks);
 
-    virtual void schedule(Ptr<Task> task);
+    virtual void schedule(ptr<Task> task);
 
-    virtual void reschedule(Ptr<Task> task, Task::reason r, unsigned int deadline);
+    virtual void reschedule(ptr<Task> task, Task::reason r, unsigned int deadline);
 
-    virtual void run(Ptr<Task> task);
+    virtual void run(ptr<Task> task);
 
     /**
      * Adds the given task type to the tasks whose execution times must be monitored (debug).
@@ -128,16 +127,16 @@ private:
      * A sort operator for tasks. This operator is based on the expected
      * duration of tasks, so that shorter tasks are executed first.
      */
-    struct taskSort : public less< Ptr<Task> >
+    struct taskSort : public less< ptr<Task> >
     {
-        bool operator()(const Ptr<Task> x, const Ptr<Task> y) const;
+        bool operator()(const ptr<Task> x, const ptr<Task> y) const;
     };
 
     /**
      * A sorted task set, where tasks are sorted based on their deadline,
      * execution context and expected duration.
      */
-    typedef map<taskKey, set<Ptr<Task>, taskSort>, taskKeySort> SortedTaskSet;
+    typedef map<taskKey, set<ptr<Task>, taskSort>, taskKeySort> SortedTaskSet;
 
     /**
      * A mutex used to ensure consistent access to the data structures of this
@@ -201,7 +200,7 @@ private:
     /**
      * The primitive tasks that must be executed at the current frame.
      */
-    set< Ptr<Task> > immediateTasks;
+    set< ptr<Task> > immediateTasks;
 
     /**
      * The primitive CPU or GPU tasks that are ready to be executed. A task is
@@ -218,17 +217,17 @@ private:
     /**
      * The predecessors of the tasks that remain to be executed.
      */
-    map< Ptr<Task>, set< Ptr<Task> > > dependencies;
+    map< ptr<Task>, set< ptr<Task> > > dependencies;
 
     /**
      * The successors of the tasks that remain to be executed.
      */
-    map< Ptr<Task>, set< Ptr<Task> > > inverseDependencies;
+    map< ptr<Task>, set< ptr<Task> > > inverseDependencies;
 
     /**
      * The prefetching tasks that remain to be executed.
      */
-    set< Ptr<Task> > prefetchQueue;
+    set< ptr<Task> > prefetchQueue;
 
     /**
      * The task classes whose execution time must be monitored (debug).
@@ -269,7 +268,7 @@ private:
      * @param[in,out] addedTasks the already added tasks. This method adds the
      *      tasks it adds to this set.
      */
-    void addFlattenedTask(Ptr<Task> t, set< Ptr<Task> > &addedTasks);
+    void addFlattenedTask(ptr<Task> t, set< ptr<Task> > &addedTasks);
 
     /**
      * Adds all the primitive dependencies between the primitive first tasks of
@@ -278,7 +277,7 @@ private:
      * @param src a task that must be executed after dst.
      * @param dst a task that must be execute before src.
      */
-    void addFlattenedDependency(Ptr<Task> src, Ptr<Task> dst);
+    void addFlattenedDependency(ptr<Task> src, ptr<Task> dst);
 
     /**
      * Sets the deadline of this task. This method ensures that the predecessors
@@ -290,7 +289,7 @@ private:
      * @param deadline the new deadline for this task.
      * @param visited a set of tasks already visited by this method.
      */
-    void setDeadline(Ptr<Task> t, unsigned int deadline, set< Ptr<Task> > &visited);
+    void setDeadline(ptr<Task> t, unsigned int deadline, set< ptr<Task> > &visited);
 
     /**
      * Updates the data structures after the execution of a task. This method
@@ -302,7 +301,7 @@ private:
      * @param changes true if the task execution changed the result of its
      *      previous execution.
      */
-    void taskDone(Ptr<Task> t, bool changes);
+    void taskDone(ptr<Task> t, bool changes);
 
     /**
      * The method executed by the additional threads of this scheduler. This
@@ -333,7 +332,7 @@ private:
      * @return a task from s with, if possible, the given execution context. The
      *      returned task is not removed from the set.
      */
-    static Ptr<Task> getTask(SortedTaskSet &s, void *previousContext);
+    static ptr<Task> getTask(SortedTaskSet &s, void *previousContext);
 
     /**
      * Inserts a task in the given set.
@@ -341,7 +340,7 @@ private:
      * @param s a task set.
      * @param t the task to be added in s.
      */
-    static void insertTask(SortedTaskSet &s, Ptr<Task> t);
+    static void insertTask(SortedTaskSet &s, ptr<Task> t);
 
     /**
      * Removes a task from the given set.
@@ -350,10 +349,8 @@ private:
      * @param t the task to be removed from s.
      * @return true if the set contained t.
      */
-    static bool removeTask(SortedTaskSet &s, Ptr<Task> t);
+    static bool removeTask(SortedTaskSet &s, ptr<Task> t);
 };
-
-}
 
 }
 

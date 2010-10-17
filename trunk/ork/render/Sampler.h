@@ -36,17 +36,14 @@
 
 using namespace std;
 
-using namespace ork::core;
-
 namespace ork
-{
-
-namespace render
 {
 
 /**
  * A texture sampler. A texture sampler can be used in a UniformSampler to
  * change the default sampling parameters of a texture.
+ *
+ * @ingroup render
  */
 class ORK_API Sampler : public Object
 {
@@ -337,8 +334,6 @@ private:
      */
     static map<Sampler::Parameters, pair<GLuint, unsigned int> > INSTANCES;
 };
-
-}
 
 }
 

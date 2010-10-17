@@ -30,11 +30,9 @@
 namespace ork
 {
 
-namespace math
-{
-
 /**
  * A 4D vector.
+ * @ingroup math
  */
 template <typename type> class vec4
 {
@@ -233,24 +231,28 @@ public:
 };
 
 /**
+ * A 4D vector with half float coordinates.
+ * @ingroup math
+ */
+typedef vec4<half> vec4h;
+
+/**
  * A 4D vector with float coordinates.
+ * @ingroup math
  */
 typedef vec4<float> vec4f;
 
 /**
  * A 4D vector with double coordinates.
+ * @ingroup math
  */
 typedef vec4<double> vec4d;
 
 /**
  * A 4D vector with int coordinates.
+ * @ingroup math
  */
 typedef vec4<int> vec4i;
-
-/**
- * A 4D vector with half float coordinates.
- */
-typedef vec4<half> vec4h;
 
 template <typename type>
 inline vec4<type>::vec4()
@@ -471,8 +473,6 @@ const vec4<type> vec4<type>::UNIT_Z(0, 0, 1, 0);
 
 template <typename type>
 const vec4<type> vec4<type>::UNIT_W(0, 0, 0, 1);
-
-}
 
 }
 

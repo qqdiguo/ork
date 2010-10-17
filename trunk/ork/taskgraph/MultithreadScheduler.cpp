@@ -42,8 +42,6 @@
 #include <unistd.h>
 #endif
 
-using namespace ork::resource;
-
 // if defined, prefecth threads work only on tasks for future frames
 // otherwise they can also execute tasks for the current frame, in parallel
 // with main thread
@@ -92,9 +90,6 @@ static void getAbsoluteTime(timespec &ts)
 namespace ork
 {
 
-namespace taskgraph
-{
-
 bool MultithreadScheduler::taskKeySort::operator()(const taskKey &x, const taskKey &y) const
 {
     unsigned int xDeadline = x.first;
@@ -108,12 +103,12 @@ bool MultithreadScheduler::taskKeySort::operator()(const taskKey &x, const taskK
     }
 }
 
-bool MultithreadScheduler::taskSort::operator()(const Ptr<Task> x, const Ptr<Task> y) const
+bool MultithreadScheduler::taskSort::operator()(const ptr<Task> x, const ptr<Task> y) const
 {
     int xDuration = int(x->getExpectedDuration());
     int yDuration = int(y->getExpectedDuration());
     if (xDuration == yDuration) {
-        return &(*x) < &(*y);
+        return x.get() < y.get();
     } else {
         return xDuration < yDuration;
     }
@@ -197,13 +192,13 @@ bool MultithreadScheduler::supportsPrefetch(bool gpuTasks)
     return false;
 }
 
-void MultithreadScheduler::schedule(Ptr<Task> task)
+void MultithreadScheduler::schedule(ptr<Task> task)
 {
-    set< Ptr<Task> > initialized;
+    set<Task*> initialized;
     task->init(initialized);
     pthread_mutex_lock((pthread_mutex_t*) mutex);
     bool noCpuTasks = readyCpuTasks.empty();
-    set< Ptr<Task> > addedTasks;
+    set< ptr<Task> > addedTasks;
     addFlattenedTask(task, addedTasks);
     pthread_cond_broadcast((pthread_cond_t*) allTasksCond);
     if (noCpuTasks && !readyCpuTasks.empty()) {
@@ -216,18 +211,18 @@ void MultithreadScheduler::schedule(Ptr<Task> task)
     pthread_mutex_unlock((pthread_mutex_t*) mutex);
 }
 
-void MultithreadScheduler::reschedule(Ptr<Task> task, Task::reason r, unsigned int deadline)
+void MultithreadScheduler::reschedule(ptr<Task> task, Task::reason r, unsigned int deadline)
 {
     pthread_mutex_lock((pthread_mutex_t*) mutex);
     task->setIsDone(false, 0, r);
     if (r == Task::DATA_NEEDED) {
-        set< Ptr<Task> > visited;
+        set< ptr<Task> > visited;
         setDeadline(task, deadline, visited);
     }
     pthread_mutex_unlock((pthread_mutex_t*) mutex);
 }
 
-void MultithreadScheduler::run(Ptr<Task> task)
+void MultithreadScheduler::run(ptr<Task> task)
 {
     Timer timer;
     timer.start();
@@ -246,7 +241,7 @@ void MultithreadScheduler::run(Ptr<Task> task)
     int run = 0; // number of executed tasks
     int prefetched = 0; // number of prefetching tasks executed
     int contextSwitches = 0; // number of context switches performed
-    Ptr<Task> previousGpuTask = NULL; // last GPU task executed
+    ptr<Task> previousGpuTask = NULL; // last GPU task executed
 
     double deadline = 0.0; // deadline for the end of this method
     timespec deadlinespec; // same, in timespec format
@@ -280,7 +275,7 @@ void MultithreadScheduler::run(Ptr<Task> task)
     // we loop to execute all required tasks
     while (true) {
         // first step: find or wait for a task ready to be executed
-        Ptr<Task> t = NULL;
+        ptr<Task> t = NULL;
         pthread_mutex_lock((pthread_mutex_t*) mutex);
         if (immediateTasks.empty() && framePeriod > 0.0) {
             // if the tasks for the current frame are completed, and if we have
@@ -476,7 +471,7 @@ void MultithreadScheduler::monitorTask(const string &taskType)
     monitoredTasks.push_back(taskType);
 }
 
-void MultithreadScheduler::addFlattenedTask(Ptr<Task> t, set< Ptr<Task> > &addedTasks)
+void MultithreadScheduler::addFlattenedTask(ptr<Task> t, set< ptr<Task> > &addedTasks)
 {
     // NOTE: the mutex should be locked before calling this method!
     if (addedTasks.find(t) != addedTasks.end()) {
@@ -486,7 +481,7 @@ void MultithreadScheduler::addFlattenedTask(Ptr<Task> t, set< Ptr<Task> > &added
     if (t->isDone()) {
         return;
     }
-    Ptr<TaskGraph> tg = t.cast<TaskGraph>();
+    ptr<TaskGraph> tg = t.cast<TaskGraph>();
     if (tg == NULL) {
         if (t->getDeadline() == 0) {
             immediateTasks.insert(t);
@@ -510,8 +505,8 @@ void MultithreadScheduler::addFlattenedTask(Ptr<Task> t, set< Ptr<Task> > &added
         }
         i = tg->getFirstTasks();
         while (i.hasNext()) {
-            Ptr<Task> u = i.next();
-            Ptr<TaskGraph> ug = u.cast<TaskGraph>();
+            ptr<Task> u = i.next();
+            ptr<TaskGraph> ug = u.cast<TaskGraph>();
             if (ug == NULL) {
                 tg->flattenedFirstTasks.insert(u);
             } else {
@@ -520,8 +515,8 @@ void MultithreadScheduler::addFlattenedTask(Ptr<Task> t, set< Ptr<Task> > &added
         }
         i = tg->getLastTasks();
         while (i.hasNext()) {
-            Ptr<Task> u = i.next();
-            Ptr<TaskGraph> ug = u.cast<TaskGraph>();
+            ptr<Task> u = i.next();
+            ptr<TaskGraph> ug = u.cast<TaskGraph>();
             if (ug == NULL) {
                 tg->flattenedLastTasks.insert(u);
             } else {
@@ -531,41 +526,41 @@ void MultithreadScheduler::addFlattenedTask(Ptr<Task> t, set< Ptr<Task> > &added
 
         i = tg->getAllTasks();
         while (i.hasNext()) {
-            Ptr<Task> dst = i.next();
+            ptr<Task> dst = i.next();
             if (dst->isDone()) {
                 continue;
             }
             TaskGraph::TaskIterator j = tg->getInverseDependencies(dst);
             while (j.hasNext()) {
-                Ptr<Task> src = j.next();
+                ptr<Task> src = j.next();
                 addFlattenedDependency(src, dst);
             }
         }
     }
 }
 
-void MultithreadScheduler::addFlattenedDependency(Ptr<Task> src, Ptr<Task> dst)
+void MultithreadScheduler::addFlattenedDependency(ptr<Task> src, ptr<Task> dst)
 {
     // NOTE: the mutex should be locked before calling this method!
-    Ptr<TaskGraph> srcTg = src.cast<TaskGraph>();
+    ptr<TaskGraph> srcTg = src.cast<TaskGraph>();
     if (srcTg != NULL) {
-        set< Ptr<Task> >::iterator i = srcTg->flattenedFirstTasks.begin();
+        set< ptr<Task> >::iterator i = srcTg->flattenedFirstTasks.begin();
         while (i != srcTg->flattenedFirstTasks.end()) {
-            Ptr<Task> srcT = *i;
+            ptr<Task> srcT = *i;
             addFlattenedDependency(srcT, dst);
             ++i;
         }
     } else {
-        Ptr<TaskGraph> dstTg = dst.cast<TaskGraph>();
+        ptr<TaskGraph> dstTg = dst.cast<TaskGraph>();
         if (dstTg != NULL) {
-            set< Ptr<Task> >::iterator i = dstTg->flattenedLastTasks.begin();
+            set< ptr<Task> >::iterator i = dstTg->flattenedLastTasks.begin();
             while (i != dstTg->flattenedLastTasks.end()) {
-                Ptr<Task> dstT = *i;
+                ptr<Task> dstT = *i;
                 addFlattenedDependency(src, dstT);
                 ++i;
             }
         } else {
-            set< Ptr<Task> > visited;
+            set< ptr<Task> > visited;
             removeTask(allReadyTasks, src);
             removeTask(readyCpuTasks, src);
             dependencies[src].insert(dst);
@@ -576,14 +571,14 @@ void MultithreadScheduler::addFlattenedDependency(Ptr<Task> src, Ptr<Task> dst)
     }
 }
 
-void MultithreadScheduler::setDeadline(Ptr<Task> t, unsigned int deadline, set< Ptr<Task> > &visited)
+void MultithreadScheduler::setDeadline(ptr<Task> t, unsigned int deadline, set< ptr<Task> > &visited)
 {
     if (visited.find(t) != visited.end()) {
         return;
     }
     visited.insert(t);
 
-    Ptr<TaskGraph> tg = t.cast<TaskGraph>();
+    ptr<TaskGraph> tg = t.cast<TaskGraph>();
     if (tg != NULL) {
         TaskGraph::TaskIterator i = tg->getAllTasks();
         while (i.hasNext()) {
@@ -608,9 +603,9 @@ void MultithreadScheduler::setDeadline(Ptr<Task> t, unsigned int deadline, set< 
             insertTask(readyCpuTasks, t);
 #endif
         }
-        map< Ptr<Task>, set< Ptr<Task> > >::iterator i = dependencies.find(t);
+        map< ptr<Task>, set< ptr<Task> > >::iterator i = dependencies.find(t);
         if (i != dependencies.end()) {
-            set< Ptr<Task> >::iterator j = i->second.begin();
+            set< ptr<Task> >::iterator j = i->second.begin();
             while (j != i->second.end()) {
                 setDeadline(*j, deadline, visited);
                 j++;
@@ -619,20 +614,20 @@ void MultithreadScheduler::setDeadline(Ptr<Task> t, unsigned int deadline, set< 
     }
 }
 
-void MultithreadScheduler::taskDone(Ptr<Task> t, bool changes)
+void MultithreadScheduler::taskDone(ptr<Task> t, bool changes)
 {
     pthread_mutex_lock((pthread_mutex_t*) mutex);
     unsigned int completionDate = changes ? time : t->getCompletionDate();
-    map< Ptr<Task>, set< Ptr<Task> > >::iterator i = inverseDependencies.find(t);
+    map< ptr<Task>, set< ptr<Task> > >::iterator i = inverseDependencies.find(t);
     if (i != inverseDependencies.end()) {
-        set< Ptr<Task> >::iterator j = i->second.begin();
-        set< Ptr<Task> >::iterator end = i->second.end();
+        set< ptr<Task> >::iterator j = i->second.begin();
+        set< ptr<Task> >::iterator end = i->second.end();
         while (j != end) { // iterates over the successors of t
-            Ptr<Task> r = *j; // r is a successor of t
+            ptr<Task> r = *j; // r is a successor of t
             // the predecessors of r should not be empty, and should contain t
-            map< Ptr<Task>, set< Ptr<Task> > >::iterator k = dependencies.find(r);
+            map< ptr<Task>, set< ptr<Task> > >::iterator k = dependencies.find(r);
             assert(k != dependencies.end());
-            set< Ptr<Task> >::iterator l = k->second.find(t);
+            set< ptr<Task> >::iterator l = k->second.find(t);
             assert(l != k->second.end());
             // we then remove t from the predecessors of r
             k->second.erase(l);
@@ -672,7 +667,7 @@ void MultithreadScheduler::schedulerThread()
 
     // loop to execute tasks, until the scheduler must be deleted
     while (!stop) {
-        Ptr<Task> t;
+        ptr<Task> t;
         pthread_mutex_lock((pthread_mutex_t*) mutex);
         // wait until we have a CPU task ready to be executed (the additional
         // threads cannot execute GPU tasks, because OpenGL supports only one
@@ -755,7 +750,7 @@ void MultithreadScheduler::clearBufferedFrames()
     bufferedFrames = 0;
 }
 
-Ptr<Task> MultithreadScheduler::getTask(SortedTaskSet &s, void *previousContext)
+ptr<Task> MultithreadScheduler::getTask(SortedTaskSet &s, void *previousContext)
 {
     SortedTaskSet::iterator i = s.begin();
     // the task set should contain at least one task
@@ -788,14 +783,14 @@ Ptr<Task> MultithreadScheduler::getTask(SortedTaskSet &s, void *previousContext)
     return *(i->second.begin());
 }
 
-void MultithreadScheduler::insertTask(SortedTaskSet &s, Ptr<Task> t)
+void MultithreadScheduler::insertTask(SortedTaskSet &s, ptr<Task> t)
 {
     // computes the key for this task and inserts it
     taskKey key = make_pair(t->getDeadline(), t->getContext());
     s[key].insert(t);
 }
 
-bool MultithreadScheduler::removeTask(SortedTaskSet &s, Ptr<Task> t)
+bool MultithreadScheduler::removeTask(SortedTaskSet &s, ptr<Task> t)
 {
     // computes the key for this task and finds it in the set
     taskKey key = make_pair(t->getDeadline(), t->getContext());
@@ -817,7 +812,7 @@ bool MultithreadScheduler::removeTask(SortedTaskSet &s, Ptr<Task> t)
 class MultithreadSchedulerResource : public ResourceTemplate<0, MultithreadScheduler>
 {
 public:
-    MultithreadSchedulerResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    MultithreadSchedulerResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<0, MultithreadScheduler>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -847,7 +842,5 @@ extern const char multithreadScheduler[] = "multithreadScheduler";
 static ResourceFactory::Type<multithreadScheduler, MultithreadSchedulerResource> MultithreadSchedulerType;
 
 /// @endcond
-
-}
 
 }

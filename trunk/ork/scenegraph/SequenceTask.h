@@ -29,11 +29,9 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 /**
  * An AbstractTask to compose a list of tasks in a sequence.
+ * @ingroup scenegraph
  */
 class ORK_API SequenceTask : public AbstractTask
 {
@@ -43,14 +41,14 @@ public:
      *
      * @param subtasks the tasks that must be composed into a sequence.
      */
-    SequenceTask(const vector< Ptr<TaskFactory> > &subtasks);
+    SequenceTask(const vector< ptr<TaskFactory> > &subtasks);
 
     /**
      * Deletes this SequenceTask.
      */
     virtual ~SequenceTask();
 
-    virtual Ptr<Task> getTask(Ptr<Object> context);
+    virtual ptr<Task> getTask(ptr<Object> context);
 
 protected:
     /**
@@ -63,23 +61,21 @@ protected:
      *
      * @param subtasks the tasks that must be composed into a sequence.
      */
-    void init(const vector< Ptr<TaskFactory> > &subtasks);
+    void init(const vector< ptr<TaskFactory> > &subtasks);
 
     /**
      * Swaps this SequenceTask with another one.
      *
      * @param t a SequenceTask.
      */
-    void swap(Ptr<SequenceTask> t);
+    void swap(ptr<SequenceTask> t);
 
 private:
     /**
      * The tasks that are composed sequentially by this task.
      */
-    vector< Ptr<TaskFactory> > subtasks;
+    vector< ptr<TaskFactory> > subtasks;
 };
-
-}
 
 }
 

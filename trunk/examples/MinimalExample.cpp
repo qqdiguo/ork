@@ -26,15 +26,14 @@
 
 #include "examples/Main.h"
 
-using namespace ork::render;
-using namespace ork::ui;
+using namespace ork;
 
 class MinimalExample : public GlutWindow
 {
 public:
-    Ptr< Mesh<vec2f, unsigned int> > m;
+    ptr< Mesh<vec2f, unsigned int> > m;
 
-    Ptr<Program> p;
+    ptr<Program> p;
 
     MinimalExample() : GlutWindow(Window::Parameters().size(512, 512))
     {
@@ -52,7 +51,7 @@ public:
         // creates a 2D texture with 4x4 pixels, using one 8bits channel
         // per pixel, with a magnification filter in nearest mode
         unsigned char data[16] = { 0, 255, 0, 255, 255, 0, 255, 0, 0, 255, 0, 255, 255, 0, 255, 0 };
-        Ptr<Texture2D> tex = new Texture2D(4, 4, R8, RED, UNSIGNED_BYTE,
+        ptr<Texture2D> tex = new Texture2D(4, 4, R8, RED, UNSIGNED_BYTE,
             Texture::Parameters().mag(NEAREST), Buffer::Parameters(), CPUBuffer(data));
 
         // creates a program made of a single module,
@@ -71,7 +70,7 @@ public:
 
     virtual void redisplay(double t, double dt)
     {
-        Ptr<FrameBuffer> fb = FrameBuffer::getDefault();
+        ptr<FrameBuffer> fb = FrameBuffer::getDefault();
         // clears the color buffer of the default framebuffer
         fb->clear(true, false, false);
         // draws the mesh 'm' in the default framebuffer, with the program 'p'
@@ -100,10 +99,10 @@ public:
         return true;
     }
 
-    static StaticPtr<Window> app;
+    static static_ptr<Window> app;
 };
 
-StaticPtr<Window> MinimalExample::app;
+static_ptr<Window> MinimalExample::app;
 
 int minimalExample(int argc, char* argv[])
 {

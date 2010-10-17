@@ -26,9 +26,6 @@
 namespace ork
 {
 
-namespace resource
-{
-
 int resCounter = 0;
 
 int compile(TiXmlElement *e, ostream &out)
@@ -84,9 +81,9 @@ string ResourceCompiler::findResource(const string &name)
     return s;
 }
 
-Ptr<ResourceDescriptor> ResourceCompiler::loadResource(const string &name)
+ptr<ResourceDescriptor> ResourceCompiler::loadResource(const string &name)
 {
-    Ptr<ResourceDescriptor> desc = XMLResourceLoader::loadResource(name);
+    ptr<ResourceDescriptor> desc = XMLResourceLoader::loadResource(name);
     int a = compile((TiXmlElement*) desc->descriptor, out);
     if (desc->getData() != NULL) {
         unsigned int o = offset;
@@ -96,8 +93,6 @@ Ptr<ResourceDescriptor> ResourceCompiler::loadResource(const string &name)
         out << "addResource(\"" << name << "\", new ResourceDescriptor(e" << a << ", NULL, 0));" << endl;
     }
     return desc;
-}
-
 }
 
 }

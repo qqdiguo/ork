@@ -32,12 +32,7 @@
 
 using namespace std;
 
-using namespace ork::math;
-
 namespace ork
-{
-
-namespace render
 {
 
 class FrameBuffer;
@@ -48,6 +43,8 @@ class FrameBuffer;
  * of the vertices of the mesh. A mesh can have an indices array that allows
  * vertices shared between adjacent primitives to be shared in memory. If there
  * is no indices array shared vertices must be duplicated in the vertices array.
+ *
+ * @ingroup render
  */
 class ORK_API MeshBuffers : public Object
 {
@@ -103,12 +100,12 @@ public:
      *
      * @param index an index between 0 and #getAttributeCount (exclusive).
      */
-    Ptr<AttributeBuffer> getAttributeBuffer(int index) const;
+    ptr<AttributeBuffer> getAttributeBuffer(int index) const;
 
     /**
      * Returns the indices buffer of this mesh.
      */
-    Ptr<AttributeBuffer> getIndiceBuffer() const;
+    ptr<AttributeBuffer> getIndiceBuffer() const;
 
     /**
      * Adds a vertex attribute buffer to this mesh. This method assumes that
@@ -139,7 +136,7 @@ public:
     /**
      * Sets the indices array buffer of this mesh.
      */
-    void setIndicesBuffer(Ptr<AttributeBuffer> indices);
+    void setIndicesBuffer(ptr<AttributeBuffer> indices);
 
     /**
      * Resets the internal %state associated with this mesh. For internal use only.
@@ -296,7 +293,7 @@ protected:
     /**
      * Swaps this mesh with the given one.
      */
-    virtual void swap(Ptr<MeshBuffers> buffers);
+    virtual void swap(ptr<MeshBuffers> buffers);
 
     /**
      * Draws a part of this mesh one or more times.
@@ -339,13 +336,13 @@ protected:
     /**
      * The AttributeBuffer of this mesh.
      */
-    vector< Ptr<AttributeBuffer> > attributeBuffers;
+    vector< ptr<AttributeBuffer> > attributeBuffers;
 
 private:
     /**
      * The indices buffer of this mesh.
      */
-    Ptr<AttributeBuffer> indicesBuffer;
+    ptr<AttributeBuffer> indicesBuffer;
 
     /**
      * The currently bound mesh buffers. The buffers of a mesh must be bound
@@ -393,8 +390,6 @@ private:
 
     friend class FrameBuffer;
 };
-
-}
 
 }
 

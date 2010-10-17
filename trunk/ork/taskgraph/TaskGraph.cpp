@@ -26,14 +26,11 @@
 namespace ork
 {
 
-namespace taskgraph
-{
-
 TaskGraph::TaskGraph() : Task("TaskGraph", false, 0)
 {
 }
 
-TaskGraph::TaskGraph(Ptr<Task> task) : Task("TaskGraph", false, 0)
+TaskGraph::TaskGraph(ptr<Task> task) : Task("TaskGraph", false, 0)
 {
     addTask(task);
 }
@@ -79,16 +76,16 @@ void TaskGraph::setPredecessorsCompletionDate(unsigned int t)
  * of sub tasks is modified during the iteration (by the init method of one of
  * the sub tasks).
  */
-void initTasks(TaskGraph::TaskIterator &i, set< Ptr<Task> > &initialized)
+void initTasks(TaskGraph::TaskIterator &i, set<Task*> &initialized)
 {
     if (i.hasNext()) {
-        Ptr<Task> t = i.next();
+        ptr<Task> t = i.next();
         initTasks(i, initialized);
         t->init(initialized);
     }
 }
 
-void TaskGraph::init(set< Ptr<Task> > &initialized)
+void TaskGraph::init(set<Task*> &initialized)
 {
     if (initialized.find(this) == initialized.end()) {
         initialized.insert(this);
@@ -117,20 +114,20 @@ TaskGraph::TaskIterator TaskGraph::getLastTasks()
     return TaskIterator(lastTasks);
 }
 
-TaskGraph::TaskIterator TaskGraph::getDependencies(Ptr<Task> t)
+TaskGraph::TaskIterator TaskGraph::getDependencies(ptr<Task> t)
 {
-    map< Ptr<Task>, set< Ptr<Task> > >::iterator i;
+    map< ptr<Task>, set< ptr<Task> > >::iterator i;
     i = dependencies.find(t);
     if (i != dependencies.end()) {
-        set< Ptr<Task> > s = i->second;
+        set< ptr<Task> > s = i->second;
         return TaskIterator(s);
     }
     return TaskIterator();
 }
 
-TaskGraph::TaskIterator TaskGraph::getInverseDependencies(Ptr<Task> t)
+TaskGraph::TaskIterator TaskGraph::getInverseDependencies(ptr<Task> t)
 {
-    map< Ptr<Task>, set< Ptr<Task> > >::iterator i;
+    map< ptr<Task>, set< ptr<Task> > >::iterator i;
     i = inverseDependencies.find(t);
     if (i != inverseDependencies.end()) {
         return TaskIterator(i->second);
@@ -138,7 +135,7 @@ TaskGraph::TaskIterator TaskGraph::getInverseDependencies(Ptr<Task> t)
     return TaskIterator();
 }
 
-void TaskGraph::addTask(Ptr<Task> t)
+void TaskGraph::addTask(ptr<Task> t)
 {
     assert(t.cast<TaskGraph>() == NULL || !t.cast<TaskGraph>()->isEmpty());
     if (allTasks.find(t) == allTasks.end()) {
@@ -151,9 +148,9 @@ void TaskGraph::addTask(Ptr<Task> t)
     }
 }
 
-void TaskGraph::removeTask(Ptr<Task> t)
+void TaskGraph::removeTask(ptr<Task> t)
 {
-    set< Ptr<Task> >::iterator i = allTasks.find(t);
+    set< ptr<Task> >::iterator i = allTasks.find(t);
     if (i != allTasks.end()) {
         // we remove ourselves from the listeners of t
         t->removeListener(this);
@@ -166,7 +163,7 @@ void TaskGraph::removeTask(Ptr<Task> t)
     }
 }
 
-void TaskGraph::addDependency(Ptr<Task> src, Ptr<Task> dst)
+void TaskGraph::addDependency(ptr<Task> src, ptr<Task> dst)
 {
     assert(allTasks.find(src) != allTasks.end());
     assert(allTasks.find(dst) != allTasks.end());
@@ -181,7 +178,7 @@ void TaskGraph::addDependency(Ptr<Task> src, Ptr<Task> dst)
     inverseDependencies[dst].insert(src);
 }
 
-void TaskGraph::removeDependency(Ptr<Task> src, Ptr<Task> dst)
+void TaskGraph::removeDependency(ptr<Task> src, ptr<Task> dst)
 {
     assert(allTasks.find(src) != allTasks.end());
     assert(allTasks.find(dst) != allTasks.end());
@@ -202,15 +199,15 @@ void TaskGraph::removeDependency(Ptr<Task> src, Ptr<Task> dst)
     }
 }
 
-void TaskGraph::removeAndGetDependencies(Ptr<Task> src, set< Ptr<Task> >& deletedDependencies)
+void TaskGraph::removeAndGetDependencies(ptr<Task> src, set< ptr<Task> >& deletedDependencies)
 {
     // find the set of dependencies for this task
-    map< Ptr<Task>, set< Ptr<Task> > >::iterator it = dependencies.find(src);
+    map< ptr<Task>, set< ptr<Task> > >::iterator it = dependencies.find(src);
     if (it != dependencies.end()) { // there are dependencies
-        set< Ptr<Task> > dests = it->second;
-        for (set< Ptr<Task> >::iterator i = dests.begin(); i != dests.end(); ++i) {
+        set< ptr<Task> > dests = it->second;
+        for (set< ptr<Task> >::iterator i = dests.begin(); i != dests.end(); ++i) {
             deletedDependencies.insert(*i);
-            set< Ptr<Task> > dstSet = inverseDependencies[*i];
+            set< ptr<Task> > dstSet = inverseDependencies[*i];
             bool removed = dstSet.erase(src) != 0;
             assert(removed); // should exist in inverse dependencies
             if (dstSet.empty()) {
@@ -236,7 +233,7 @@ void TaskGraph::clearDependencies()
     inverseDependencies.clear();
 }
 
-void TaskGraph::taskStateChanged(Ptr<Task> t, bool done, reason r)
+void TaskGraph::taskStateChanged(ptr<Task> t, bool done, reason r)
 {
     assert(allTasks.find(t) != allTasks.end());
     if (!done) {
@@ -249,7 +246,7 @@ void TaskGraph::taskStateChanged(Ptr<Task> t, bool done, reason r)
             // dependencies has changed, and that they must be reexecuted:
             TaskIterator i = getInverseDependencies(t);
             while (i.hasNext()) {
-                Ptr<Task> s = i.next();
+                ptr<Task> s = i.next();
                 s->setIsDone(false, 0, DEPENDENCY_CHANGED);
             }
         }
@@ -269,7 +266,7 @@ void TaskGraph::taskStateChanged(Ptr<Task> t, bool done, reason r)
     }
 }
 
-void TaskGraph::completionDateChanged(Ptr<Task> t, unsigned int date)
+void TaskGraph::completionDateChanged(ptr<Task> t, unsigned int date)
 {
     completionDate = max(completionDate, date);
     TaskIterator i = getInverseDependencies(t);
@@ -277,7 +274,7 @@ void TaskGraph::completionDateChanged(Ptr<Task> t, unsigned int date)
         // if t has successors,
         // updates the predecessor completion date of the successors of t
         while (i.hasNext()) {
-            Ptr<Task> s = i.next();
+            ptr<Task> s = i.next();
             s->setPredecessorsCompletionDate(date);
         }
     } else {
@@ -293,8 +290,6 @@ void TaskGraph::cleanup()
 {
     flattenedFirstTasks.clear();
     flattenedLastTasks.clear();
-}
-
 }
 
 }

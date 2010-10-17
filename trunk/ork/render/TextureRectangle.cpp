@@ -32,18 +32,13 @@
 #include "ork/resource/ResourceTemplate.h"
 
 using namespace std;
-using namespace ork::resource;
-using namespace ork::render;
-
-void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t);
-
-void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params);
 
 namespace ork
 {
 
-namespace render
-{
+void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t);
+
+void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params);
 
 GLenum getTextureInternalFormat(TextureInternalFormat f);
 
@@ -148,7 +143,7 @@ void TextureRectangle::setCompressedSubImage(int level, int x, int y, int w, int
 class TextureRectangleResource : public ResourceTemplate<0, TextureRectangle>
 {
 public:
-    TextureRectangleResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    TextureRectangleResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<0, TextureRectangle>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -180,7 +175,5 @@ extern const char textureRectangle[] = "textureRectangle";
 static ResourceFactory::Type<textureRectangle, TextureRectangleResource> TextureRectangleType;
 
 /// @endcond
-
-}
 
 }

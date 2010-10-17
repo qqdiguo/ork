@@ -26,17 +26,12 @@
 namespace ork
 {
 
-namespace resource
-{
-
 ResourceLoader::ResourceLoader() : Object("ResourceLoader")
 {
 }
 
 ResourceLoader::~ResourceLoader()
 {
-}
-
 }
 
 }

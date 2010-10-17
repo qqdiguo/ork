@@ -32,18 +32,13 @@
 #include "ork/resource/ResourceTemplate.h"
 
 using namespace std;
-using namespace ork::resource;
-using namespace ork::render;
-
-void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t);
-
-void getParameters(const Ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params);
 
 namespace ork
 {
 
-namespace render
-{
+void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, TextureInternalFormat &ff, TextureFormat &f, PixelType &t);
+
+void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElement *e, Texture::Parameters &params);
 
 GLenum getTextureInternalFormat(TextureInternalFormat f);
 
@@ -119,7 +114,7 @@ void Texture1DArray::setCompressedSubImage(int level, int x, int l, int w, int d
     assert(FrameBuffer::getError() == GL_NO_ERROR);
 }
 
-void Texture1DArray::swap(Ptr<Texture> t)
+void Texture1DArray::swap(ptr<Texture> t)
 {
     Texture::swap(t);
     std::swap(w, t.cast<Texture1DArray>()->w);
@@ -131,7 +126,7 @@ void Texture1DArray::swap(Ptr<Texture> t)
 class Texture1DArrayResource : public ResourceTemplate<0, Texture1DArray>
 {
 public:
-    Texture1DArrayResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    Texture1DArrayResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<0, Texture1DArray>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -163,7 +158,5 @@ extern const char texture1DArray[] = "texture1DArray";
 static ResourceFactory::Type<texture1DArray, Texture1DArrayResource> Texture1DArrayType;
 
 /// @endcond
-
-}
 
 }

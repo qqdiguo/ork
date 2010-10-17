@@ -33,11 +33,9 @@
 namespace ork
 {
 
-namespace math
-{
-
 /**
  * A 4x4 matrix.
+ * @ingroup math
  */
 template <typename type> class mat4
 {
@@ -259,11 +257,13 @@ public:
 
 /**
  * A 4x4 matrix with float components.
+ * @ingroup math
  */
 typedef mat4<float> mat4f;
 
 /**
  * A 4x4 matrix with double components.
+ * @ingroup math
  */
 typedef mat4<double> mat4d;
 
@@ -663,8 +663,6 @@ const mat4<type> mat4<type>::IDENTITY(
     0, 1, 0, 0,
     0, 0, 1, 0,
     0, 0, 0, 1);
-
-}
 
 }
 

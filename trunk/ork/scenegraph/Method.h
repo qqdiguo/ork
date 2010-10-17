@@ -25,12 +25,7 @@
 
 #include "ork/taskgraph/TaskFactory.h"
 
-using namespace ork::taskgraph;
-
 namespace ork
-{
-
-namespace scenegraph
 {
 
 class SceneNode;
@@ -43,6 +38,8 @@ class SceneNode;
  * execute the method, depending on the context (the context passed to
  * TaskFactory#getTask being the Method itself, from which the owner SceneNode
  * can be found, and then then owner SceneManager).
+ *
+ * @ingroup scenegraph
  */
 class ORK_API Method : public Object
 {
@@ -52,7 +49,7 @@ public:
      *
      * @param body the method definition.
      */
-    Method(Ptr<TaskFactory> body);
+    Method(ptr<TaskFactory> body);
 
     /**
      * Deletes this method.
@@ -63,7 +60,7 @@ public:
      * Returns the SceneNode to which this Method belongs.
      * See SceneNode#getMethod.
      */
-    Ptr<SceneNode> getOwner();
+    ptr<SceneNode> getOwner();
 
     /**
      * Returns true if this method is enabled. A call to disabled method is
@@ -81,19 +78,19 @@ public:
     /**
      * Returns the body of this method.
      */
-    Ptr<TaskFactory> getTaskFactory();
+    ptr<TaskFactory> getTaskFactory();
 
     /**
      * Sets the body of this method.
      *
      * @param taskFactory the new method body.
      */
-    void setTaskFactory(Ptr<TaskFactory> taskFactory);
+    void setTaskFactory(ptr<TaskFactory> taskFactory);
 
     /**
      * Returns the Task to be run to execute this method.
      */
-    Ptr<Task> getTask();
+    ptr<Task> getTask();
 
 private:
     /**
@@ -109,12 +106,10 @@ private:
     /**
      * The body of this method.
      */
-    Ptr<TaskFactory> taskFactory;
+    ptr<TaskFactory> taskFactory;
 
     friend class SceneNode;
 };
-
-}
 
 }
 

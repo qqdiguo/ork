@@ -31,9 +31,6 @@
 namespace ork
 {
 
-namespace core
-{
-
 FileLogger::File::File(const string &name) : prev(0), cur(0)
 {
     stream.open(name.c_str(), ios::in | ios::out | ios::trunc | ios::binary);
@@ -85,7 +82,7 @@ void FileLogger::File::flush()
     }
 }
 
-FileLogger::FileLogger(const string &type, File *out, Ptr<Logger> next) :
+FileLogger::FileLogger(const string &type, File *out, ptr<Logger> next) :
     Logger(type), out(out), next(next)
 {
 }
@@ -152,8 +149,6 @@ void FileLogger::log(const string &topic, const string &msg)
 void FileLogger::flush()
 {
     out->flush();
-}
-
 }
 
 }

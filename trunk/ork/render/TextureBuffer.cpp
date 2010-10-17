@@ -31,17 +31,12 @@
 
 using namespace std;
 
-using namespace ork::render;
-
 namespace ork
-{
-
-namespace render
 {
 
 GLenum getTextureInternalFormat(TextureInternalFormat f);
 
-TextureBuffer::TextureBuffer(TextureInternalFormat tf, Ptr<GPUBuffer> pixels) : Texture("TextureBuffer", GL_TEXTURE_BUFFER)
+TextureBuffer::TextureBuffer(TextureInternalFormat tf, ptr<GPUBuffer> pixels) : Texture("TextureBuffer", GL_TEXTURE_BUFFER)
 {
     int formatSize;
     switch (tf) {
@@ -118,11 +113,9 @@ int TextureBuffer::getWidth()
     return w;
 }
 
-Ptr<GPUBuffer> TextureBuffer::getBuffer()
+ptr<GPUBuffer> TextureBuffer::getBuffer()
 {
     return b;
-}
-
 }
 
 }

@@ -30,9 +30,6 @@
 namespace ork
 {
 
-namespace render
-{
-
 /**
  * A buffer texture. A buffer texture is similar to a one-dimensional texture.
  * However, unlike other texture types, the texel array is not stored as part
@@ -43,6 +40,8 @@ namespace render
  * the buffer object is attached.  Also unlike other textures, buffer
  * textures do not have multiple image levels; only a single data store is
  * available.
+ *
+ * @ingroup render
  */
 class ORK_API TextureBuffer : public Texture
 {
@@ -53,7 +52,7 @@ public:
      * @param tf texture data format in 'pixels'.
      * @param pixels the buffer holding the texture's texel array.
      */
-    TextureBuffer(TextureInternalFormat tf, Ptr<GPUBuffer> pixels);
+    TextureBuffer(TextureInternalFormat tf, ptr<GPUBuffer> pixels);
 
     /**
      * Destroys this buffer texture.
@@ -68,7 +67,7 @@ public:
     /**
      * Returns the buffer holding the texture's texel array.
      */
-    Ptr<GPUBuffer> getBuffer();
+    ptr<GPUBuffer> getBuffer();
 
 protected:
     /**
@@ -79,10 +78,8 @@ protected:
     /**
      * The buffer holding the texture's texel array.
      */
-    Ptr<GPUBuffer> b;
+    ptr<GPUBuffer> b;
 };
-
-}
 
 }
 

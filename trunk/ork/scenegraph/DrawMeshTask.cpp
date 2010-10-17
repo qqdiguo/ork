@@ -30,9 +30,6 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 DrawMeshTask::DrawMeshTask() : AbstractTask("DrawMeshTask")
 {
 }
@@ -53,11 +50,11 @@ DrawMeshTask::~DrawMeshTask()
 {
 }
 
-Ptr<Task> DrawMeshTask::getTask(Ptr<Object> context)
+ptr<Task> DrawMeshTask::getTask(ptr<Object> context)
 {
-    Ptr<SceneNode> n = context.cast<Method>()->getOwner();
-    Ptr<SceneNode> target = mesh.getTarget(n);
-    Ptr<MeshBuffers> m = NULL;
+    ptr<SceneNode> n = context.cast<Method>()->getOwner();
+    ptr<SceneNode> target = mesh.getTarget(n);
+    ptr<MeshBuffers> m = NULL;
     if (target == NULL) {
         m = n->getOwner()->getResourceManager()->loadResource(mesh.name + ".mesh").cast<MeshBuffers>();
     } else {
@@ -72,13 +69,13 @@ Ptr<Task> DrawMeshTask::getTask(Ptr<Object> context)
     return new Impl(m, count);
 }
 
-void DrawMeshTask::swap(Ptr<DrawMeshTask> t)
+void DrawMeshTask::swap(ptr<DrawMeshTask> t)
 {
     std::swap(mesh, t->mesh);
     std::swap(count, t->count);
 }
 
-DrawMeshTask::Impl::Impl(Ptr<MeshBuffers> m, int count) :
+DrawMeshTask::Impl::Impl(ptr<MeshBuffers> m, int count) :
     Task("DrawMesh", true, 0), m(m), count(count)
 {
 }
@@ -94,7 +91,7 @@ bool DrawMeshTask::Impl::run()
             Resource *r = dynamic_cast<Resource*>(&(*m));
             Logger::DEBUG_LOGGER->log("SCENEGRAPH", r == NULL ? "DrawMesk" : "DrawMesh '" + r->getName() + "'");
         }
-        Ptr<Program> prog = SceneManager::getCurrentProgram();
+        ptr<Program> prog = SceneManager::getCurrentProgram();
         if (m->nindices == 0) {
             SceneManager::getCurrentFrameBuffer()->draw(prog, *m, m->mode, 0, m->nvertices);
         } else {
@@ -109,7 +106,7 @@ bool DrawMeshTask::Impl::run()
 class DrawMeshTaskResource : public ResourceTemplate<40, DrawMeshTask>
 {
 public:
-    DrawMeshTaskResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    DrawMeshTaskResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, DrawMeshTask>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -129,7 +126,5 @@ extern const char drawMesh[] = "drawMesh";
 static ResourceFactory::Type<drawMesh, DrawMeshTaskResource> DrawMeshTaskType;
 
 /// @endcond
-
-}
 
 }

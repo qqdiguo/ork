@@ -29,13 +29,11 @@
 namespace ork
 {
 
-namespace render
-{
-
 class FrameBuffer;
 
 /**
  * A buffer for offscreen rendering.
+ * @ingroup render
  */
 class ORK_API RenderBuffer : public Object
 {
@@ -150,8 +148,6 @@ private:
 
     friend class FrameBuffer;
 };
-
-}
 
 }
 

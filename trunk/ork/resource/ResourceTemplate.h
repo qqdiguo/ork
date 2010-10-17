@@ -30,14 +30,13 @@
 namespace ork
 {
 
-namespace resource
-{
-
 /**
  * A template Resource class to ease the implementation of concrete Resource
  * subclasses. This template class takes care of the two phase commit for the
  * update of resources, provided that the actual %resource class implements a
- * swap(Ptr<C>) method that can swap two instances of resources of class C.
+ * swap(ptr<C>) method that can swap two instances of resources of class C.
+ *
+ * @ingroup resource
  *
  * @tparam o the update order of resources of class C (see #getUpdateOrder).
  * @tparam C the concrete %resource class.
@@ -53,8 +52,8 @@ public:
      * @param name the name of this %resource.
      * @param desc the descriptor of this %resource.
      */
-    ResourceTemplate(Ptr<ResourceManager> manager,
-            const string &name, Ptr<ResourceDescriptor> desc);
+    ResourceTemplate(ptr<ResourceManager> manager,
+            const string &name, ptr<ResourceDescriptor> desc);
 
     /**
      * Returns the template parameter o.
@@ -86,7 +85,7 @@ protected:
     /**
      * The old value of this %resource.
      */
-    Ptr<C> oldValue;
+    ptr<C> oldValue;
 
     /**
      * Calls ResourceManager#releaseResource to release this %resource.
@@ -95,7 +94,7 @@ protected:
 };
 
 template<int o, class C>
-ResourceTemplate<o, C>::ResourceTemplate(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc) :
+ResourceTemplate<o, C>::ResourceTemplate(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc) :
     C(), Resource(manager, name, desc)
 {
 }
@@ -165,8 +164,6 @@ void ResourceTemplate<o, C>::doRelease()
     } else {
         delete this;
     }
-}
-
 }
 
 }

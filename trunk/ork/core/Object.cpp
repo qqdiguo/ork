@@ -27,6 +27,7 @@
 
 #include <sstream>
 #include <iostream>
+
 #include "ork/core/Logger.h"
 
 void fopen(FILE **f, const char* fileName, const char *mode)
@@ -50,10 +51,10 @@ void fseek64(FILE *f, long long offset, int origin)
 #ifndef NDEBUG
 void assertAndSegfault(const char* a, const char* f, int l)
 {
-    if (ork::core::Logger::ERROR_LOGGER != NULL) {
+    if (ork::Logger::ERROR_LOGGER != NULL) {
         ostringstream msg;
         msg << "Assertion failed " << a << " (file " << f << " line " << l << ")";
-        ork::core::Logger::ERROR_LOGGER->log("ASSERTION", msg.str());
+        ork::Logger::ERROR_LOGGER->log("ASSERTION", msg.str());
     }
     *((int*) 0) = 0;
 }
@@ -62,24 +63,25 @@ void assertAndSegfault(const char* a, const char* f, int l)
 namespace ork
 {
 
-namespace core
-{
-
 #ifndef NDEBUG
 unsigned int Object::count = 0;
+
 map<char*,int>* Object::counts = NULL;
 #endif
 
-
-#ifdef KEEP_OBJECTS_REFERENCES
+#ifdef KEEP_OBJECT_REFERENCES
 map<char*, set<Object*>* >* Object::instances = NULL;
 #endif
 
+#ifdef USED_SHARED_PTR
+Object::Object(const char *type)
+#else
 Object::Object(const char *type) : references(0)
+#endif
 {
 #ifndef NDEBUG
     // sets the type of this object
-    this->type = (char *)type;
+    this->type = (char*) type;
     // increments the global instance counter
     ++count;
     // increments the instance counter of the 'type' class
@@ -96,22 +98,17 @@ Object::Object(const char *type) : references(0)
     }
 #endif
 
-#ifdef KEEP_OBJECTS_REFERENCES
-
+#ifdef KEEP_OBJECT_REFERENCES
     // insert into the instances set
-
     if (instances == NULL) {
         instances = new map<char*, set<Object*>* >();
     }
-
     map<char*, set<Object*>* >::iterator classInstances = instances->find((char *)type);
     if (classInstances == instances->end()) {
         set<Object*>* s = new set<Object*>();
         (*instances)[(char *)type] = s;
     }
-
     (*instances)[(char *)type]->insert(this);
-
 #endif
 
 #ifndef NDEBUG
@@ -123,11 +120,9 @@ Object::Object(const char *type) : references(0)
 
 Object::~Object()
 {
-#ifdef KEEP_OBJECTS_REFERENCES
+#ifdef KEEP_OBJECT_REFERENCES
     // remove from references
-     (*instances)[(char *)type]->erase(this);
-
-
+    (*instances)[(char *)type]->erase(this);
 #endif
 
 #ifndef NDEBUG
@@ -152,9 +147,14 @@ const char* Object::getClass() const
 #endif
 }
 
+const char* Object::toString()
+{
+    return getClass();
+}
+
 void Object::exit()
 {
-    StaticRef *last = statics;
+    static_ref *last = statics;
     while (last != 0) {
         last->erase();
         last = last->next;
@@ -168,7 +168,7 @@ void Object::exit()
             if (i->second != 0) {
                 cerr << i->second << " remaining instance(s) of " << i->first << endl;
             }
-#ifdef KEEP_OBJECTS_REFERENCES
+#ifdef KEEP_OBJECT_REFERENCES
             set<Object*>* remainingInstances = findAllInstances(i->first);
             for (set<Object*>::iterator j = remainingInstances->begin(); j != remainingInstances->end(); ++j) {
                 cerr << "\t" << (*j)->toString() << endl;
@@ -181,7 +181,7 @@ void Object::exit()
 #endif
 }
 
-#ifdef KEEP_OBJECTS_REFERENCES
+#ifdef KEEP_OBJECT_REFERENCES
 set<Object*>* Object::findAllInstances(const char* className)
 {
     if (instances == NULL) {
@@ -198,13 +198,6 @@ set<Object*>* Object::findAllInstances(const char* className)
 }
 #endif
 
-const char* Object::toString()
-{
-    return getClass();
-}
-
-Object::StaticRef *Object::statics = 0;
-
-}
+Object::static_ref *Object::statics = 0;
 
 }

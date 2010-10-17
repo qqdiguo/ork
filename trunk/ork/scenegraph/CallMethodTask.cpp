@@ -30,9 +30,6 @@
 namespace ork
 {
 
-namespace scenegraph
-{
-
 CallMethodTask::CallMethodTask() : AbstractTask("CallMethodTask")
 {
 }
@@ -52,12 +49,12 @@ CallMethodTask::~CallMethodTask()
 {
 }
 
-Ptr<Task> CallMethodTask::getTask(Ptr<Object> context)
+ptr<Task> CallMethodTask::getTask(ptr<Object> context)
 {
-    Ptr<SceneNode> n = context.cast<Method>()->getOwner();
-    Ptr<SceneNode> target = method.getTarget(n);
+    ptr<SceneNode> n = context.cast<Method>()->getOwner();
+    ptr<SceneNode> target = method.getTarget(n);
     if (target != NULL) {
-        Ptr<Method> m = target->getMethod(method.name);
+        ptr<Method> m = target->getMethod(method.name);
         if (m != NULL) {
             if (m->isEnabled()) {
                 return m->getTask();
@@ -72,7 +69,7 @@ Ptr<Task> CallMethodTask::getTask(Ptr<Object> context)
     throw exception();
 }
 
-void CallMethodTask::swap(Ptr<CallMethodTask> t)
+void CallMethodTask::swap(ptr<CallMethodTask> t)
 {
     std::swap(method, t->method);
 }
@@ -82,7 +79,7 @@ void CallMethodTask::swap(Ptr<CallMethodTask> t)
 class CallMethodTaskResource : public ResourceTemplate<40, CallMethodTask>
 {
 public:
-    CallMethodTaskResource(Ptr<ResourceManager> manager, const string &name, Ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
+    CallMethodTaskResource(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc, const TiXmlElement *e = NULL) :
         ResourceTemplate<40, CallMethodTask>(manager, name, desc)
     {
         e = e == NULL ? desc->descriptor : e;
@@ -97,7 +94,5 @@ extern const char callMethod[] = "callMethod";
 static ResourceFactory::Type<callMethod, CallMethodTaskResource> CallMethodTaskType;
 
 /// @endcond
-
-}
 
 }
