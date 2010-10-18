@@ -33,11 +33,11 @@
 #else
 #include <sys/stat.h>
 #include <sys/fcntl.h>
-
 #endif
-#include "ork/resource/ResourceManager.h"
 
 #include "stbi/stb_image.h"
+
+#include "ork/resource/ResourceManager.h"
 
 namespace ork
 {
@@ -544,7 +544,8 @@ ptr<ResourceDescriptor> XMLResourceLoader::loadResource(const string &name)
         // resource names of the form "module1;module;module3;..." describe
         // program resources that may not be described by any file, either for the
         // XML part or for the binary part. The XML part is generated from the
-        // resource name, and the binary part is NULL
+        // resource name, and the binary part is NULL (unless a compiled program
+        // exists for this program)
         desc = findDescriptor(name, stamp, false);
         if (desc == NULL) {
             desc = buildProgramDescriptor(name);
@@ -772,11 +773,28 @@ unsigned char* XMLResourceLoader::loadData(TiXmlElement *desc, unsigned int &siz
         strcmp(desc->Value(), "textureCubeArray") == 0 ||
         strcmp(desc->Value(), "textureRectangle") == 0 ||
         strcmp(desc->Value(), "module") == 0 ||
-        strcmp(desc->Value(), "mesh") == 0)
+        strcmp(desc->Value(), "mesh") == 0 ||
+        strcmp(desc->Value(), "program") == 0)
     {
         // we first get the name of the file containing this ASCII or binary part
+        string str;
         const char* file = desc->Attribute("source");
-        if (file == NULL) {
+        if (file == NULL && strcmp(desc->Value(), "program") == 0) {
+            str = string(desc->Attribute("name")) + ".bin";
+            for (unsigned int i = 0; i < paths.size(); ++i) {
+                string path = paths[i] + '/' + str;
+                FILE *f;
+                fopen(&f, path.c_str(), "rb");
+                if (f != NULL) {
+                    fclose(f);
+                    file = str.c_str();
+                    break;
+                }
+            }
+            if (file == NULL) {
+                return NULL;
+            }
+        } else if (file == NULL) {
             if (strcmp(desc->Value(), "module") != 0 &&
                 strcmp(desc->Value(), "mesh") != 0 &&
                 desc->Attribute("width") != NULL)
@@ -909,8 +927,10 @@ unsigned char* XMLResourceLoader::loadData(TiXmlElement *desc, unsigned int &siz
             // via #include directives; we need to load them and to substitute
             // their content
             return loadShaderData(desc, paths, path, data, size, stamps);
-        } else if (strcmp(desc->Value(), "mesh") == 0) {
-            // for a mesh resource, no processing is needed
+        } else if (strcmp(desc->Value(), "mesh") == 0 ||
+                   strcmp(desc->Value(), "program") == 0)
+        {
+            // for a mesh or compiled program resource, no processing is needed
             time_t t;
             getTimeStamp(path, t);
             stamps.push_back(make_pair(path, t));

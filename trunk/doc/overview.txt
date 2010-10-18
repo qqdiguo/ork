@@ -340,9 +340,9 @@ a ork::Texture object is no longer referenced it is deleted,
 which deletes the corresponding OpenGL texture in GPU memory).
 
 The rendering API fully covers the OpenGL 3.3 core profile, and 
-partially covers the OpenGL 4.0 and 4.1 core profile APIs (tesselation
-shaders are supported, but uniform subroutines, binary shaders and 
-programs, pipeline objects, separable shaders, and multiple viewports
+partially covers the OpenGL 4.0 and 4.1 core profile APIs (tessellation
+shaders and binary programs are supported, but uniform subroutines, 
+pipeline objects, separable shaders, and multiple viewports
 are currently not supported).
 
 \subsection sec_meshes Meshes

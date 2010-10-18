@@ -59,6 +59,21 @@ Program::Program(ptr<Module> module) : Object("Program")
     init(modules);
 }
 
+Program::Program(GLenum format, GLsizei length, unsigned char *binary) : Object("Program")
+{
+    init(format, length, binary);
+}
+
+void Program::init(GLenum format, GLsizei length, unsigned char *binary)
+{
+    programId = glCreateProgram();
+    assert(programId > 0);
+
+    glProgramBinary(programId, format, binary, length);
+
+    initUniforms();
+}
+
 void Program::init(const vector< ptr<Module> > &modules)
 {
     this->modules = modules;
@@ -117,8 +132,14 @@ void Program::init(const vector< ptr<Module> > &modules)
     }
 
     // link everything together
-    GLint linked;
     glLinkProgram(programId);
+
+    initUniforms();
+}
+
+void Program::initUniforms()
+{
+    GLint linked;
     glGetProgramiv(programId, GL_LINK_STATUS, &linked);
     if (linked == GL_FALSE) {
         // if a link error occured ...
@@ -462,6 +483,7 @@ void Program::init(const vector< ptr<Module> > &modules)
     }
 
     // sets the initial values of the uniforms
+    vector< ptr<Module> >::iterator i;
     for (i = this->modules.begin(); i != this->modules.end(); ++i) {
         ptr<Module> module = *i;
         map<string, ptr<Value> >::iterator j = module->initialValues.begin();
@@ -542,6 +564,15 @@ ptr<UniformBlock> Program::getUniformBlock(const string &name)
         return NULL;
     }
     return i->second;
+}
+
+unsigned char *Program::getBinary(GLsizei &length, GLenum &format)
+{
+    GLsizei len = 0;
+    glGetProgramiv(programId, GL_PROGRAM_BINARY_LENGTH, &len);
+    unsigned char *binary = new unsigned char[len];
+    glGetProgramBinary(programId, len, &length, &format, binary);
+    return binary;
 }
 
 void Program::swap(ptr<Program> p)
@@ -799,6 +830,17 @@ public:
         e = e == NULL ? desc->descriptor : e;
         vector< ptr<Module> > modules;
         checkParameters(desc, e, "name,");
+
+        if (desc->getData() != NULL) {
+            try {
+                init(*((int*) desc->getData()), desc->getSize() - 4, desc->getData() + 4);
+                desc->clearData();
+            } catch (...) {
+                desc->clearData();
+            }
+            return;
+        }
+
         const TiXmlNode *n = e->FirstChild();
         while (n != NULL) {
             const TiXmlElement *f = n->ToElement();

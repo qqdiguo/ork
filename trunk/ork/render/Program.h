@@ -59,6 +59,15 @@ public:
     Program(ptr<Module> module);
 
     /**
+     * Creates a new program from a compiled representation.
+     *
+     * @param format the format of the compiled reprensentation.
+     * @param length the length of the 'binary' array.
+     * @param binary the compiled program code.
+     */
+    Program(GLenum format, GLsizei length, unsigned char *binary);
+
+    /**
      * Deletes this program.
      */
     virtual ~Program();
@@ -447,6 +456,15 @@ public:
      */
     ptr<UniformBlock> getUniformBlock(const string &name);
 
+    /**
+     * Returns a compiled version of this program.
+     *
+     * @param[out] length the length of the returned array.
+     * @param[out] format the format of the returned array.
+     * @return a compiled version of this program.
+     */
+    unsigned char *getBinary(GLsizei &length, GLenum &format);
+
 protected:
     /**
      * The modules of this program.
@@ -464,6 +482,20 @@ protected:
      * @param modules the modules that will compose this program.
      */
     void init(const vector< ptr<Module> > &modules);
+
+    /**
+     * Initializes this program from a compiled representation.
+     *
+     * @param format the format of the compiled reprensentation.
+     * @param length the length of the 'binary' array.
+     * @param binary the compiled program code.
+     */
+    void init(GLenum format, GLsizei length, unsigned char *binary);
+
+    /**
+     * Initializes the uniforms of this program.
+     */
+    void initUniforms();
 
     /**
      * Swaps this program with the given one.
