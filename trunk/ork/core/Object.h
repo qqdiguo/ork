@@ -28,7 +28,13 @@
 #include <cassert>
 
 #ifdef USE_SHARED_PTR
+#ifdef _MSC_VER
+#include <memory>
+#define TR1 std
+#else
 #include <tr1/memory>
+#define TR1 std::tr1
+#endif
 #else
 #include "ork/core/Atomic.h"
 #endif
@@ -143,7 +149,7 @@ public: // in fact should be private, but then ptr could not access these member
     /*
      * A weak pointer to this object.
      */
-    std::tr1::weak_ptr<Object> ref_this;
+    TR1::weak_ptr<Object> ref_this;
 
     /*
      * Calls the #doRelease method on the given object.
@@ -258,20 +264,20 @@ private:
  */
 #ifdef USE_SHARED_PTR
 template <class T>
-class ptr : public std::tr1::shared_ptr<T>
+class ptr : public TR1::shared_ptr<T>
 {
 private:
     template<typename D>
-    inline ptr(T* target, D d) : std::tr1::shared_ptr<T>(target, d)
+    inline ptr(T* target, D d) : TR1::shared_ptr<T>(target, d)
     {
-        target->ref_this = std::tr1::weak_ptr<T>(*this);
+        target->ref_this = TR1::weak_ptr<T>(*this);
     }
 
 public:
     /**
      * Creates a pointer pointing to NULL.
      */
-    inline ptr() : std::tr1::shared_ptr<T>()
+    inline ptr() : TR1::shared_ptr<T>()
     {
     }
 
@@ -279,9 +285,9 @@ public:
      * Creates a pointer to the given object.
      */
     inline ptr(T *target) :
-        std::tr1::shared_ptr<T>(target == NULL ? std::tr1::shared_ptr<T>() :
+        TR1::shared_ptr<T>(target == NULL ? TR1::shared_ptr<T>() :
             target->ref_this.expired() ? ptr<T>(target, Object::release) :
-                std::tr1::dynamic_pointer_cast<T>(std::tr1::shared_ptr<Object>(target->ref_this)))
+                TR1::dynamic_pointer_cast<T>(TR1::shared_ptr<Object>(target->ref_this)))
     {
     }
 
@@ -289,7 +295,7 @@ public:
      * Creates a pointer as a copy of the given pointer.
      */
     template<class U>
-    inline ptr(const std::tr1::shared_ptr<U> &p) : std::tr1::shared_ptr<T>(p)
+    inline ptr(const TR1::shared_ptr<U> &p) : TR1::shared_ptr<T>(p)
     {
     }
 
@@ -297,7 +303,7 @@ public:
      * Creates a pointer as a copy of the given pointer.
      */
     template<class U>
-    inline ptr(const std::tr1::weak_ptr<U> &p) : std::tr1::shared_ptr<T>(p)
+    inline ptr(const TR1::weak_ptr<U> &p) : TR1::shared_ptr<T>(p)
     {
     }
 
@@ -307,7 +313,7 @@ public:
     template <class U>
     inline ptr<U> cast() const
     {
-        return std::tr1::dynamic_pointer_cast<U>(*this);
+        return TR1::dynamic_pointer_cast<U>(*this);
     }
 };
 #else
@@ -516,5 +522,7 @@ protected:
 };
 
 }
+
+#undef TR1
 
 #endif
