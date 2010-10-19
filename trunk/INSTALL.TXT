@@ -12,7 +12,7 @@ Ork also requires the following external libraries:
 - pthreads-2.8.0 (only the task graph and scene graph frameworks)
 - glut or freeglut (only for the GlutWindow class)
 
-INSTALLATION
+INSTALLATION WITH PROJECT FILES
 ------------------------------------------------------------------------------
 
 Ork comes with two project files, one for Code::Blocks (either on Windows or
@@ -34,6 +34,29 @@ The USE_SHARED_PTR preprocessor flag can be set to use std::tr1::shared_ptr
 an Ork specific implementation (potentially more efficient since based on
 intrusive counters).
 
+INSTALLATION WITH CMAKE
+------------------------------------------------------------------------------
+
+CMake (http://www.cmake.org) is a cross-platform build system able to generate
+Makefiles and project files for various IDEs.
+The following instructions assume Linux/MSYS-like environment.
+
+  $ mkdir build
+  $ cd build
+  $ cmake ..
+  $ make
+
+It will output a library to $SOURCE_DIR/lib and executables to $SOURCE_DIR/bin
+
+You can control the build with certain variables that can be edited with a
+CMake GUI, such as ccmake, or by directly giving arguments to cmake in the
+form: -DVARIABLE_NAME=VALUE
+
+The variables (and their defaults) are:
+  BUILD_SHARED                 OFF
+  BUILD_EXAMPLES               ON
+  BUILD_TESTS                  ON
+  CMAKE_BUILD_TYPE             RelWithDebInfo
 
 UNIT TESTS
 ------------------------------------------------------------------------------
