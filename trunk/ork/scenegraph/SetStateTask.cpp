@@ -498,15 +498,16 @@ public:
         this->bfail = bfail;
         this->bdpfail = bdpfail;
         this->bdppass = bdppass;
-        assert(ff == -1 || (fref != -1 && ffail != -1 && fdpfail != -1 && fdppass != -1)); // checks that correct parameters are provided if a function is set
-        assert(bf == -1 || (bref != -1 && bfail != -1 && bdpfail != -1 && bdppass != -1));
+        // checks that correct parameters are provided if a function is set
+        assert(ff == (Function)-1 || (fref != (StencilOperation)-1 && ffail != (StencilOperation)-1 && fdpfail != (StencilOperation)-1 && fdppass != (StencilOperation)-1));
+        assert(bf == (Function)-1 || (bref != (StencilOperation)-1 && bfail != (StencilOperation)-1 && bdpfail != (StencilOperation)-1 && bdppass != (StencilOperation)-1));
     }
 
     virtual void run(ptr<FrameBuffer> fb)
     {
-        if (ff == -1 && bf == -1) {
+        if (ff == (Function)-1 && bf == (Function)-1) {
             fb->setStencilTest(enableStencil);
-        } else if (bf == -1) {
+        } else if (bf == (Function)-1) {
             fb->setStencilTest(enableStencil, ff, fref, fmask, ffail, fdpfail, fdppass);
         } else {
             fb->setStencilTest(enableStencil, ff, fref, fmask, ffail, fdpfail, fdppass, bf, bref, bmask, bfail, bdpfail, bdppass);
@@ -552,7 +553,7 @@ public:
 
     virtual void run(ptr<FrameBuffer> fb)
     {
-        if (depth == -1) {
+        if (depth == (Function) -1) {
             fb->setDepthTest(enableDepth);
         } else {
             fb->setDepthTest(enableDepth, depth);
@@ -579,21 +580,22 @@ public:
         this->drgb = dst;
         this->salpha = srcAlpha;
         this->dalpha = dstAlpha;
-        assert(e == -1 || (src != -1 && dst != -1)); // checks that src & dst arguments are set when the equations are set.
-        assert(eAlpha == -1 || (srcAlpha != -1 && dstAlpha != -1));
+        // checks that src & dst arguments are set when the equations are set.
+        assert(e == BlendEquation(-1) || (src != BlendArgument(-1) && dst != BlendArgument(-1)));
+        assert(eAlpha == BlendEquation(-1) || (srcAlpha != BlendArgument(-1) && dstAlpha != BlendArgument(-1)));
     }
 
     virtual void run(ptr<FrameBuffer> fb)
     {
-        if (rgb == -1 && buffer == -1) {
+        if (rgb == BlendEquation(-1) && buffer == BufferId(-1)) {
             fb->setBlend(enableBlend);
-        } else if (rgb == -1) {
+        } else if (rgb == BlendEquation(-1)) {
             fb->setBlend(buffer, enableBlend);
-        } else if (alpha == -1 && buffer == -1) {
+        } else if (alpha == BlendEquation(-1) && buffer == BufferId(-1)) {
             fb->setBlend(enableBlend, rgb, srgb, drgb);
-        } else if (alpha == -1) {
+        } else if (alpha == BlendEquation(-1)) {
             fb->setBlend(buffer, enableBlend, rgb, srgb, drgb);
-        } else if (buffer == -1) {
+        } else if (buffer == BufferId(-1)) {
             fb->setBlend(enableBlend, rgb, srgb, drgb, alpha, salpha, dalpha);
         } else {
             fb->setBlend(buffer, enableBlend, rgb, srgb, drgb, alpha, salpha, dalpha);
@@ -663,7 +665,7 @@ public:
 
     virtual void run(ptr<FrameBuffer> fb)
     {
-        if (logicOp == -1) {
+        if (logicOp == (LogicOperation)-1) {
             fb->setLogicOp(enableLogic);
         } else {
             fb->setLogicOp(enableLogic, logicOp);
@@ -690,7 +692,7 @@ public:
 
     virtual void run(ptr<FrameBuffer> fb)
     {
-        if (buffer != -1) {
+        if (buffer != BufferId(-1)) {
             fb->setColorMask(buffer, r, g, b, a);
         } else {
             fb->setColorMask(r, g, b, a);
@@ -780,10 +782,10 @@ public:
 
     virtual void run(ptr<FrameBuffer> fb)
     {
-        if (rb != -1) {
+        if (rb != BufferId(-1)) {
             fb->setReadBuffer(rb);
         }
-        if (db != -1) {
+        if (db != BufferId(-1)) {
             if (db == COLOR0 || db == COLOR1 || db == COLOR2 || db == COLOR3) {
                 fb->setDrawBuffer(db);
             } else {
