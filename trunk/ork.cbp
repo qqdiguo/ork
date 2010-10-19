@@ -26,7 +26,7 @@
 			</Target>
 			<Target title="Debug_UNIX">
 				<Option output="orkd" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/" />
+				<Option object_output="obj/debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -56,6 +56,20 @@
 					<Add library="opengl32" />
 					<Add library="gdi32" />
 					<Add library="winmm" />
+				</Linker>
+			</Target>
+			<Target title="Release_UNIX">
+				<Option output="ork" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/release/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-fPIC" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add library="glut" />
 				</Linker>
 			</Target>
 			<Target title="Test">
@@ -115,6 +129,26 @@
 					<Add library="winmm" />
 				</Linker>
 			</Target>
+			<Target title="Examples_Release">
+				<Option output="build/Release/ork-examples" prefix_auto="1" extension_auto="1" />
+				<Option object_output="build/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="scenegraphresource examples exampleScene" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-mthreads" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add library="pthreadGCE2" />
+					<Add library="$(#glut)" />
+					<Add library="glu32" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add library="winmm" />
+				</Linker>
+			</Target>
 			<Target title="Examples_UNIX">
 				<Option output="bin/ork-examples" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/" />
@@ -128,7 +162,6 @@
 				</Compiler>
 				<Linker>
 					<Add option="-pg" />
-					<Add library="glut" />
 					<Add library="pthread" />
 					<Add library="rt" />
 					<Add directory="$(#glut)" />
@@ -159,214 +192,267 @@
 		<Unit filename="examples/Main.cpp">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/Main.h">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/MinimalExample.cpp">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/RenderExample.cpp">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/ResourceExample.cpp">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/SceneGraphExample.cpp">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/SceneGraphResourceExample.cpp">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/TessellationExample.cpp">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/meshes/cube.mesh">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/meshes/plane.mesh">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/meshes/quad.mesh">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/meshes/sphere.mesh">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/methods/cameraMethod.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/methods/cameraMethodPostprocess.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/methods/infoMethod.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/methods/lightMethod.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/methods/logMethod.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/methods/meshMethod.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/methods/objectMethod.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/methods/skyboxMethod.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/scenes/cubesScene.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/scenes/exampleScene.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/scenes/postprocessScene.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/scenes/skyboxScene.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/camera.glsl">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/camera.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/flat.glsl">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/flat.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/plastic.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/plasticFS.glsl">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/plasticVS.glsl">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/postprocess.glsl">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/postprocess.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/skybox.glsl">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/skybox.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/skyboxArray.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/spotlight.glsl">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/spotlight.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/text.glsl">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/text.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/texturedPlastic.glsl">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/shaders/texturedPlastic.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/checker.png">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/checker.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/cubemap.png">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/cubemap.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/cubemapArray.png">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/cubemapArray.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/defaultFont.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/lucidaConsole.png">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/lucidaConsole.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/offscreenColor.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="examples/textures/offscreenDepth.xml">
 			<Option target="Examples" />
 			<Option target="Examples_UNIX" />
+			<Option target="Examples_Release" />
 		</Unit>
 		<Unit filename="libraries/pmath.h" />
 		<Unit filename="libraries/stbi/stb_image.cpp" />
