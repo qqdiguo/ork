@@ -145,4 +145,38 @@ void ValueSampler::set(const ptr<Texture> value)
     this->value = value;
 }
 
+ValueSubroutine::ValueSubroutine(Stage stage, const string &name) :
+    Value("UniformSubroutine", name), stage(stage)
+{
+}
+
+ValueSubroutine::ValueSubroutine(Stage stage, const string &name, const string &value) :
+    Value("UniformSubroutine", name), stage(stage), value(value)
+{
+}
+
+ValueSubroutine::~ValueSubroutine()
+{
+}
+
+UniformType ValueSubroutine::getType() const
+{
+    return SUBROUTINE;
+}
+
+Stage ValueSubroutine::getStage() const
+{
+    return stage;
+}
+
+string ValueSubroutine::get() const
+{
+    return value;
+}
+
+void ValueSubroutine::set(const string &value)
+{
+    this->value = value;
+}
+
 }

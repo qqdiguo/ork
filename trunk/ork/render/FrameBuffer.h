@@ -79,6 +79,11 @@ public:
 
     private:
         /**
+         * True if several viewports are specified.
+         */
+        bool multiViewports;
+
+        /**
          * The viewport that defines the destination area for FrameBuffer#draw.
          * This value is specific to this framebuffer instance and is
          * automatically updated when the framebuffer is activated with
@@ -88,10 +93,25 @@ public:
         vec4<GLint> viewport;
 
         /**
+         * The viewports that define the destination areas for FrameBuffer#draw.
+         * This value is specific to this framebuffer instance and is
+         * automatically updated when the framebuffer is activated with
+         * FrameBuffer##set.
+         * (This corresponds to up, down, left and right planes).
+         */
+        vec4<GLfloat> viewports[16];
+
+        /**
          * The depth range that defines the destination area for #draw.
          * Contains far and near planes.
          */
         vec2<GLfloat> depthRange;
+
+        /**
+         * The depth ranges that define the destination areas for #draw.
+         * Contains far and near planes.
+         */
+        vec2<GLdouble> depthRanges[16];
 
         /**
          * Defines which planes must be used for clipping tests.
@@ -101,7 +121,8 @@ public:
         int clipDistances;
 
         /**
-         * A unique Id incremented each time viewport, depthrange or clipDistances change.
+         * A unique Id incremented each time multiViewports, viewport,
+         * viewports, depthRange depthRanges or clipDistances change.
          */
         int transformId;
 
@@ -283,15 +304,20 @@ public:
         // -------------
 
         /**
+         * True if separate scissor tests are used for each viewport.
+         */
+        bool multiScissor;
+
+        /**
          * If enabled, only the fragments inside #scissor will not be discarded.
          * If disabled, the scissor test always passes.
          */
-        bool enableScissor;
+        bool enableScissor[16];
 
         /**
-         * The viewport of the scissor test.
+         * The viewports of the scissor test.
          */
-        vec4<GLint> scissor;
+        vec4<GLint> scissor[16];
 
         // -------------
 
@@ -682,9 +708,19 @@ public:
     vec4<GLint> getViewport();
 
     /**
+     * Returns the viewport of this framebuffer whose index is given.
+     */
+    vec4<GLfloat> getViewport(int index);
+
+    /**
      * Returns this framebuffer's depth range.
      */
     vec2<GLfloat> getDepthRange();
+
+    /**
+     * Returns the depth range of this framebuffer whose index is given.
+     */
+    vec2<GLdouble> getDepthRange(int index);
 
     /**
      * Returns this framebuffer's clip distances mask.
@@ -787,16 +823,29 @@ public:
     ptr<Query> getOcclusionTest(QueryMode &occlusionMode);
 
     /**
-     * Returns True if Scissor test is enabled.
+     * Returns True if the scissor test is enabled.
      */
     bool getScissorTest();
 
     /**
-     * Returns True if Scissor test is enabled.
+     * Returns True if the scissor test is enabled for the given viewport.
+     */
+    bool getScissorTest(int index);
+
+    /**
+     * Returns true if the scissor test is enabled.
      *
      * @param[out] scissor the current scissor test viewport.
      */
     bool getScissorTest(vec4<GLint> &scissor);
+
+    /**
+     * Returns true if the scissor test is enabled for the given viewport.
+     *
+     * @param index a viewport index.
+     * @param[out] scissor the current scissor test viewport.
+     */
+    bool getScissorTest(int index, vec4<GLint> &scissor);
 
     /**
      * Returns true if stencil test is enabled.
@@ -932,12 +981,29 @@ public:
     void setViewport(const vec4<GLint> &viewport);
 
     /**
+     * Sets a viewport for this framebuffer (up, down, left and right planes).
+     *
+     * @param index the viewport index.
+     * @param viewport the new viewport.
+     */
+    void setViewport(int index, const vec4<GLfloat> &viewport);
+
+    /**
      * Sets the depth range for this framebuffer (near and far planes).
      *
      * @param n near plane.
      * @param f far plane.
      */
     void setDepthRange(GLfloat n, GLfloat f);
+
+    /**
+     * Sets a depth range for this framebuffer (near and far planes).
+     *
+     * @param index the viewport index.
+     * @param n near plane.
+     * @param f far plane.
+     */
+    void setDepthRange(int index, GLdouble n, GLdouble f);
 
     /**
      * Sets the clipping bit, used to determine which planes will be used for clipping.
@@ -1050,9 +1116,19 @@ public:
     void setScissorTest(bool enableScissor);
 
     /**
+     * Enables or disables scissor test for the given viewport.
+     */
+    void setScissorTest(int index, bool enableScissor);
+
+    /**
      * Enables or disables scissor test.
      */
     void setScissorTest(bool enableScissor, const vec4<GLint> &scissor);
+
+    /**
+     * Enables or disables scissor test for the given viewport.
+     */
+    void setScissorTest(int index, bool enableScissor, const vec4<GLint> &scissor);
 
     /**
      * Enables or disables stencil test.
@@ -1267,7 +1343,6 @@ public:
      * Only available with OpenGL 4.0 or more.
      *
      * @param p the program to use to draw the mesh.
-     * @param mesh the mesh to draw.
      * @param m how the mesh vertices must be interpreted.
      * @param buf a CPU or GPU buffer containing the 'count', 'primCount',
      *      'first' and 'base' parameters, in this order, followed by '0',
@@ -1276,15 +1351,16 @@ public:
     void drawIndirect(ptr<Program> p, const MeshBuffers &mesh, MeshMode m, const Buffer &buf);
 
     /**
-     * Draws the mesh resulting from a transform feedback session.
+     * Draws a mesh with a vertex count resulting from a transform feedback session.
      * Only available with OpenGL 4.0 or more.
      *
      * @param p the program to use to draw the mesh.
+     * @param mesh the mesh to draw.
      * @param m how the mesh vertices must be interpreted.
      * @param tfb a TransformFeedback containing the results of a transform feedback session.
      * @param stream the stream to draw.
      */
-    void drawFeedback(ptr<Program> p, MeshMode m, const TransformFeedback &tfb, int stream = 0);
+    void drawFeedback(ptr<Program> p, const MeshBuffers &mesh, MeshMode m, const TransformFeedback &tfb, int stream = 0);
 
     /**
      * Draws a quad mesh. This mesh has a position attribute made of four
@@ -1465,18 +1541,18 @@ private:
     /**
      * The attachments of this framebuffer.
      */
-    ptr<Object> textures[6];
+    ptr<Object> textures[10];
 
     /**
      * The levels specified for each attachments of this framebuffer.
      */
-    int levels[6];
+    int levels[10];
 
     /**
      * The layers specified for each attachments of this framebuffer. Only used for
      * Texture arrays, Texture Cube, and Texture 3D.
      */
-    int layers[6];
+    int layers[10];
 
     /**
      * True if #textures, #levels or #layers has changed since the last call to #set().
@@ -1496,7 +1572,7 @@ private:
     /**
      * The draw buffers.
      */
-    BufferId drawBuffers[4];
+    BufferId drawBuffers[8];
 
     /**
      * True if #readBuffer, #drawBufferCount or #drawBuffers has changed since

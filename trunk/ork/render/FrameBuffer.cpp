@@ -156,7 +156,7 @@ void checkExtensions()
 }
 
 FrameBuffer::Parameters::Parameters() :
-    viewport(0, 0, 0, 0), depthRange(0.0f, 1.0f), clipDistances(0), transformId(0),
+    multiViewports(false), viewport(0, 0, 0, 0), depthRange(0.0f, 1.0f), clipDistances(0), transformId(0),
     clearColor(0.0f, 0.0f, 0.0f, 0.0f), clearDepth(1.0f), clearStencil(0), clearId(0),
     pointSize(1.0f), pointFadeThresholdSize(1.0f), pointLowerLeftOrigin(false), pointId(0),
     lineWidth(1.0f), lineSmooth(false),
@@ -165,7 +165,7 @@ FrameBuffer::Parameters::Parameters() :
     multiSample(true), sampleAlphaToCoverage(false), sampleAlphaToOne(false),
         sampleCoverage(1.0f), sampleMask(0xFFFFFFFF), multiSampleId(0),
     occlusionQuery(NULL), occlusionMode(WAIT),
-    enableScissor(false), scissor(0, 0, 0, 0),
+    multiScissor(false),
     enableStencil(false), ffunc(ALWAYS), fref(0), fmask(0xFFFFFFFF), ffail(KEEP), fdpfail(KEEP), fdppass(KEEP),
         bfunc(ALWAYS), bref(0), bmask(0xFFFFFFFF), bfail(KEEP), bdpfail(KEEP), bdppass(KEEP), stencilId(0),
     enableDepth(false), depth(LESS),
@@ -174,6 +174,8 @@ FrameBuffer::Parameters::Parameters() :
     enableLogic(false), logicOp(COPY),
     multiColorMask(false), depthMask(true), stencilMaskFront(0xFFFFFFFF), stencilMaskBack(0xFFFFFFFF), maskId(0)
 {
+    enableScissor[0] = false;
+    scissor[0] = vec4<GLint>(0, 0, 0, 0);
     for (int i = 0; i < 4; ++i) {
         enableBlend[i] = false;
         rgb[i] = ADD;
@@ -197,8 +199,15 @@ void FrameBuffer::Parameters::set(const Parameters &p)
     // TRANSFORM -------------
     if (transformId != p.transformId)
     {
-        glViewport(p.viewport.x, p.viewport.y, p.viewport.z, p.viewport.w);
-        glDepthRange(p.depthRange.x, p.depthRange.y);
+        if (p.multiViewports) {
+            for (int i = 0; i < 16; ++i) {
+                glViewportIndexedf(i, p.viewports[i].x, p.viewports[i].y, p.viewports[i].z, p.viewports[i].w);
+                glDepthRangeIndexed(i, p.depthRanges[i].x, p.depthRanges[i].y);
+            }
+        } else {
+            glViewport(p.viewport.x, p.viewport.y, p.viewport.z, p.viewport.w);
+            glDepthRange(p.depthRange.x, p.depthRange.y);
+        }
         for (int i = 0; i < 6; ++i) {
             glEnable(GL_CLIP_DISTANCE0 + i, (p.clipDistances & (1 << i)) != 0);
         }
@@ -294,8 +303,19 @@ void FrameBuffer::Parameters::set(const Parameters &p)
     if (enableScissor != p.enableScissor ||
         scissor != p.scissor)
     {
-        glEnable(GL_SCISSOR_TEST, p.enableScissor);
-        glScissor(p.scissor.x, p.scissor.y, p.scissor.z, p.scissor.w);
+        if (p.multiScissor) {
+            for (int i = 0; i < 16; ++i) {
+                if (p.enableScissor[i]) {
+                    glEnablei(i, GL_SCISSOR_TEST);
+                } else {
+                    glDisablei(i, GL_SCISSOR_TEST);
+                }
+                glScissorIndexed(i, p.scissor[i].x, p.scissor[i].y, p.scissor[i].z, p.scissor[i].w);
+            }
+        } else {
+            glEnable(GL_SCISSOR_TEST, p.enableScissor[0]);
+            glScissor(p.scissor[0].x, p.scissor[0].y, p.scissor[0].z, p.scissor[0].w);
+        }
     }
     // STENCIL TEST -------------
     if (stencilId != p.stencilId)
@@ -375,7 +395,7 @@ FrameBuffer::FrameBuffer() : Object("FrameBuffer"),
     glGenFramebuffers(1, &framebufferId);
     assert(getError() == 0);
 
-    for (int i = 0; i < 6; ++i) {
+    for (int i = 0; i < 10; ++i) {
         textures[i] = NULL;
         levels[i] = 0;
         layers[i] = 0;
@@ -574,6 +594,18 @@ void FrameBuffer::setDrawBuffers(BufferId b)
     if ((b & COLOR3) != 0) {
         drawBuffers[drawBufferCount++] = COLOR3;
     }
+    if ((b & COLOR4) != 0) {
+        drawBuffers[drawBufferCount++] = COLOR4;
+    }
+    if ((b & COLOR5) != 0) {
+        drawBuffers[drawBufferCount++] = COLOR5;
+    }
+    if ((b & COLOR6) != 0) {
+        drawBuffers[drawBufferCount++] = COLOR6;
+    }
+    if ((b & COLOR7) != 0) {
+        drawBuffers[drawBufferCount++] = COLOR7;
+    }
     readDrawChanged = true;
 }
 
@@ -587,9 +619,29 @@ vec4<GLint> FrameBuffer::getViewport()
     return parameters.viewport;
 }
 
+vec4<GLfloat> FrameBuffer::getViewport(int index)
+{
+    assert(index >= 0 && index < 16);
+    if (parameters.multiViewports) {
+        return parameters.viewports[index];
+    } else {
+        return parameters.viewport.cast<GLfloat>();
+    }
+}
+
 vec2<GLfloat> FrameBuffer::getDepthRange()
 {
     return parameters.depthRange;
+}
+
+vec2<GLdouble> FrameBuffer::getDepthRange(int index)
+{
+    assert(index >= 0 && index < 16);
+    if (parameters.multiViewports) {
+        return parameters.depthRanges[index];
+    } else {
+        return parameters.depthRange.cast<GLdouble>();
+    }
 }
 
 GLint FrameBuffer::getClipDistances()
@@ -696,13 +748,26 @@ ptr<Query> FrameBuffer::getOcclusionTest(QueryMode &occlusionMode)
 
 bool FrameBuffer::getScissorTest()
 {
-    return parameters.enableScissor;
+    return parameters.enableScissor[0];
+}
+
+bool FrameBuffer::getScissorTest(int index)
+{
+    assert(index >=0 && index < 16);
+    return parameters.enableScissor[index];
 }
 
 bool FrameBuffer::getScissorTest(vec4<GLint> &scissor)
 {
-    scissor = parameters.scissor;
-    return parameters.enableScissor;
+    scissor = parameters.scissor[0];
+    return parameters.enableScissor[0];
+}
+
+bool FrameBuffer::getScissorTest(int index, vec4<GLint> &scissor)
+{
+    assert(index >=0 && index < 16);
+    scissor = parameters.scissor[index];
+    return parameters.enableScissor[index];
 }
 
 bool FrameBuffer::getStencilTest()
@@ -824,14 +889,44 @@ void FrameBuffer::setParameters(const Parameters &p)
 
 void FrameBuffer::setViewport(const vec4<GLint> &viewport)
 {
+    parameters.multiViewports = false;
     parameters.viewport = viewport;
+    parameters.transformId = ++PARAMETER_ID;
+    parametersChanged = true;
+}
+
+void FrameBuffer::setViewport(int index, const vec4<GLfloat> &viewport)
+{
+    if (!parameters.multiViewports) {
+        for (int i = 0; i < 16; ++i) {
+            parameters.viewports[i] = parameters.viewport.cast<GLfloat>();
+            parameters.depthRanges[i] = parameters.depthRange.cast<GLdouble>();
+        }
+        parameters.multiViewports = true;
+    }
+    parameters.viewports[index] = viewport;
     parameters.transformId = ++PARAMETER_ID;
     parametersChanged = true;
 }
 
 void FrameBuffer::setDepthRange(GLfloat n, GLfloat f)
 {
+    parameters.multiViewports = false;
     parameters.depthRange = vec2<GLfloat>(n, f);
+    parameters.transformId = ++PARAMETER_ID;
+    parametersChanged = true;
+}
+
+void FrameBuffer::setDepthRange(int index, GLdouble n, GLdouble f)
+{
+    if (!parameters.multiViewports) {
+        for (int i = 0; i < 16; ++i) {
+            parameters.viewports[i] = parameters.viewport.cast<GLfloat>();
+            parameters.depthRanges[i] = parameters.depthRange.cast<GLdouble>();
+        }
+        parameters.multiViewports = true;
+    }
+    parameters.depthRanges[index] = vec2<GLdouble>(n, f);
     parameters.transformId = ++PARAMETER_ID;
     parametersChanged = true;
 }
@@ -982,14 +1077,43 @@ void FrameBuffer::setOcclusionTest(ptr<Query> occlusionQuery, QueryMode occlusio
 
 void FrameBuffer::setScissorTest(bool enableScissor)
 {
-    parameters.enableScissor = enableScissor;
+    parameters.multiScissor = false;
+    parameters.enableScissor[0] = enableScissor;
+    parametersChanged = true;
+}
+
+void FrameBuffer::setScissorTest(int index, bool enableScissor)
+{
+    if (!parameters.multiScissor) {
+        for (int i = 1; i < 16; ++i) {
+            parameters.enableScissor[i] = parameters.enableScissor[0];
+            parameters.scissor[i] = parameters.scissor[0];
+        }
+        parameters.multiScissor = true;
+    }
+    parameters.enableScissor[index] = enableScissor;
     parametersChanged = true;
 }
 
 void FrameBuffer::setScissorTest(bool enableScissor, const vec4<GLint> &scissor)
 {
-    parameters.enableScissor = enableScissor;
-    parameters.scissor = scissor;
+    parameters.multiScissor = false;
+    parameters.enableScissor[0] = enableScissor;
+    parameters.scissor[0] = scissor;
+    parametersChanged = true;
+}
+
+void FrameBuffer::setScissorTest(int index, bool enableScissor, const vec4<GLint> &scissor)
+{
+    if (!parameters.multiScissor) {
+        for (int i = 1; i < 16; ++i) {
+            parameters.enableScissor[i] = parameters.enableScissor[0];
+            parameters.scissor[i] = parameters.scissor[0];
+        }
+        parameters.multiScissor = true;
+    }
+    parameters.enableScissor[index] = enableScissor;
+    parameters.scissor[index] = scissor;
     parametersChanged = true;
 }
 
@@ -1256,16 +1380,16 @@ void FrameBuffer::drawIndirect(ptr<Program> p, const MeshBuffers &mesh, MeshMode
     endConditionalRender();
 }
 
-void FrameBuffer::drawFeedback(ptr<Program> p, MeshMode m, const TransformFeedback &tfb, int stream)
+void FrameBuffer::drawFeedback(ptr<Program> p, const MeshBuffers &mesh, MeshMode m, const TransformFeedback &tfb, int stream)
 {
-    assert(TransformFeedback::TRANSFORM == NULL);
+    assert(TransformFeedback::TRANSFORM == NULL && tfb.id != 0);
     set();
     p->set();
     if (Logger::DEBUG_LOGGER != NULL) {
         Logger::DEBUG_LOGGER->log("RENDER", "DrawFeedBack");
     }
     beginConditionalRender();
-    glDrawTransformFeedbackStream(getMeshMode(m), tfb.id, stream);
+    mesh.drawFeedback(m, tfb.id, stream);
     endConditionalRender();
 }
 
@@ -1454,11 +1578,18 @@ void FrameBuffer::setAttachments()
         GL_COLOR_ATTACHMENT1,
         GL_COLOR_ATTACHMENT2,
         GL_COLOR_ATTACHMENT3,
+        GL_COLOR_ATTACHMENT4,
+        GL_COLOR_ATTACHMENT5,
+        GL_COLOR_ATTACHMENT6,
+        GL_COLOR_ATTACHMENT7,
         GL_STENCIL_ATTACHMENT,
         GL_DEPTH_ATTACHMENT
     };
 
-    for (int i = 0; i < 6; ++i) {
+    for (int i = 0; i < 10; ++i) {
+        if (framebufferId == 0 && i >= 4 && i < 8) {
+            continue;
+        }
         if (textures[i] == NULL) {
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, ATTACHMENTS[i], GL_RENDERBUFFER, 0);
             continue;
@@ -1570,7 +1701,7 @@ void FrameBuffer::endConditionalRender()
 
 GLenum FrameBuffer::getBuffer(BufferId b) const
 {
-    switch (b & (COLOR0 | COLOR1 | COLOR2 | COLOR3)) {
+    switch (b & (COLOR0 | COLOR1 | COLOR2 | COLOR3 | COLOR4 | COLOR5 | COLOR6 | COLOR7)) {
     case 0:
         return GL_NONE;
     case COLOR0:
@@ -1581,6 +1712,14 @@ GLenum FrameBuffer::getBuffer(BufferId b) const
         return framebufferId == 0 ? GL_BACK_LEFT : GL_COLOR_ATTACHMENT2;
     case COLOR3:
         return framebufferId == 0 ? GL_BACK_RIGHT : GL_COLOR_ATTACHMENT3;
+    case COLOR4:
+        return framebufferId == 0 ? GL_NONE : GL_COLOR_ATTACHMENT4;
+    case COLOR5:
+        return framebufferId == 0 ? GL_NONE : GL_COLOR_ATTACHMENT5;
+    case COLOR6:
+        return framebufferId == 0 ? GL_NONE : GL_COLOR_ATTACHMENT6;
+    case COLOR7:
+        return framebufferId == 0 ? GL_NONE : GL_COLOR_ATTACHMENT7;
     }
     assert(false);
     throw exception();

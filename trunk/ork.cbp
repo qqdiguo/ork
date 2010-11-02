@@ -615,6 +615,10 @@
 			<Option target="Test" />
 			<Option target="Test_UNIX" />
 		</Unit>
+		<Unit filename="test/TestProgram.cpp">
+			<Option target="Test" />
+			<Option target="Test_UNIX" />
+		</Unit>
 		<Unit filename="test/TestResource.cpp">
 			<Option target="Test" />
 			<Option target="Test_UNIX" />

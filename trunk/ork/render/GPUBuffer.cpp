@@ -116,7 +116,7 @@ public:
         }
     }
 
-    int findFreeUnit(int programId)
+    int findFreeUnit(const vector<GLuint> &programIds)
     {
         for (GLuint i = 0; i < maxUnits; ++i) {
             if (units[i]->isFree()) {
@@ -129,7 +129,7 @@ public:
 
         for (GLuint i = 0; i < maxUnits; ++i) {
             const GPUBuffer *buffer = units[i]->getCurrentBufferBinding();
-            if (!buffer->isUsedBy(programId)) {
+            if (!buffer->isUsedBy(programIds)) {
                 unsigned int bindingTime = units[i]->getLastBindingTime();
                 if (bestUnit == -1 || bindingTime < oldestBindingTime) {
                     bestUnit = i;
@@ -254,7 +254,7 @@ void GPUBuffer::setData(int size, const void *data, BufferUsage u)
 #endif
 }
 
-void GPUBuffer::setSubData(int target, int offset, int size, const void *data)
+void GPUBuffer::setSubData(int offset, int size, const void *data)
 {
     assert(mappedData == NULL);
     glBindBuffer(GL_COPY_WRITE_BUFFER, bufferId);
@@ -267,7 +267,7 @@ void GPUBuffer::setSubData(int target, int offset, int size, const void *data)
     }
 }
 
-void GPUBuffer::getSubData(int target, int offset, int size, void *data)
+void GPUBuffer::getSubData(int offset, int size, void *data)
 {
     assert(mappedData == NULL);
     glBindBuffer(GL_COPY_READ_BUFFER, bufferId);
@@ -335,7 +335,7 @@ void GPUBuffer::unbind(int target) const
 
 void GPUBuffer::addUser(GLuint programId) const
 {
-    assert(!isUsedBy(programId));
+    assert(find(programIds.begin(), programIds.end(), programId) == programIds.end());
     programIds.push_back(programId);
 }
 
@@ -346,22 +346,19 @@ void GPUBuffer::removeUser(GLuint programId) const
     programIds.erase(i);
 }
 
-bool GPUBuffer::isUsedBy(GLuint programId) const
+bool GPUBuffer::isUsedBy(const vector<GLuint> &programId) const
 {
-    return find(programIds.begin(), programIds.end(), programId) != programIds.end();
+    return find_first_of(programIds.begin(), programIds.end(), programId.begin(), programId.end()) != programIds.end();
 }
 
-GLint GPUBuffer::bindToUniformBufferUnit(int programId) const
+GLint GPUBuffer::bindToUniformBufferUnit(const vector<GLuint> &programIds) const
 {
-    assert(programId != 0);
-
     GLint unit = currentUniformUnit;
     if (unit == -1) {
-        unit = UNIFORM_BUFFER_MANAGER->findFreeUnit(programId);
+        unit = UNIFORM_BUFFER_MANAGER->findFreeUnit(programIds);
+        assert(unit >= 0);
     }
-
     UNIFORM_BUFFER_MANAGER->bind(GLuint(unit), this);
-
     return unit;
 }
 

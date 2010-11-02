@@ -88,7 +88,7 @@ bool DrawMeshTask::Impl::run()
 {
     if (m != NULL) {
         if (Logger::DEBUG_LOGGER != NULL) {
-            Resource *r = dynamic_cast<Resource*>(&(*m));
+            Resource *r = dynamic_cast<Resource*>(m.get());
             Logger::DEBUG_LOGGER->log("SCENEGRAPH", r == NULL ? "DrawMesk" : "DrawMesh '" + r->getName() + "'");
         }
         ptr<Program> prog = SceneManager::getCurrentProgram();

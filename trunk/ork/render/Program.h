@@ -48,15 +48,19 @@ public:
      * Creates a new program.
      *
      * @param modules the modules that will compose this program.
+     * @param separable true to enable the separate use of the shaders of
+     *      this program (see #Program(ptr<Program>, ptr<Program>, ptr<Program>, ptr<Program>, ptr<Program>)).
      */
-    Program(const vector< ptr<Module> > &modules);
+    Program(const vector< ptr<Module> > &modules, bool separable = false);
 
     /**
      * Creates a new program.
      *
      * @param module the single module that will compose this program.
+     * @param separable true to enable the separate use of the shaders of
+     *      this program (see #Program(ptr<Program>, ptr<Program>, ptr<Program>, ptr<Program>, ptr<Program>)).
      */
-    Program(ptr<Module> module);
+    Program(ptr<Module> module, bool separable = false);
 
     /**
      * Creates a new program from a compiled representation.
@@ -64,8 +68,21 @@ public:
      * @param format the format of the compiled reprensentation.
      * @param length the length of the 'binary' array.
      * @param binary the compiled program code.
+     * @param separable true to enable the separate use of the shaders of
+     *      this program (see #Program(ptr<Program>, ptr<Program>, ptr<Program>, ptr<Program>, ptr<Program>)).
      */
-    Program(GLenum format, GLsizei length, unsigned char *binary);
+    Program(GLenum format, GLsizei length, unsigned char *binary, bool separable = false);
+
+    /**
+     * Creates a program from individual shaders in separable programs.
+     *
+     * @param vertex the program whose vertex shader must be used.
+     * @param tessControl the program whose tessellation control shader must be used.
+     * @param tessEval the program whose tessellation evaluation shader must be used.
+     * @param geometry the program whose geometry shader must be used.
+     * @param fragment the program whose fragment shader must be used.
+     */
+    Program(ptr<Program> vertex, ptr<Program> tessControl, ptr<Program> tessEval, ptr<Program> geometry, ptr<Program> fragment);
 
     /**
      * Deletes this program.
@@ -448,6 +465,16 @@ public:
     inline ptr<UniformSampler> getUniformSampler(const string &name);
 
     /**
+     * Returns the uniform subroutine of this program whose name is given.
+     *
+     * @param stage a shader type (vertex, fragment, etc).
+     * @param name a GLSL uniform subroutine name.
+     * @return the uniform of this program whose name is given,
+     *       or NULL if there is no such uniform.
+     */
+    inline ptr<UniformSubroutine> getUniformSubroutine(Stage stage, const string &name);
+
+    /**
      * Returns the uniform block of this program whose name is given.
      *
      * @param name a GLSL uniform block name.
@@ -480,8 +507,10 @@ protected:
      * Initializes this program.
      *
      * @param modules the modules that will compose this program.
+     * @param separable true to enable the separate use of the shaders of
+     *      this program (see #Program(ptr<Program>, ptr<Program>, ptr<Program>, ptr<Program>, ptr<Program>)).
      */
-    void init(const vector< ptr<Module> > &modules);
+    void init(const vector< ptr<Module> > &modules, bool separable);
 
     /**
      * Initializes this program from a compiled representation.
@@ -489,8 +518,18 @@ protected:
      * @param format the format of the compiled reprensentation.
      * @param length the length of the 'binary' array.
      * @param binary the compiled program code.
+     * @param separable true to enable the separate use of the shaders of
+     *      this program (see #Program(ptr<Program>, ptr<Program>, ptr<Program>, ptr<Program>, ptr<Program>)).
      */
-    void init(GLenum format, GLsizei length, unsigned char *binary);
+    void init(GLenum format, GLsizei length, unsigned char *binary, bool separable);
+
+    /**
+     * Initializes the given stage of this pipeline object.
+     *
+     * @param s a shader type (vertex, fragment, etc).
+     * @param p the program to use for this stage in this pipelne object.
+     */
+    void init(Stage s, ptr<Program> p);
 
     /**
      * Initializes the uniforms of this program.
@@ -506,11 +545,32 @@ private:
     /**
      * The id of this program.
      */
-    int programId;
+    GLuint programId;
+
+    /**
+     * The pipeline object id of this program, if applicable.
+     */
+    GLuint pipelineId;
+
+    /**
+     * The programs used in this pipeline object.
+     */
+    vector<GLuint> programIds;
+
+    /**
+     * The programs whose shaders are used in this pipeline object.
+     */
+    vector< ptr<Program> > pipelinePrograms;
+
+    /**
+     * The pipeline stages for which #pipelinePrograms are used.
+     */
+    vector<int> pipelineStages;
 
     /**
      * The uniforms of this program. This includes all uniforms,
-     * whether outside or inside a uniform block, including uniform samplers.
+     * whether outside or inside a uniform block, including uniform samplers
+     * and uniform subroutines.
      */
     map<string, ptr<Uniform> > uniforms;
 
@@ -524,6 +584,17 @@ private:
      * The uniform samplers of this program.
      */
     vector< ptr<UniformSampler> > uniformSamplers;
+
+    /**
+     * The values of the uniform subroutines of this program.
+     */
+    GLuint** uniformSubroutines;
+
+    /**
+     * Bitfield indicating the program stages in which at least one
+     * uniform subroutines has changed.
+     */
+    int dirtyStages;
 
     /**
      * The uniform blocks of this program.
@@ -548,6 +619,23 @@ private:
     void set();
 
     /**
+     * Binds the textures and uniform blocks of this program to available units.
+     */
+    void bindTexturesAndUniformBlocks();
+
+    /**
+     * Updates the value of the uniforms of this program. This method unmaps the
+     * buffers of the uniform blocks, updates the uniform subroutines, and
+     * optionally updates the value of the "regular" uniforms whose value has
+     * changed since the last time this program was used (this only happens with
+     * the ORK_NO_GLPROGRAMUNIFORM preprocessor option).
+     *
+     * @param stages a bitfield indicating the stages whose uniform subroutines
+     *      must be updated.
+     */
+    void updateDirtyUniforms(int stages);
+
+    /**
      * Adds or removes this program as a user of the textures bound to
      * the uniform samplers of this program.
      */
@@ -567,9 +655,17 @@ private:
      */
     void updateUniforms(Program *owner);
 
+    /**
+     * Returns true if this program is the current one, or is part of the
+     * current pipeline object.
+     */
+    bool isCurrent() const;
+
     friend class Uniform;
 
     friend class UniformSampler;
+
+    friend class UniformSubroutine;
 
     friend class Texture;
 
@@ -773,6 +869,23 @@ inline ptr<UniformMatrix4x3d> Program::getUniformMatrix4x3d(const string &name)
 inline ptr<UniformSampler> Program::getUniformSampler(const string &name)
 {
     return getUniform(name).cast<UniformSampler>();
+}
+
+inline ptr<UniformSubroutine> Program::getUniformSubroutine(Stage stage, const string &name)
+{
+    switch (stage) {
+    case VERTEX:
+        return getUniform("VERTEX " + name).cast<UniformSubroutine>();
+    case TESSELATION_CONTROL:
+        return getUniform("TESS_CONTROL " + name).cast<UniformSubroutine>();
+    case TESSELATION_EVALUATION:
+        return getUniform("TESS_EVAL " + name).cast<UniformSubroutine>();
+    case GEOMETRY:
+        return getUniform("GEOMETRY " + name).cast<UniformSubroutine>();
+    case FRAGMENT:
+        return getUniform("FRAGMENT " + name).cast<UniformSubroutine>();
+    }
+    throw exception();
 }
 
 }

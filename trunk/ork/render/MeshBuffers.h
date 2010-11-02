@@ -334,6 +334,16 @@ protected:
     void drawIndirect(MeshMode m, const Buffer &buf) const;
 
     /**
+     * Draws this mesh with a vertex count resulting from a transform feedback session.
+     * Only available with OpenGL 4.0 or more.
+     *
+     * @param m how the mesh vertices must be interpreted.
+     * @param tfb the id of a TransformFeedback containing the results of a transform feedback session.
+     * @param stream the stream to draw.
+     */
+    void drawFeedback(MeshMode m, GLuint tfb, int stream = 0) const;
+
+    /**
      * The AttributeBuffer of this mesh.
      */
     vector< ptr<AttributeBuffer> > attributeBuffers;

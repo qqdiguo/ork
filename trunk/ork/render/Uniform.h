@@ -1146,6 +1146,104 @@ private:
 // ----------------------------------------------------------------------------
 
 /**
+ * A Uniform holding a subroutine value.
+ */
+class ORK_API UniformSubroutine : public Uniform
+{
+public:
+    /**
+     * Deletes this uniform.
+     */
+    virtual ~UniformSubroutine();
+
+    virtual UniformType getType() const;
+
+    /**
+     * Returns the shader type to which this uniform subroutine belongs.
+     */
+    Stage getStage() const;
+
+    /**
+     * Returns the possible values for this uniform subroutine.
+     */
+    vector<string> getPossibleValues() const;
+
+    /**
+     * Returns the value of this uniform subroutine.
+     *
+     * @return the index of the subroutine name in #getPossibleValues.
+     */
+    int get();
+
+    /**
+     * Returns the value of this uniform subroutine.
+     *
+     * @return the subroutine name.
+     */
+    string getSubroutine();
+
+    /**
+     * Sets the value of this uniform subroutine.
+     *
+     * @param subroutine the index of a subroutine name in #getPossibleValues.
+     */
+    void set(int subroutine);
+
+    /**
+     * Sets the value of this uniform subroutine.
+     *
+     * @param subroutine a subroutine name.
+     */
+    void setSubroutine(const string &subroutine);
+
+    virtual void setValue(ptr<Value> v);
+
+protected:
+    virtual void setValue();
+
+private:
+    /**
+     * The shader type to which this uniform subroutine belongs.
+     */
+    Stage stage;
+
+    /**
+     * The index of the current subroutine name in #compatibleSubroutineNames.
+     */
+    GLint value;
+
+    /**
+     * The names of the possible subroutines for this uniform subroutine.
+     */
+    vector<string> compatibleSubroutineNames;
+
+    /**
+     * The OpenGL ids of the possible subroutines for this uniform subroutine.
+     */
+    vector<GLint> compatibleSubroutineIndices;
+
+    /**
+     * Creates a new uniform subroutine.
+     *
+     * @param program the Program to which this uniform belongs.
+     * @param stage the shader type to which this uniform subroutine belongs.
+     * @param name the name of the uniform in the GLSL shader code.
+     * @param location the location of this uniform. For an uniform inside a
+     *      block, this location is an offset inside the uniform block buffer.
+     * @param compatibleSubroutineNames the names of the possible subroutines
+     *      for this uniform subroutine.
+     * @param compatibleSubroutineIndices the OpenGL ids of the possible
+     *      subroutines for this uniform subroutine.
+     */
+    UniformSubroutine(Program *program, Stage stage, const string &name, GLint location,
+        const vector<string> &compatibleSubroutineNames, const vector<GLint> &compatibleSubroutineIndices);
+
+    friend class Program;
+};
+
+// ----------------------------------------------------------------------------
+
+/**
  * A named block of uniforms. The values of the uniforms in a uniform block are
  * stored in a GPUBuffer. Different Programs having identical uniform blocks have
  * different UniformBlock objects, but these objects can share the same GPUBuffer
@@ -1584,7 +1682,7 @@ protected:
      * When creating a new uniform block, the user should check if a buffer was
      * already created for that UB name. Otherwise, he may create a new one.
      */
-    static static_ptr<Factory<string, ptr<GPUBuffer> > >buffers;
+    static static_ptr< Factory< string, ptr<GPUBuffer> > > buffers;
 
     /**
      * Callback method to create a new buffer. For use with #buffers.

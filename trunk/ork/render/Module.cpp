@@ -308,7 +308,28 @@ void Module::addFeedbackVarying(const string &name)
 
 void Module::addInitialValue(ptr<Value> value)
 {
-    initialValues.insert(make_pair(value->getName(), value));
+    ptr<ValueSubroutine> sub = value.cast<ValueSubroutine>();
+    if (sub != NULL) {
+        switch (sub->getStage()) {
+        case VERTEX:
+            initialValues.insert(make_pair("VERTEX " + value->getName(), value));
+            break;
+        case TESSELATION_CONTROL:
+            initialValues.insert(make_pair("TESS_CONTROL " + value->getName(), value));
+            break;
+        case TESSELATION_EVALUATION:
+            initialValues.insert(make_pair("TESS_EVAL " + value->getName(), value));
+            break;
+        case GEOMETRY:
+            initialValues.insert(make_pair("GEOMETRY " + value->getName(), value));
+            break;
+        case FRAGMENT:
+            initialValues.insert(make_pair("FRAGMENT " + value->getName(), value));
+            break;
+        }
+    } else {
+        initialValues.insert(make_pair(value->getName(), value));
+    }
 }
 
 void Module::swap(ptr<Module> s)
@@ -371,7 +392,7 @@ public:
     {
         e = e == NULL ? desc->descriptor : e;
         try {
-            checkParameters(desc, e, "name,version, source,vertex,tessControl,tessEvaluation,geometry,fragment,options,");
+            checkParameters(desc, e, "name,version, source,vertex,tessControl,tessEvaluation,geometry,fragment,feedback,varyings,options,");
 
             int version;
             getIntParameter(desc, e, "version", &version);
@@ -699,7 +720,7 @@ public:
                                 }
                             }
                         }
-                    } else if (strncmp(type.c_str(), "uniformSampler", 14) == 0) {
+                    } else if (strcmp(type.c_str(), "uniformSampler") == 0) {
                         checkParameters(desc, f, "name,texture,");
                         ptr<Texture> t = manager->loadResource(f->Attribute("texture")).cast<Texture>();
                         if (t == NULL) {
@@ -709,6 +730,25 @@ public:
                             throw exception();
                         }
                         v = new ValueSampler(SAMPLER_2D, n, t);
+                    } else if (strcmp(type.c_str(), "uniformSubroutine") == 0) {
+                        checkParameters(desc, f, "name,subroutine,stage,");
+                        assert(f->Attribute("stage") != NULL);
+                        if (strcmp(f->Attribute("stage"), "VERTEX") == 0) {
+                            v = new ValueSubroutine(VERTEX, n, string(f->Attribute("subroutine")));
+                        } else if (strcmp(f->Attribute("stage"), "TESSELATION_CONTROL") == 0) {
+                            v = new ValueSubroutine(TESSELATION_CONTROL, n, string(f->Attribute("subroutine")));
+                        } else if (strcmp(f->Attribute("stage"), "TESSELATION_EVALUATION") == 0) {
+                            v = new ValueSubroutine(TESSELATION_EVALUATION, n, string(f->Attribute("subroutine")));
+                        } else if (strcmp(f->Attribute("stage"), "GEOMETRY") == 0) {
+                            v = new ValueSubroutine(GEOMETRY, n, string(f->Attribute("subroutine")));
+                        } else if (strcmp(f->Attribute("stage"), "FRAGMENT") == 0) {
+                            v = new ValueSubroutine(FRAGMENT, n, string(f->Attribute("subroutine")));
+                        } else {
+                            if (Logger::ERROR_LOGGER != NULL) {
+                                log(Logger::ERROR_LOGGER, desc, e, "Invalid shader stage '" + string(f->Attribute("stage")) + "'");
+                            }
+                            throw exception();
+                        }
                     } else {
                         if (Logger::ERROR_LOGGER != NULL) {
                             log(Logger::ERROR_LOGGER, desc, e, "Unsupported type specifier '" + type + "'");
@@ -772,7 +812,6 @@ public:
                     addFeedbackVarying(varying);
                     start = index + 1;
                 }
-
             }
 
             desc->clearData();

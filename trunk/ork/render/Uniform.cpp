@@ -57,7 +57,10 @@ void Uniform::setValueIfCurrent()
     if (block != NULL) {
         return;
     }
-    if (program == Program::CURRENT) {
+    if (program->isCurrent()) {
+        if (Program::CURRENT->pipelineId > 0) {
+            glActiveShaderProgram(Program::CURRENT->pipelineId, program->programId);
+        }
         setValue();
         dirty = false;
     } else {
@@ -523,7 +526,7 @@ ptr<Sampler> UniformSampler::getSampler() const
 void UniformSampler::setSampler(const ptr<Sampler> sampler)
 {
     this->sampler = sampler;
-    if (program != NULL && program == Program::CURRENT) {
+    if (program != NULL && program->isCurrent()) {
         setValue();
     }
 }
@@ -544,7 +547,7 @@ void UniformSampler::set(ptr<Texture> value)
         }
     }
     this->value = value;
-    if (program != NULL && program == Program::CURRENT) {
+    if (program != NULL && program->isCurrent()) {
         setValue();
     }
 }
@@ -558,11 +561,14 @@ void UniformSampler::setValue(ptr<Value> v)
 
 void UniformSampler::setValue()
 {
-    if (value != NULL && location != -1) {
-        GLint newUnit = value->bindToTextureUnit(sampler, program->getId());
+    if (value != NULL && location != -1 && Program::CURRENT != NULL) {
+        GLint newUnit = value->bindToTextureUnit(sampler, Program::CURRENT->programIds);
         assert(newUnit >= 0);
         if (newUnit != unit) {
 #ifdef ORK_NO_GLPROGRAMUNIFORM
+            if (Program::CURRENT->pipelineId > 0) {
+                glActiveShaderProgram(Program::CURRENT->pipelineId, program->programId);
+            }
             glUniform1i(location, newUnit);
 #else
             glProgramUniform1iEXT(program->getId(), location, newUnit);
@@ -570,7 +576,77 @@ void UniformSampler::setValue()
             assert(FrameBuffer::getError() == 0);
             unit = newUnit;
         }
+    } else {
+        unit = -1;
     }
+}
+
+// ----------------------------------------------------------------------------
+
+UniformSubroutine::UniformSubroutine(Program *program, Stage stage, const string &name, GLint location,
+    const vector<string> &compatibleSubroutineNames, const vector<GLint> &compatibleSubroutineIndices) :
+        Uniform("UniformSubroutine", program, NULL, name, location), stage(stage), value(0),
+        compatibleSubroutineNames(compatibleSubroutineNames), compatibleSubroutineIndices(compatibleSubroutineIndices)
+{
+}
+
+UniformSubroutine::~UniformSubroutine()
+{
+}
+
+UniformType UniformSubroutine::getType() const
+{
+    return SUBROUTINE;
+}
+
+Stage UniformSubroutine::getStage() const
+{
+    return stage;
+}
+
+vector<string> UniformSubroutine::getPossibleValues() const
+{
+    return compatibleSubroutineNames;
+}
+
+int UniformSubroutine::get()
+{
+    return value;
+}
+
+string UniformSubroutine::getSubroutine()
+{
+    return compatibleSubroutineNames[value];
+}
+
+void UniformSubroutine::set(int subroutine)
+{
+    value = subroutine;
+    if (program != NULL) {
+        program->uniformSubroutines[stage][location + 1] = compatibleSubroutineIndices[subroutine];
+        program->dirtyStages |= (1 << stage);
+    }
+}
+
+void UniformSubroutine::setSubroutine(const string &subroutine)
+{
+    for (unsigned int i = 0; i < compatibleSubroutineNames.size(); ++i) {
+        if (subroutine == compatibleSubroutineNames[i]) {
+            set(i);
+            return;
+        }
+    }
+    throw exception();
+}
+
+void UniformSubroutine::setValue(ptr<Value> v)
+{
+    setSubroutine(v.cast<ValueSubroutine>()->get());
+}
+
+void UniformSubroutine::setValue()
+{
+    // nothing to do (subroutines are set in Program::set)
 }
 
 // ----------------------------------------------------------------------------
@@ -595,7 +671,6 @@ UniformBlock::UniformBlock(Program *program, const string &name, GLuint index, G
 
 UniformBlock::~UniformBlock()
 {
-    setBuffer(NULL);
 }
 
 ptr<GPUBuffer> UniformBlock::newBuffer(string name)
@@ -627,6 +702,14 @@ ptr<Uniform> UniformBlock::getUniform(const string &name) const
 
 void UniformBlock::setBuffer(ptr<GPUBuffer> buffer)
 {
+    if (program != NULL) {
+        if (this->buffer != NULL) {
+            this->buffer->removeUser(program->getId());
+        }
+        if (buffer != NULL) {
+            buffer->addUser(program->getId());
+        }
+    }
     if (this->buffer != NULL && isMapped()) {
         unmapBuffer();
         ptr<UniformBlockBuffer> b = this->buffer.cast<UniformBlockBuffer>();

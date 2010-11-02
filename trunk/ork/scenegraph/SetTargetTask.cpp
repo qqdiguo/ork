@@ -162,6 +162,18 @@ bool SetTargetTask::Impl::run()
                 case COLOR3:
                     os << " COLOR3";
                     break;
+                case COLOR4:
+                    os << " COLOR4";
+                    break;
+                case COLOR5:
+                    os << " COLOR5";
+                    break;
+                case COLOR6:
+                    os << " COLOR6";
+                    break;
+                case COLOR7:
+                    os << " COLOR7";
+                    break;
                 case STENCIL:
                     os << " STENCIL";
                     break;
@@ -169,7 +181,7 @@ bool SetTargetTask::Impl::run()
                     os << " DEPTH";
                     break;
             }
-            Resource* r = dynamic_cast<Resource*>(&(*(textures[i])));
+            Resource* r = dynamic_cast<Resource*>(textures[i].get());
             if (r != NULL) {
                 os << " '" << r->getName() << "'";
             }
@@ -182,15 +194,19 @@ bool SetTargetTask::Impl::run()
 
     ptr<FrameBuffer> fb = getTargetBuffer();
     if (textures.size() == 0) {
-        BufferId bufs[6] = {
+        BufferId bufs[10] = {
             COLOR0,
             COLOR1,
             COLOR2,
             COLOR3,
+            COLOR4,
+            COLOR5,
+            COLOR6,
+            COLOR7,
             STENCIL,
             DEPTH
         };
-        for (int i = 0; i < 6; ++i) {
+        for (int i = 0; i < 10; ++i) {
             ptr<Texture> t = fb->getTextureBuffer(bufs[i]);
             if (t != NULL) {
                 t->generateMipMap();

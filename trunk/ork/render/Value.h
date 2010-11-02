@@ -824,6 +824,66 @@ private:
     ptr<Texture> value;
 };
 
+// ----------------------------------------------------------------------------
+
+/**
+ * A Value holding a subroutine value.
+ * @ingroup render
+ */
+class ORK_API ValueSubroutine : public Value
+{
+public:
+    /**
+     * Creates an uninitialized ValueSubroutine.
+     */
+    ValueSubroutine(Stage stage, const string &name);
+
+    /**
+     * Creates a ValueSubroutine.
+     */
+    ValueSubroutine(Stage stage, const string &name, const string &value);
+
+    /**
+     * Deletes this ValueSubroutine.
+     */
+    virtual ~ValueSubroutine();
+
+    virtual UniformType getType() const;
+
+    /**
+     * Returns the shader type for this subroutine (vertex, fragment, etc).
+     */
+    Stage getStage() const;
+
+    /**
+     * Returns the current value of this ValueSubroutine.
+     */
+    string get() const;
+
+    /**
+     * Sets the value of this uniform.
+     *
+     * @param value the new value for this ValueSubroutine.
+     */
+    void set(const string &value);
+
+private:
+    /**
+     * The type of this ValueSubroutine.
+     */
+    UniformType type;
+
+    /**
+     * The shader type for this subroutine (vertex, fragment, etc).
+     */
+    Stage stage;
+
+    /**
+     * The current value of this ValueSubroutine.
+     */
+    string value;
+};
+
 }
 
 #endif

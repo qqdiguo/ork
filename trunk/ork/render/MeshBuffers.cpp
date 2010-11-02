@@ -708,6 +708,43 @@ void MeshBuffers::drawIndirect(MeshMode m, const Buffer &buf) const
 #endif
 }
 
+void MeshBuffers::drawFeedback(MeshMode m, GLuint tfb, int stream) const
+{
+    if (CURRENT != this) {
+        set();
+    }
+
+    if (primitiveRestart != CURRENT_RESTART_INDEX) {
+        if (primitiveRestart >= 0) {
+            glEnable(GL_PRIMITIVE_RESTART);
+            glPrimitiveRestartIndex(GLuint(primitiveRestart));
+        } else {
+            glDisable(GL_PRIMITIVE_RESTART);
+        }
+        CURRENT_RESTART_INDEX = primitiveRestart;
+    }
+    if (patchVertices > 0 && patchVertices != CURRENT_PATCH_VERTICES) {
+        glPatchParameteri(GL_PATCH_VERTICES, patchVertices);
+    }
+
+    glDrawTransformFeedbackStream(getMeshMode(m), tfb, stream);
+
+#ifndef NDEBUG
+    GLenum err = glGetError();
+    if (err != 0) {
+        if (Program::CURRENT == NULL || Program::CURRENT->checkSamplers()) {
+            if (Logger::ERROR_LOGGER != NULL) {
+                ostringstream oss;
+                oss << "OpenGL error " << err << ", returned string '" << gluErrorString(err) << "'";
+                Logger::ERROR_LOGGER->log("RENDER", oss.str());
+                Logger::ERROR_LOGGER->flush();
+            }
+            assert(err == 0);
+        }
+    }
+#endif
+}
+
 const MeshBuffers *MeshBuffers::CURRENT = NULL;
 
 int MeshBuffers::CURRENT_RESTART_INDEX = -1;

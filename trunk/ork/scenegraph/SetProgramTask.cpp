@@ -62,7 +62,7 @@ ptr<Task> SetProgramTask::getTask(ptr<Object> context)
                 name = name + modules[i].name + ";";
             } else {
                 ptr<Module> s = target->getModule(modules[i].name);
-                name = name + dynamic_cast<Resource*>(&(*s))->getName() + ";";
+                name = name + dynamic_cast<Resource*>(s.get())->getName() + ";";
             }
         }
         // TODO sort name components!!!
@@ -94,7 +94,7 @@ bool SetProgramTask::Impl::run()
 {
     if (p != NULL) {
         if (Logger::DEBUG_LOGGER != NULL) {
-            Resource *r = dynamic_cast<Resource*>(&(*p));
+            Resource *r = dynamic_cast<Resource*>(p.get());
             Logger::DEBUG_LOGGER->log("SCENEGRAPH", r == NULL ? "SetProgram" : "SetProgram '" + r->getName() + "'");
         }
         if (n != NULL) {

@@ -396,3 +396,47 @@ TEST(testStructureArray1)
     fb->readPixels(0, 0, 1, 1, RGBA, FLOAT, Buffer::Parameters(), CPUBuffer(&pixels));
     ASSERT(pixels[0] == 1.0f && pixels[1] == 2.0f && pixels[2] == 3.0f && pixels[3] == 6.0f);
 }
+
+// ----------------------------------------------------------------------------
+// SUBROUTINES
+// ----------------------------------------------------------------------------
+
+TEST4(testSubroutine1)
+{
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32F, 1, 1);
+    ptr<Program> p = new Program(new Module(400, NULL, "\
+        subroutine float sr(float x);\n\
+        subroutine (sr) float sr1(float x) { return x; }\n\
+        subroutine (sr) float sr2(float x) { return x + 1.0f; }\n\
+        subroutine uniform sr f;\n\
+        layout(location=0) out vec4 color;\n\
+        void main() { color = vec4(f(1.0), 0.0, 0.0, 0.0); }\n"));
+    p->getUniformSubroutine(FRAGMENT, "f")->setSubroutine("sr1");
+    GLfloat pixels1[4];
+    fb->drawQuad(p);
+    fb->readPixels(0, 0, 1, 1, RGBA, FLOAT, Buffer::Parameters(), CPUBuffer(&pixels1));
+    p->getUniformSubroutine(FRAGMENT, "f")->setSubroutine("sr2");
+    GLfloat pixels2[4];
+    fb->drawQuad(p);
+    fb->readPixels(0, 0, 1, 1, RGBA, FLOAT, Buffer::Parameters(), CPUBuffer(&pixels2));
+    ASSERT(pixels1[0] == 1.0f && pixels2[0] == 2.0f);
+}
+
+TEST4(testSubroutine2)
+{
+    ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::RG32F, 1, 1);
+    ptr<Program> p = new Program(new Module(400, NULL, "\
+        subroutine float sr(float x);\n\
+        subroutine (sr) float sr1(float x) { return x; }\n\
+        subroutine (sr) float sr2(float x) { return x + 1.0f; }\n\
+        subroutine uniform sr f[2];\n\
+        layout(location=0) out vec4 color;\n\
+        void main() { color = vec4(f[0](1.0), f[1](1.0), 0.0, 0.0); }\n"));
+    p->getUniformSubroutine(FRAGMENT, "f[0]")->setSubroutine("sr1");
+    p->getUniformSubroutine(FRAGMENT, "f[1]")->setSubroutine("sr2");
+    GLfloat pixels[4];
+    fb->drawQuad(p);
+    fb->readPixels(0, 0, 1, 1, RGBA, FLOAT, Buffer::Parameters(), CPUBuffer(&pixels));
+    ASSERT(pixels[0] == 1.0f && pixels[1] == 2.0f);
+}
+

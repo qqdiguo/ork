@@ -131,12 +131,13 @@ void TransformFeedback::transformIndirect(const MeshBuffers &mesh, const Buffer 
     TRANSFORMFEEDBACK_FRAMEBUFFER->endConditionalRender();
 }
 
-void TransformFeedback::transformFeedback(const TransformFeedback &tfb, int stream)
+void TransformFeedback::transformFeedback(const MeshBuffers &mesh, const TransformFeedback &tfb, int stream)
 {
+    assert(tfb.id != 0);
     TRANSFORMFEEDBACK_FRAMEBUFFER->set();
     TRANSFORM->set();
     TRANSFORMFEEDBACK_FRAMEBUFFER->beginConditionalRender();
-    glDrawTransformFeedbackStream(getMeshMode(MODE), tfb.id, stream);
+    mesh.drawFeedback(MODE, tfb.id, stream);
     TRANSFORMFEEDBACK_FRAMEBUFFER->endConditionalRender();
 }
 

@@ -430,8 +430,12 @@ enum BufferId {
     COLOR1 = 2, ///< &nbsp;
     COLOR2 = 4, ///< &nbsp;
     COLOR3 = 8, ///< &nbsp;
-    STENCIL = 16, ///< &nbsp;
-    DEPTH = 32 ///< depth
+    COLOR4 = 16, ///< &nbsp;
+    COLOR5 = 32, ///< &nbsp;
+    COLOR6 = 64, ///< &nbsp;
+    COLOR7 = 128, ///< &nbsp;
+    STENCIL = 256, ///< &nbsp;
+    DEPTH = 512 ///< depth
 };
 
 /**
@@ -515,11 +519,11 @@ enum LogicOperation {
  * A shader type.
  */
 enum Stage {
-    VERTEX, ///< &nbsp;
-    TESSELATION_CONTROL, ///< &nbsp;
-    TESSELATION_EVALUATION, ///< &nbsp;
-    GEOMETRY, ///< &nbsp;
-    FRAGMENT ///< &nbsp;
+    VERTEX = 0, ///< &nbsp;
+    TESSELATION_CONTROL = 1, ///< &nbsp;
+    TESSELATION_EVALUATION = 2, ///< &nbsp;
+    GEOMETRY = 3, ///< &nbsp;
+    FRAGMENT = 4 ///< &nbsp;
 };
 
 /**
@@ -596,7 +600,8 @@ enum UniformType {
     UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE, ///< &nbsp;
     UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY, ///< &nbsp;
     UNSIGNED_INT_SAMPLER_BUFFER, ///< &nbsp;
-    UNSIGNED_INT_SAMPLER_2D_RECT ///< &nbsp;
+    UNSIGNED_INT_SAMPLER_2D_RECT, ///< &nbsp;
+    SUBROUTINE ///< &nbsp;
 };
 
 /**

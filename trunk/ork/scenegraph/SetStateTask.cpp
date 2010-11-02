@@ -41,6 +41,14 @@ BufferId getBufferFromName(const char *v) {
         return COLOR2;
     } else if (strcmp(v, "COLOR3") == 0) {
         return COLOR3;
+    } else if (strcmp(v, "COLOR4") == 0) {
+        return COLOR4;
+    } else if (strcmp(v, "COLOR5") == 0) {
+        return COLOR5;
+    } else if (strcmp(v, "COLOR6") == 0) {
+        return COLOR6;
+    } else if (strcmp(v, "COLOR7") == 0) {
+        return COLOR7;
     } else if (strcmp(v, "DEPTH") == 0) {
         return DEPTH;
     } else {
@@ -786,7 +794,9 @@ public:
             fb->setReadBuffer(rb);
         }
         if (db != BufferId(-1)) {
-            if (db == COLOR0 || db == COLOR1 || db == COLOR2 || db == COLOR3) {
+            if (db == COLOR0 || db == COLOR1 || db == COLOR2 || db == COLOR3 ||
+                db == COLOR4 || db == COLOR5 || db == COLOR6 || db == COLOR7)
+            {
                 fb->setDrawBuffer(db);
             } else {
                 fb->setDrawBuffers(db);

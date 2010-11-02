@@ -143,11 +143,12 @@ public:
      * Retransforms a mesh resulting from a previous transform feedback session.
      * Only available with OpenGL 4.0 or more.
      *
+     * @param mesh the mesh to retransform.
      * @param tfb a TransformFeedback containing the results of a previous transform
      *      feedback session.
      * @param stream the stream to draw.
      */
-    void transformFeedback(const TransformFeedback &tfb, int stream = 0);
+    void transformFeedback(const MeshBuffers &mesh, const TransformFeedback &tfb, int stream = 0);
 
     /**
      * Pauses the current transform feedback session.

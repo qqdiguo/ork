@@ -624,12 +624,12 @@ public:
     /**
      * Finds a free texture unit and return its index. If no texture unit is
      * free, evicts the least recently bound texture not used in the given
-     * program.
+     * programs.
      *
      * @return a free texture unit, or -1 if all units are used by the given
      *      program.
      */
-    int findFreeTextureUnit(int programId)
+    int findFreeTextureUnit(const vector<GLuint> &programIds)
     {
         // we first try to find an unused texture unit
         for (GLuint i = 0; i < maxUnits; ++i) {
@@ -647,7 +647,7 @@ public:
 
         for (GLuint i = 0; i < maxUnits; ++i) {
             const Texture *t = units[i]->getCurrentTextureBinding();
-            if (!t->isUsedBy(programId)) {
+            if (!t->isUsedBy(programIds)) {
                 unsigned int bindingTime = units[i]->getLastBindingTime();
                 if (bestUnit == -1 || bindingTime < oldestBindingTime) {
                     bestUnit = i;
@@ -1285,16 +1285,14 @@ void Texture::generateMipMap()
     }
 }
 
-GLint Texture::bindToTextureUnit(ptr<Sampler> sampler, GLuint programId) const
+GLint Texture::bindToTextureUnit(ptr<Sampler> sampler, const vector<GLuint> &programIds) const
 {
-    assert(programId != 0);
-
     GLuint samplerId = sampler == NULL ? 0 : sampler->getId();
     map<GLuint, GLuint>::iterator i = currentTextureUnits.find(samplerId);
 
     GLint unit;
     if (i == currentTextureUnits.end()) {
-        unit = TEXTURE_UNIT_MANAGER->findFreeTextureUnit(programId);
+        unit = TEXTURE_UNIT_MANAGER->findFreeTextureUnit(programIds);
     } else {
         unit = i->second;
     }
@@ -1307,11 +1305,13 @@ GLint Texture::bindToTextureUnit(ptr<Sampler> sampler, GLuint programId) const
 GLint Texture::bindToTextureUnit() const
 {
     if (currentTextureUnits.empty()) {
-        int programId = 0;
-        if (Program::CURRENT != NULL) {
-            programId = Program::CURRENT->getId();
+        GLint unit;
+        if (Program::CURRENT == NULL) {
+            unit = TEXTURE_UNIT_MANAGER->findFreeTextureUnit(vector<GLuint>());
+        } else {
+            unit = TEXTURE_UNIT_MANAGER->findFreeTextureUnit(Program::CURRENT->programIds);
         }
-        GLint unit = TEXTURE_UNIT_MANAGER->findFreeTextureUnit(programId);
+        assert(unit != -1);
         TEXTURE_UNIT_MANAGER->bind(GLuint(unit), NULL, this);
         return unit;
     } else {
@@ -1319,22 +1319,14 @@ GLint Texture::bindToTextureUnit() const
         glActiveTexture(GL_TEXTURE0 + unit);
         return unit;
     }
-   // Visual Studio says this code is not reachable so I
-   // commented it.
-   // return -1;
 }
 
 void Texture::swap(ptr<Texture> t)
 {
     TEXTURE_UNIT_MANAGER->unbind(this);
-    TEXTURE_UNIT_MANAGER->unbind(&(*t));
-    if (Program::CURRENT != NULL) {
-        GLuint programId = Program::CURRENT->getId();
-        for (unsigned int i = 0; i < programIds.size(); ++i) {
-            if (programIds[i] == programId) {
-                Program::CURRENT = NULL;
-            }
-        }
+    TEXTURE_UNIT_MANAGER->unbind(t.get());
+    if (Program::CURRENT != NULL && isUsedBy(Program::CURRENT->programIds)) {
+        Program::CURRENT = NULL;
     }
     assert(textureTarget == t->textureTarget);
     std::swap(textureId, t->textureId);
@@ -1344,7 +1336,7 @@ void Texture::swap(ptr<Texture> t)
 
 void Texture::addUser(GLuint programId) const
 {
-    assert(!isUsedBy(programId));
+    assert(find(programIds.begin(), programIds.end(), programId) == programIds.end());
     programIds.push_back(programId);
 }
 
@@ -1355,9 +1347,9 @@ void Texture::removeUser(GLuint programId) const
     programIds.erase(i);
 }
 
-bool Texture::isUsedBy(GLuint programId) const
+bool Texture::isUsedBy(const vector<GLuint> &programId) const
 {
-    return find(programIds.begin(), programIds.end(), programId) != programIds.end();
+    return find_first_of(programIds.begin(), programIds.end(), programId.begin(), programId.end()) != programIds.end();
 }
 
 unsigned int Texture::getMaxTextureUnits()

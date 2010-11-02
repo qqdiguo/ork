@@ -780,10 +780,18 @@ int getBufferId(BufferId b)
         return 2;
     case COLOR3:
         return 3;
-    case STENCIL:
+    case COLOR4:
         return 4;
-    case DEPTH:
+    case COLOR5:
         return 5;
+    case COLOR6:
+        return 6;
+    case COLOR7:
+        return 7;
+    case STENCIL:
+        return 8;
+    case DEPTH:
+        return 9;
     }
     assert(false);
     throw exception();

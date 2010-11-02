@@ -72,22 +72,20 @@ public:
     /**
      * Replaces a part of the content of this buffer.
      *
-     * @param target the target to bind to (use 0 for default).
      * @param offset index of the first byte to be replaced.
      * @param size number of bytes in 'data'.
      * @param data the new buffer data.
      */
-    void setSubData(int target, int offset, int size, const void *data);
+    void setSubData(int offset, int size, const void *data);
 
      /**
      * Gets a part of the content of this buffer.
      *
-     * @param target the target to bind to (use 0 for default).
      * @param offset index of the first byte to be replaced.
      * @param size number of bytes in 'data'.
      * @param data the new buffer data.
      */
-    void getSubData(int target, int offset, int size, void *data);
+    void getSubData(int offset, int size, void *data);
 
     /**
      * Maps this buffer into CPU memory and returns a pointer to it. If the
@@ -161,27 +159,29 @@ private:
     void removeUser(GLuint programId) const;
 
     /**
-     * Returns true if the given program uses this buffer as a uniform block.
+     * Returns true if one of the given programs uses this buffer as a uniform block.
      */
-    bool isUsedBy(GLuint programId) const;
+    bool isUsedBy(const vector<GLuint> &programIds) const;
 
     /**
      * Binds this buffer to a uniform block binding unit not currently used
-     * by the given program. If all the uniform block binding units are
-     * currently bound, a unit not used by the given program will be unbound
+     * by the given programs. If all the uniform block binding units are
+     * currently bound, a unit not used by the given programs will be unbound
      * and reused to bind this buffer.
      *
-     * @param programId the id of a program that must use this buffer as a
+     * @param programIds the ids of programs that must use this buffer as a
      *      uniform block.
      * @return the uniform block binding unit to which this buffer has been
      *      bound, or -1 if no unit was available (meaning that the program
      *      uses too much uniform blocks).
      */
-    GLint bindToUniformBufferUnit(int programId) const;
+    GLint bindToUniformBufferUnit(const vector<GLuint> &programIds) const;
 
     friend class UniformBufferUnit;
 
     friend class UniformBufferManager;
+
+    friend class UniformBlock;
 
     friend class Program;
 

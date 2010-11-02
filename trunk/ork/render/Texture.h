@@ -255,17 +255,17 @@ protected:
 
     /**
      * Binds this texture and the given sampler to a texture unit, for the
-     * given program. If there is a texture unit to which no texture is
+     * given programs. If there is a texture unit to which no texture is
      * currently bound the texture is bound to this unit. Otherwise the
-     * least recently used texture unit that is not used by the given program
+     * least recently used texture unit that is not used by the given programs
      * is unbound, and this texture is bound instead.
      *
      * @param s a sampler object to sample this texture. May be NULL.
-     * @param programId the program for which this texture must be bound.
+     * @param programIds the programs for which this texture must be bound.
      * @return the texture unit to which the texture has been bound, or -1
-     *      if the binding failed (all units already used by the program).
+     *      if the binding failed (all units already used by the programs).
      */
-    GLint bindToTextureUnit(ptr<Sampler> s, GLuint programId) const;
+    GLint bindToTextureUnit(ptr<Sampler> s, const vector<GLuint> &programIds) const;
 
     /**
      * Binds this texture to a texture unit. If there is a texture unit
@@ -326,9 +326,9 @@ private:
     void removeUser(GLuint programId) const;
 
     /**
-     * Returns true if the given program uses this texture.
+     * Returns true if one of the given programs uses this texture.
      */
-    bool isUsedBy(GLuint programId) const;
+    bool isUsedBy(const vector<GLuint> &programIds) const;
 
     /**
      * Returns the actual maximum number of texture units.
