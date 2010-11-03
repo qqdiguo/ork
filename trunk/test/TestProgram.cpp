@@ -32,20 +32,6 @@ ptr<FrameBuffer> getFrameBuffer(RenderBuffer::RenderBufferFormat f, int w, int h
 TEST(testProgramBinary)
 {
     ptr<FrameBuffer> fb = getFrameBuffer(RenderBuffer::R32F, 1, 1);
-
-    ptr<Program> q = new Program(new Module(400, "\
-        subroutine int sr(int x);\n\
-        subroutine (sr) int sr1(int x) { return x; }\n\
-        subroutine (sr) int sr2(int x) { return x + 1; }\n\
-        subroutine uniform sr u;\n\
-        void main() { gl_Position = vec4(float(u(0))); }", "\
-        subroutine int sru(int x, int y);\n\
-        subroutine (sru) int sr1(int x, int y) { return x; }\n\
-        subroutine (sru) int sr2(int x, int y) { return x + y; }\n\
-        subroutine uniform sru u;\n\
-        layout(location=0) out vec4 color;\n\
-        void main() { color = vec4(float(u(0, 1))); }\n"));
-
     ptr<Program> p = new Program(new Module(330, NULL, "\
         uniform float u;\n\
         layout(location=0) out vec4 color;\n\
