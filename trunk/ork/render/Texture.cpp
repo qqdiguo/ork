@@ -444,7 +444,7 @@ ORK_API void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElemen
     if (e->Attribute("anisotropy") != NULL) {
         float a;
         Resource::getFloatParameter(desc, e, "anisotropy", &a);
-        params.lodBias(a);
+        params.maxAnisotropyEXT(a);
     }
 
     v = e->Attribute("compare");
