@@ -71,79 +71,17 @@ static FORCE_INLINE int atomic_decrement(int volatile * pw)
 
 #elif defined(_MSC_VER) // MSVC
 
-// the intrinsics don't work in release mode, so there is asm
+#include <intrin.h>
 
-inline __declspec(naked) int __fastcall atomic_exchange_and_add(int volatile * pw, int dv)
-{
-    //return _InterlockedExchangeAdd(pw, dv);
-    __asm
-    {
-        lock xadd dword ptr [ecx], edx
-        mov eax, edx
-        ret
-    }
-}
-
-inline __declspec(naked) void __fastcall atomic_increment(int volatile * pw)
-{
-    //return _InterlockedExchangeAdd(pw, -1);
-    __asm
-    {
-        mov eax, 1
-        lock xadd dword ptr [ecx], eax
-        ret
-    }
-}
-
-inline __declspec(naked) int __fastcall atomic_decrement(int volatile * pw)
-{
-    //    return _InterlockedDecrement(reinterpret_cast<volatile long* >(pw));
-    __asm
-    {
-        mov eax, 0xffffffff
-        lock xadd dword ptr [ecx], eax
-        ret
-    }
-}
+#define atomic_exchange_and_add(pw,dv) _InterlockedExchangeAdd((volatile long*)(pw),(dv))
+#define atomic_increment(pw) (_InterlockedIncrement((volatile long*)(pw)))
+#define atomic_decrement(pw) (_InterlockedDecrement((volatile long*)(pw))+1)
 
 #elif defined(__GNUC__) // GCC
 
-/*
-#define atomic_exchange_and_add(a,b) __gnu_cxx::__exchange_and_add((a),(b))
-#define atomic_increment(a) __gnu_cxx::__atomic_add((a),1)
-#define atomic_decrement(a) __gnu_cxx::__exchange_and_add((a),-1)
-*/
-
-static inline int atomic_exchange_and_add(int volatile *pw, int dv)
-{
-    int r;
-    __asm__ __volatile__
-    (
-        "lock\n\t"
-        "xadd %1, %0":
-        "=m"( *pw ), "=r"( r ): // outputs (%0, %1)
-        "m"( *pw ), "1"( dv ): // inputs (%2, %3 == %1)
-        "memory", "cc" // clobbers
-    );
-    return r;
-}
-
-static inline void atomic_increment(int volatile *pw)
-{
-    __asm__ __volatile__
-    (
-        "lock\n\t"
-        "incl %0":
-        "=m"( *pw ): // output (%0)
-        "m"( *pw ): // input (%1)
-        "cc" // clobbers
-    );
-}
-
-static inline int atomic_decrement(int volatile *pw)
-{
-    return atomic_exchange_and_add(pw, -1);
-}
+#define atomic_exchange_and_add(pw,dv) __sync_fetch_and_add((volatile long*)(pw), dv)
+#define atomic_increment(pw) __sync_fetch_and_add((volatile long*)(pw), 1)
+#define atomic_decrement(pw) __sync_fetch_and_sub((volatile long*)(pw), 1)
 
 #else
 
