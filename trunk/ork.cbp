@@ -169,6 +169,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-march=i686" />
 			<Add option="-pedantic-errors" />
 			<Add option="-pedantic" />
 			<Add option="-Wall" />
