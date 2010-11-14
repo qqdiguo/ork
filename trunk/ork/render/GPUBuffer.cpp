@@ -199,7 +199,7 @@ GLuint UniformBufferManager::maxUnits = 0;
 
 static UniformBufferManager* UNIFORM_BUFFER_MANAGER = NULL;
 
-GPUBuffer::GPUBuffer() : size(0), mappedData(NULL), cpuData(NULL), currentUniformUnit(-1)
+GPUBuffer::GPUBuffer() : size(0), mappedData(NULL), cpuData(NULL), isDirty(false), currentUniformUnit(-1)
 {
     if (UNIFORM_BUFFER_MANAGER == NULL) {
         UNIFORM_BUFFER_MANAGER = new UniformBufferManager();
@@ -250,6 +250,7 @@ void GPUBuffer::setData(int size, const void *data, BufferUsage u)
         if (data != NULL) {
             memcpy(cpuData, (unsigned char*) data, size);
         }
+        isDirty = false;
     }
 #endif
 }
@@ -281,6 +282,12 @@ volatile void *GPUBuffer::map(BufferAccess a)
     assert(mappedData == NULL);
 
     if (cpuData != NULL) {
+        if (isDirty) {
+            glBindBuffer(GL_COPY_READ_BUFFER, bufferId);
+            glGetBufferSubData(GL_COPY_READ_BUFFER, 0, size, cpuData);
+            glBindBuffer(GL_COPY_READ_BUFFER, 0);
+            isDirty = false;
+        }
         mappedData = cpuData;
     } else {
         glBindBuffer(GL_COPY_READ_BUFFER, bufferId);
@@ -331,6 +338,11 @@ void GPUBuffer::unbind(int target) const
 {
     glBindBuffer(target, 0);
     assert(FrameBuffer::getError() == GL_NO_ERROR);
+}
+
+void GPUBuffer::dirty() const
+{
+    isDirty = true;
 }
 
 void GPUBuffer::addUser(GLuint programId) const

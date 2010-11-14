@@ -54,4 +54,8 @@ void CPUBuffer::unbind(int target) const
 {
 }
 
+void CPUBuffer::dirty() const
+{
+}
+
 }

@@ -220,6 +220,13 @@ private:
      */
     virtual void unbind(int target) const = 0;
 
+    /**
+     * Notifies this buffer that it received new data on the GL side
+     * (via readPixels, transformFeedback, etc). This is only possible
+     * for a GPU buffer.
+     */
+    virtual void dirty() const = 0;
+
     friend class MeshBuffers;
 
     friend class FrameBuffer;
@@ -243,6 +250,8 @@ private:
     friend class TextureCubeArray;
 
     friend class TextureRectangle;
+
+    friend class TransformFeedback;
 };
 
 }

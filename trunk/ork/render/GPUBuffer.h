@@ -116,6 +116,8 @@ protected:
 
     virtual void unbind(int target) const;
 
+    virtual void dirty() const;
+
 private:
     /**
      * The OpenGL buffer identifier of this buffer (as returned by glGenBuffers).
@@ -136,6 +138,12 @@ private:
      * Optional copy of buffer data on CPU.
      */
     unsigned char *cpuData;
+
+    /**
+     * True if cpuData is dirty because the buffer data has changed on GPU
+     * (via readPixels, transformFeedback, etc).
+     */
+    mutable bool isDirty;
 
     /**
      * The uniform block binding unit to which this buffer is currently bound,

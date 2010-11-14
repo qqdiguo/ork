@@ -81,12 +81,14 @@ void TransformFeedback::setVertexBuffer(int index, ptr<GPUBuffer> b)
 {
     bind(id);
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, index, b->getId());
+    b.cast<Buffer>()->dirty();
 }
 
 void TransformFeedback::setVertexBuffer(int index, ptr<GPUBuffer> b, GLuint offset, GLuint size)
 {
     bind(id);
     glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, index, b->getId(), GLintptr(offset), GLsizeiptr(size));
+    b.cast<Buffer>()->dirty();
 }
 
 void TransformFeedback::begin(ptr<FrameBuffer> fb, ptr<Program> transform, MeshMode m, ptr<TransformFeedback> tfb, bool rasterize)

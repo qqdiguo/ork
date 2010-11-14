@@ -1419,6 +1419,7 @@ void FrameBuffer::readPixels(int x, int y, int w, int h, TextureFormat f, PixelT
     glReadPixels(x, y, w, h, getTextureFormat(f), getPixelType(t), dstBuf.data(0));
     s.unset();
     dstBuf.unbind(GL_PIXEL_PACK_BUFFER);
+    dstBuf.dirty();
     assert(getError() == 0);
 }
 

@@ -55,6 +55,8 @@ protected:
 
     virtual void unbind(int target) const;
 
+    virtual void dirty() const;
+
 private:
     /**
      * The buffer data. May be NULL.
