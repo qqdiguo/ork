@@ -105,6 +105,11 @@ public:
      */
     void setCompressedSubImage(int level, int x, int y, int l, int w, int h, int d, int s, const Buffer &pixels);
 
+    /**
+     * Returns the maximum number of layers for array textures.
+     */
+    static int getMaxLayers();
+
 protected:
     /**
      * The width of this texture.

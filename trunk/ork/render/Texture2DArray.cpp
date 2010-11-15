@@ -119,6 +119,13 @@ void Texture2DArray::setCompressedSubImage(int level, int x, int y, int l, int w
     assert(FrameBuffer::getError() == GL_NO_ERROR);
 }
 
+int Texture2DArray::getMaxLayers()
+{
+    GLint l;
+    glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &l);
+    return l;
+}
+
 void Texture2DArray::swap(ptr<Texture> t)
 {
     Texture::swap(t);
