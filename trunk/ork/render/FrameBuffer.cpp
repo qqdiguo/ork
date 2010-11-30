@@ -165,7 +165,7 @@ FrameBuffer::Parameters::Parameters() :
     multiSample(true), sampleAlphaToCoverage(false), sampleAlphaToOne(false),
         sampleCoverage(1.0f), sampleMask(0xFFFFFFFF), multiSampleId(0),
     occlusionQuery(NULL), occlusionMode(WAIT),
-    multiScissor(false),
+    multiScissor(false), scissorId(0),
     enableStencil(false), ffunc(ALWAYS), fref(0), fmask(0xFFFFFFFF), ffail(KEEP), fdpfail(KEEP), fdppass(KEEP),
         bfunc(ALWAYS), bref(0), bmask(0xFFFFFFFF), bfail(KEEP), bdpfail(KEEP), bdppass(KEEP), stencilId(0),
     enableDepth(false), depth(LESS),
@@ -300,8 +300,7 @@ void FrameBuffer::Parameters::set(const Parameters &p)
         }
     }
     // SCISSOR TEST -------------
-    if (enableScissor != p.enableScissor ||
-        scissor != p.scissor)
+    if (scissorId != p.scissorId)
     {
         if (p.multiScissor) {
             for (int i = 0; i < 16; ++i) {
@@ -1079,6 +1078,7 @@ void FrameBuffer::setScissorTest(bool enableScissor)
 {
     parameters.multiScissor = false;
     parameters.enableScissor[0] = enableScissor;
+    parameters.scissorId = ++PARAMETER_ID;
     parametersChanged = true;
 }
 
@@ -1092,6 +1092,7 @@ void FrameBuffer::setScissorTest(int index, bool enableScissor)
         parameters.multiScissor = true;
     }
     parameters.enableScissor[index] = enableScissor;
+    parameters.scissorId = ++PARAMETER_ID;
     parametersChanged = true;
 }
 
@@ -1100,6 +1101,7 @@ void FrameBuffer::setScissorTest(bool enableScissor, const vec4<GLint> &scissor)
     parameters.multiScissor = false;
     parameters.enableScissor[0] = enableScissor;
     parameters.scissor[0] = scissor;
+    parameters.scissorId = ++PARAMETER_ID;
     parametersChanged = true;
 }
 
@@ -1114,6 +1116,7 @@ void FrameBuffer::setScissorTest(int index, bool enableScissor, const vec4<GLint
     }
     parameters.enableScissor[index] = enableScissor;
     parameters.scissor[index] = scissor;
+    parameters.scissorId = ++PARAMETER_ID;
     parametersChanged = true;
 }
 

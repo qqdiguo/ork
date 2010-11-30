@@ -319,6 +319,11 @@ public:
          */
         vec4<GLint> scissor[16];
 
+        /**
+         * A unique ID incremented each time multiScissor, enableScissor, or scissor change.
+         */
+        int scissorId;
+
         // -------------
 
         /**
