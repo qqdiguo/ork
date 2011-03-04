@@ -179,7 +179,7 @@ public:
      * @param b a bounding box, in the same reference frame as the frustum
      *     planes.
      */
-    static visibility getVisibility(const vec4d frustumPlanes[6], const box3d &b);
+    static visibility getVisibility(const vec4d *frustumPlanes, const box3d &b);
 
     /**
      * Returns the frustum plane equations from a projection matrix.
@@ -187,7 +187,7 @@ public:
      * @param toScreen a camera to screen projection matrix.
      * @param[out] frustumPlanes the frustum plane equations in camera space.
      */
-    static void getFrustumPlanes(const mat4d &toScreen, vec4d frustumPlanes[6]);
+    static void getFrustumPlanes(const mat4d &toScreen, vec4d *frustumPlanes);
 
     /**
      * Updates all the transformation matrices in the scene graph.

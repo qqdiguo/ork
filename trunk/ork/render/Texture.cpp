@@ -375,16 +375,34 @@ ORK_API void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElemen
         throw exception();
     }
 
+    v = e->Attribute("wrapr");
+    if (v == NULL) {
+        // params.wrapR("CLAMP_TO_BORDER");
+    } else if (strcmp(v, "CLAMP_TO_EDGE") == 0) {
+        params.wrapR(CLAMP_TO_EDGE);
+    } else if (strcmp(v, "CLAMP_TO_BORDER") == 0) {
+        params.wrapR(CLAMP_TO_BORDER);
+    } else if (strcmp(v, "REPEAT") == 0) {
+        params.wrapR(REPEAT);
+    } else if (strcmp(v, "MIRRORED_REPEAT") == 0) {
+        params.wrapR(MIRRORED_REPEAT);
+    } else {
+        if (Logger::ERROR_LOGGER != NULL) {
+            Resource::log(Logger::ERROR_LOGGER, desc, e, "Bad wrap R attribute");
+        }
+        throw exception();
+    }
+
     v = e->Attribute("borderType");
     int borderType = 0;
     if (v == NULL) {
-    } else if (strcmp(v, "INT")) {
+    } else if (strcmp(v, "INT") == 0) {
         borderType = 0;
-    } else if (strcmp(v, "FLOAT")) {
+    } else if (strcmp(v, "FLOAT") == 0) {
         borderType = 1;
-    } else if (strcmp(v, "IINT")) {
+    } else if (strcmp(v, "IINT") == 0) {
         borderType = 2;
-    } else if (strcmp(v, "IUNSIGNED_INT")) {
+    } else if (strcmp(v, "IUNSIGNED_INT") == 0) {
         borderType = 3;
     } else {
         if (Logger::ERROR_LOGGER != NULL) {
@@ -418,12 +436,12 @@ ORK_API void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElemen
     if (e->Attribute("minLevel") != NULL) {
         float level;
         Resource::getFloatParameter(desc, e, "minLevel", &level);
-        params.lodMin(level);
+        params.minLevel(level);
     }
     if (e->Attribute("maxLevel") != NULL) {
         float level;
         Resource::getFloatParameter(desc, e, "maxLevel", &level);
-        params.lodMax(level);
+        params.maxLevel(level);
     }
     if (e->Attribute("minLod") != NULL) {
         float lod;
@@ -449,21 +467,21 @@ ORK_API void getParameters(const ptr<ResourceDescriptor> desc, const TiXmlElemen
 
     v = e->Attribute("compare");
     if (v == NULL) {
-    } else if (strcmp(v, "LEQUAL")) {
+    } else if (strcmp(v, "LEQUAL") == 0) {
         params.compareFunc(LEQUAL);
-    } else if (strcmp(v, "GEQUAL")) {
+    } else if (strcmp(v, "GEQUAL") == 0) {
         params.compareFunc(GEQUAL);
-    } else if (strcmp(v, "LESS")) {
+    } else if (strcmp(v, "LESS") == 0) {
         params.compareFunc(LESS);
-    } else if (strcmp(v, "GREATER")) {
+    } else if (strcmp(v, "GREATER") == 0) {
         params.compareFunc(GREATER);
-    } else if (strcmp(v, "EQUAL")) {
+    } else if (strcmp(v, "EQUAL") == 0) {
         params.compareFunc(EQUAL);
-    } else if (strcmp(v, "NOTEQUAL")) {
+    } else if (strcmp(v, "NOTEQUAL") == 0) {
         params.compareFunc(NOTEQUAL);
-    } else if (strcmp(v, "ALWAYS")) {
+    } else if (strcmp(v, "ALWAYS") == 0) {
         params.compareFunc(ALWAYS);
-    } else if (strcmp(v, "NEVER")) {
+    } else if (strcmp(v, "NEVER") == 0) {
         params.compareFunc(NEVER);
     } else {
         if (Logger::ERROR_LOGGER != NULL) {

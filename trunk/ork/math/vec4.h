@@ -187,6 +187,11 @@ public:
     type dotproduct(const vec4& v) const;
 
     /**
+     * Returns the 3D vector defined by (x/w,y/w,z/w).
+     */
+    vec3<type> xyzw() const;
+
+    /**
      * Returns the 3D vector defined by (x,y,z).
      */
     vec3<type> xyz() const;
@@ -445,6 +450,12 @@ template <typename type>
 inline type vec4<type>::dotproduct(const vec4<type>& v) const
 {
     return (x*v.x + y*v.y + z*v.z + w*v.w);
+}
+
+template <typename type>
+inline vec3<type> vec4<type>::xyzw() const
+{
+    return vec3<type>(x / w, y / w, z / w);
 }
 
 template <typename type>

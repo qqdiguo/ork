@@ -67,6 +67,7 @@ GLuint Query::getId()
 
 void Query::begin()
 {
+    resultRead = false;
     glBeginQuery(target, id);
     if (target == GL_TIME_ELAPSED) {
         glQueryCounter(id, GL_TIMESTAMP);

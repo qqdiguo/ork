@@ -28,6 +28,8 @@ variables:
 - glut (base) : either glut32 or freeglut 
 - glut (cflags) : either USE_GLUT or USE_FREEGLUT
 - glew : the path to the glew DLL, e.g. C:\Progra~1\glew\glew32.dll
+You also need to set the "Explicitly add project's top-level directory to 
+compiler search dirs" options in "Global compiler settings/Other settings"
 
 The USE_SHARED_PTR preprocessor flag can be set to use std::tr1::shared_ptr
 (needs a compiler providing support for this). Otherwise smart pointers use

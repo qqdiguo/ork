@@ -189,7 +189,7 @@ SceneManager::visibility SceneManager::getVisibility(const box3d &worldBounds)
     return getVisibility(worldFrustumPlanes, worldBounds);
 }
 
-SceneManager::visibility SceneManager::getVisibility(const vec4d frustumPlanes[6], const box3d &b)
+SceneManager::visibility SceneManager::getVisibility(const vec4d *frustumPlanes, const box3d &b)
 {
     visibility v0 = getVisibility(frustumPlanes[0], b);
     if (v0 == INVISIBLE) {
@@ -220,7 +220,7 @@ SceneManager::visibility SceneManager::getVisibility(const vec4d frustumPlanes[6
     return PARTIALLY_VISIBLE;
 }
 
-void SceneManager::getFrustumPlanes(const mat4d &toScreen, vec4d frustumPlanes[6])
+void SceneManager::getFrustumPlanes(const mat4d &toScreen, vec4d *frustumPlanes)
 {
     const double *m = toScreen.coefficients();
     // Extract the LEFT plane
