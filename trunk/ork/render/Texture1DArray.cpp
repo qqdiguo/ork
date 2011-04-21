@@ -138,7 +138,7 @@ public:
         int w;
         int l;
         try {
-            checkParameters(desc, e, "name,source,internalformat,format,type,min,mag,wraps,width,height,");
+            checkParameters(desc, e, "name,source,internalformat,format,type,min,mag,wraps,minLod,maxLod,width,height,");
             getIntParameter(desc, e, "width", &w);
             getIntParameter(desc, e, "height", &l);
             getParameters(desc, e, tf, f, t);

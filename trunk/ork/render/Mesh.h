@@ -96,6 +96,13 @@ public:
     inline int getIndiceCount() const;
 
     /**
+     * Returns an indice of this mesh.
+     *
+     * @param i an indice index.
+     */
+    inline index getIndice(int i) const;
+
+    /**
      * Returns the vertex index used for primitive restart. -1 means no restart.
      */
     inline GLint getPrimitiveRestart() const;
@@ -357,6 +364,12 @@ template<class vertex, class index>
 int Mesh<vertex, index>::getIndiceCount() const
 {
     return indicesCount;
+}
+
+template<class vertex, class index>
+index Mesh<vertex, index>::getIndice(int i) const
+{
+    return indices[i];
 }
 
 template<class vertex, class index>

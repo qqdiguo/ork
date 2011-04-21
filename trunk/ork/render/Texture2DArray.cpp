@@ -150,7 +150,7 @@ public:
         int h;
         int l;
         try {
-            checkParameters(desc, e, "name,source,internalformat,format,type,min,mag,wraps,wrapt,compare,borderType,borderr,borderg,borderb,bordera,maxAniso,width,height,depth,layers,");
+            checkParameters(desc, e, "name,source,internalformat,format,type,min,mag,wraps,wrapt,minLod,maxLod,compare,borderType,borderr,borderg,borderb,bordera,maxAniso,width,height,depth,layers,");
             getIntParameter(desc, e, "width", &w);
             getIntParameter(desc, e, "height", &h);
             if (e->Attribute("depth") != NULL) {

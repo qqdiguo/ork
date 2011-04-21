@@ -130,7 +130,7 @@ public:
         Buffer::Parameters s;
         int w;
         try {
-            checkParameters(desc, e, "name,source,internalformat,format,type,min,mag,wraps,width,height,");
+            checkParameters(desc, e, "name,source,internalformat,format,type,min,mag,wraps,minLod,maxLod,width,height,");
             getIntParameter(desc, e, "width", &w);
             getParameters(desc, e, tf, f, t);
             getParameters(desc, e, params);

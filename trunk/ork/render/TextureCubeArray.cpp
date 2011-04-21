@@ -127,7 +127,7 @@ public:
         int w;
         int h;
         try {
-            checkParameters(desc, e, "name,source,internalformat,format,type,min,mag,wraps,wrapt,width,height,");
+            checkParameters(desc, e, "name,source,internalformat,format,type,min,mag,wraps,wrapt,minLod,maxLod,width,height,");
             getIntParameter(desc, e, "width", &w);
             getIntParameter(desc, e, "height", &h);
             if (h % (6 * w) != 0) {
