@@ -7,10 +7,11 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="orkd" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/ork3d" prefix_auto="1" extension_auto="1" />
 				<Option object_output="build/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-mthreads" />
@@ -25,10 +26,11 @@
 				</Linker>
 			</Target>
 			<Target title="Debug_UNIX">
-				<Option output="orkd" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/ork3d" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-pg" />
 					<Add option="-g" />
@@ -40,10 +42,11 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="ork" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/ork3" prefix_auto="1" extension_auto="1" />
 				<Option object_output="build/Release/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-mthreads" />
@@ -59,10 +62,11 @@
 				</Linker>
 			</Target>
 			<Target title="Release_UNIX">
-				<Option output="ork" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/ork3" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/release/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
+				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-fPIC" />
