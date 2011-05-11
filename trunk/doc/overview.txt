@@ -127,7 +127,7 @@ expected, without any cast).</li>
 <li>the ork::static_ptr template is similar to ork::ptr,
 but is reserved for static variables. By calling
 ork::Object#exit at the end of your program, you can then set
-all these static references to <tt>NULL</tt>, which should destroys
+all these static references to <tt>NULL</tt>, which should destroy
 all statically referenced objects. Note that, in debug compilation
 mode, the <tt>exit</tt> method checks that all ork::Object
 instances have been destroyed, which is useful to detect memory
@@ -239,18 +239,18 @@ The \ref math module provides classes related to linear algebra in
 2D and 3D (vectors and matrices).
 
 <ul>
-<li>The templates ork::math::vec2, ork::math::vec3, ork::math::vec4, 
-ork::math::mat2, ork::math::mat3
-and ork::math::mat4 represent 2D, 3D and 4D vectors and matrices. They
+<li>The templates ork::vec2, ork::vec3, ork::vec4, 
+ork::mat2, ork::mat3
+and ork::mat4 represent 2D, 3D and 4D vectors and matrices. They
 provide all usual operations, such as the addition and subtraction of
 vectors or matrices, matrix vector and matrix matrix multiplication,
 matrix inversion, matrix transposition, vector normalization, vector
 dot product and cross product, etc. They can be instanced with <tt>float</tt>,
 <tt>double</tt> or even <tt>int</tt> types. Several
-instantiations are predefined: ork::math::vec3f, ork::math::vec3d,
-ork::math::mat3f, ork::math::mat3d, etc.</li>
+instantiations are predefined: ork::vec3f, ork::vec3d,
+ork::mat3f, ork::mat3d, etc.</li>
 
-<li>The templates ork::math::box2 and ork::math::box3 represent 2D and 3D
+<li>The templates ork::box2 and ork::box3 represent 2D and 3D
 bounding boxes. They provide functions to enlarge a bounding box, and
 to test if bounding box contains a point or another bounding box, or intersects
 another bounding box.</li>
@@ -266,7 +266,7 @@ identifiers, instead of instances of classes. The second and probably most
 important reason is that these "objects" must be bound to a "target" before
 being usable. Indeed, these idioms are not compatible with the basic 
 principles of object-oriented languages.
-Ork solves theses problems by providing a minimal object-oriented
+Ork solves these problems by providing a minimal object-oriented
 API on top of OpenGL. This means three things:
 <ul>
 <li>first, that Ork is based on OpenGL 3.3 core profile (with full support
@@ -791,7 +791,7 @@ COLOR2</tt> attachments:
 
 \code
 ptr<FrameBufer> fb = ...
-fb->setDrawBuffers(FrameBuffer::COLOR0 | FrameBuffer::COLOR2);
+fb->setDrawBuffers(COLOR0 | COLOR2);
 \endcode
 
 \subsubsection sec_framebuffers2 Interactions with OpenGL
@@ -1409,7 +1409,7 @@ some images or text on top of the 3D scene.</li>
 
 In order to leave all these options open, Ork provides a "toy"
 scene graph which is minimal but fully extensible (at the price
-of efficicency, i.e., this scene graph cannot be used with scenes
+of efficiency, i.e., this scene graph cannot be used with scenes
 made of hundreds or thousands of nodes).
 In fact an Ork scene graph is a <i>tree</i> of generic scene nodes
 ork::SceneNode, where each node can be seen as an object
@@ -1545,7 +1545,7 @@ nested inside nodes without limit), but the <tt>myCube</tt> node is
 specified by reference to the above <tt>cubeNode</tt> node. The
 advantage of specifying nodes by reference is that you can reuse them
 more easily. You can also reference them as individual resources,
-while nested nodes cannot be loaded separately (you have to load to
+while nested nodes cannot be loaded separately (you have to load the
 whole root node to load them).
 
 \subsubsection sec_scenemanager Scene manager
@@ -2082,7 +2082,7 @@ execution time of future tasks of the same type, based on the
 algorithmic "complexity" of tasks (provided by the user). This is
 useful if a fixed framerate must be ensured: then a prefetch task
 whose predicted execution time is too large to be executed before the
-deadline for the current frame is not be executed.</li>
+deadline for the current frame is not executed.</li>
 
 <li>the dependencies between tasks, i.e., the fact that some task
 must be executed before another (typically because it needs the
@@ -2147,10 +2147,10 @@ The ork::MultithreadScheduler is a concrete implementation
 of ork::Scheduler. Its constructor takes a framerate and a
 number of threads in parameter. If the framerate is 0 then no
 framerate is imposed. Otherwise the scheduler tries to impose this
-target framerate (if necessary it waits between frame to avoid
+target framerate (if necessary it waits between frames to avoid
 increasing the framerate above the target). The number of threads
 indicates how many additional threads the scheduler can use, in
-addition to the main threads. A number of 0 means that all tasks will
+addition to the main thread. A number of 0 means that all tasks will
 be executed in sequence with a single thread. Such a scheduler can be
 loaded with the resource framework, using the following format:
 
@@ -2189,7 +2189,7 @@ can be shared between graphs (e.g., T3).</div>
 \image html ork-taskgraph.svg
 \htmlonly --> \endhtmlonly
 
-This task graph is equivalent with the following "flattened" graph,
+This task graph is equivalent to the following "flattened" graph,
 without any nested graph:
 
 \htmlonly
