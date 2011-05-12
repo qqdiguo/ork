@@ -220,6 +220,16 @@ public:
      */
     double getElapsedTime();
 
+    /**
+     * Returns the 3D coordinates in world space corresponding to the given
+     * screen space position.
+     *
+     * @param x horizontal screen position.
+     * @param y vertical screen position.
+     * @return ths 3D coordinates in world space corresponding to x,y
+     */
+    vec3d getWorldCoordinates(int x, int y);
+
 	/**
      * Returns the current FrameBuffer.
      */

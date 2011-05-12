@@ -306,6 +306,24 @@ double SceneManager::getElapsedTime()
     return dt;
 }
 
+vec3d SceneManager::getWorldCoordinates(int x, int y)
+{
+    float winx, winy, winz;
+    ptr<FrameBuffer> fb = FrameBuffer::getDefault();
+    vec4<GLint> vp = fb->getViewport();
+    float width = (float) vp.z;
+    float height = (float) vp.w;
+    fb->readPixels(x, vp.w - y, 1, 1, DEPTH_COMPONENT, FLOAT, Buffer::Parameters(), CPUBuffer(&winz));
+
+    winx = (x * 2.0f) / width - 1.0f;
+    winy = 1.0f - (y * 2.0f) / height;
+    winz = 2.0f * winz - 1.0f;
+    mat4d screenToWorld = getWorldToScreen().inverse();
+    vec4d p = screenToWorld * vec4d(winx, winy, winz, 1);
+
+    return vec3d(p.x / p.w, p.y / p.w, p.z / p.w);
+}
+
 SceneManager::visibility SceneManager::getVisibility(const vec4d &clip, const box3d &b)
 {
     double x0 = b.xmin * clip.x;
