@@ -82,11 +82,6 @@ public:
 
     virtual ptr<Task> getTask(ptr<Object> context);
 
-    /**
-     * Returns a shared offscreen framebuffer.
-     */
-    static ptr<FrameBuffer> getOffscreenBuffer();
-
 protected:
     /**
      * Creates an uninitialized SetTargetTask.
@@ -110,11 +105,6 @@ protected:
     void swap(ptr<SetTargetTask> t);
 
 private:
-    /**
-     * An offscreen framebuffer.
-     */
-    static static_ptr<FrameBuffer> FRAME_BUFFER;
-
     /**
      * An offscreen framebuffer for use with SetTargetTask.
      */

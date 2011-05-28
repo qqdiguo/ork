@@ -92,14 +92,22 @@ ptr<Task> SetTransformsTask::getTask(ptr<Object> context)
 
     if (m.target.size() > 0 && module == NULL) {
         module = m.getTarget(n)->getModule(m.name);
-
         if (module == NULL) {
             if (Logger::ERROR_LOGGER != NULL) {
-                Logger::ERROR_LOGGER->log("SCENEGRAPH", "SetTransforms: cannot find " + m.name + " node");
+                Logger::ERROR_LOGGER->log("SCENEGRAPH", "SetTransforms: cannot find " + m.target + "." + m.name + " module");
+            }
+            throw exception();
+        }
+    } else if (m.name.size() > 0 && module == NULL) {
+        module = n->getOwner()->getResourceManager()->loadResource(m.name).cast<Module>();
+        if (module == NULL) {
+            if (Logger::ERROR_LOGGER != NULL) {
+                Logger::ERROR_LOGGER->log("SCENEGRAPH", "SetTransforms: cannot find " + m.name + " module");
             }
             throw exception();
         }
     }
+
     return new Impl(screenNode, n, this);
 }
 

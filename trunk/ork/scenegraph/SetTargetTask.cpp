@@ -32,8 +32,6 @@ namespace ork
 
 BufferId getBufferFromName(const char *v);
 
-static_ptr<FrameBuffer> SetTargetTask::FRAME_BUFFER;
-
 static_ptr<FrameBuffer> SetTargetTask::TARGET_BUFFER;
 
 SetTargetTask::SetTargetTask() : AbstractTask("SetTargetTask")
@@ -102,28 +100,12 @@ ptr<Task> SetTargetTask::getTask(ptr<Object> context)
     return new Impl(this, textures);
 }
 
-ptr<FrameBuffer> SetTargetTask::getOffscreenBuffer()
-{
-    if (FRAME_BUFFER == NULL) {
-        FRAME_BUFFER = new FrameBuffer();
-        ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
-        SceneManager::setCurrentFrameBuffer(FRAME_BUFFER);
-        FRAME_BUFFER->setReadBuffer(BufferId(0));
-        FRAME_BUFFER->setDrawBuffer(BufferId(0));
-        SceneManager::setCurrentFrameBuffer(fb);
-    }
-    return FRAME_BUFFER;
-}
-
 ptr<FrameBuffer> SetTargetTask::getTargetBuffer()
 {
     if (TARGET_BUFFER == NULL) {
-        ptr<FrameBuffer> fb = SceneManager::getCurrentFrameBuffer();
         TARGET_BUFFER = new FrameBuffer();
-        SceneManager::setCurrentFrameBuffer(TARGET_BUFFER);
         TARGET_BUFFER->setReadBuffer(BufferId(0));
         TARGET_BUFFER->setDrawBuffer(BufferId(0));
-        SceneManager::setCurrentFrameBuffer(fb);
     }
     return TARGET_BUFFER;
 }

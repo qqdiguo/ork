@@ -101,7 +101,6 @@ protected:
      */
     void swap(ptr<SetTransformsTask> t);
 
-
 private:
     /**
      * The "screen" node to be used for transformation involving the "screen"
