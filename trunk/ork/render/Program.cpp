@@ -699,6 +699,17 @@ ptr<Module> Program::getModule(int index) const
     return modules[index];
 }
 
+vector< ptr<Uniform> > Program::getUniforms() const
+{
+    vector< ptr<Uniform> > result;
+    map<string, ptr<Uniform> >::const_iterator i = uniforms.begin();
+    while (i != uniforms.end()) {
+        result.push_back(i->second);
+        i++;
+    }
+    return result;
+}
+
 ptr<Uniform> Program::getUniform(const string &name)
 {
     map<string, ptr<Uniform> >::iterator i = uniforms.find(name);

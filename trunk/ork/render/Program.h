@@ -105,6 +105,11 @@ public:
     ptr<Module> getModule(int index) const;
 
     /**
+     * Returns the uniforms of this program.
+     */
+    vector< ptr<Uniform> > getUniforms() const;
+
+    /**
      * Returns the uniform of this program whose name is given.
      *
      * @param name a GLSL uniform name.
