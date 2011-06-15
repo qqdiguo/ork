@@ -261,6 +261,9 @@ void Program::initUniforms()
         glGetActiveUniformsiv(programId, 1, &i, GL_UNIFORM_IS_ROW_MAJOR, &isRowMajor);
 
         string name = string(buf);
+        if (size > 1 && name.find_first_of('[') != string::npos) {
+            name = name.substr(0, name.find_first_of('['));
+        }
 
         ptr<UniformBlock> b = NULL;
         if (blockIndex != -1) {
@@ -548,6 +551,9 @@ void Program::initUniforms()
                 GLsizei length;
                 glGetActiveSubroutineUniformName(programId, getStage(s), i, GLsizei(maxLength), &length, buf);
                 string uname = string(buf);
+                if (size > 1 && uname.find_first_of('[') != string::npos) {
+                    uname = uname.substr(0, uname.find_first_of('['));
+                }
                 for (GLint j = 0; j < size; ++j) {
                     string sruName = uname;
                     if (size > 1) {
