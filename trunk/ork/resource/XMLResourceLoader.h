@@ -92,6 +92,35 @@ public:
      */
     virtual ptr<ResourceDescriptor> reloadResource(const string &name, ptr<ResourceDescriptor> currentValue);
 
+protected:
+    /**
+     * Looks for a file in a set of directories.
+     *
+     * @param desc the XML part of a ResourceDescriptor.
+     * @param paths a set of directory names.
+     * @param file a relative file name.
+     * @return the absolute file name of the file.
+     * @throw exception if the file is not found in any directory.
+     */
+    virtual string findFile(const TiXmlElement *desc, const vector<string> paths, const string &file);
+
+    /**
+     * Loads the content of a file.
+     *
+     * @param file the name of a file.
+     * @param[out] size returns the size of the file's content in bytes.
+     * @return the file's content.
+     */
+    virtual unsigned char *loadFile(const string &file, unsigned int &size);
+
+    /**
+     * Computes the last modification time of the given file.
+     *
+     * @param name a fie name.
+     * @param[out] t returns the last modification time of the given file.
+     */
+    virtual void getTimeStamp(const string &name, time_t &t);
+
 private:
     /**
      * The directories where individual ResourceDescriptor files can be looked for.
@@ -174,6 +203,42 @@ private:
      *      modification times.
      */
     unsigned char* loadData(TiXmlElement *e, unsigned int &size, vector< pair<string, time_t> > &stamps);
+
+    /**
+     * Loads the ASCII part of a shader %resource, i.e. the shader source code.
+     *
+     * @param desc the XML part of a shader ResourceDescriptor.
+     * @param paths the directories where the shader source files must be looked for.
+     * @param path a file containing (a part of the) shader source code.
+     * @param data the content of the 'path' file.
+     * @param[in,out] size the size of the content of the 'path' file and, after the
+     *      method's execution, the size of the returned data.
+     * @param[in,out] stamps the last modification time of the file(s) that contain
+     *      the shader source code, or an empty vector if these files are not known
+     *      yet. These modification times are updated by this method if they have
+     *      changed. Each element of this vector contains a file name and its last
+     *      modification time.
+     * @throw exception if a problem occurs.
+     */
+    unsigned char* loadShaderData(TiXmlElement *desc, const vector<string> &paths,
+            const string &path, unsigned char *data, unsigned int &size, vector< pair<string, time_t> > &stamps);
+
+    /**
+     * Loads the binary part of a texture %resource.
+     *
+     * @param desc the XML part of the texture %resource descriptor.
+     * @param path the absolute name of the file containing the texture image.
+     * @param data the encoded image data (in PNG, PJG, etc format).
+     * @param[in,out] size the size of the encoded image data and, after the
+     *      method's execution, the size of the returned data.
+     * @param[in,out] stamps the last modification time of the file that contain the
+     *      texture image, or an empty vector if this file is not loaded yet. This
+     *      modification time is updated by this method if it has changed. Each
+     *      element of this vector contains a file name and its last modification
+     *      time.
+     */
+    unsigned char* loadTextureData(TiXmlElement *desc, const string &path,
+            unsigned char *data, unsigned int &size, vector< pair<string, time_t> > &stamps);
 };
 
 }

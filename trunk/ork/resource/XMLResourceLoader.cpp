@@ -65,310 +65,6 @@ static bool isTextureFile(const string &name)
 }
 
 /**
- * Looks for a file in a set of directories.
- *
- * @param desc the XML part of a ResourceDescriptor.
- * @param paths a set of directory names.
- * @param file a relative file name.
- * @return the absolute file name of the file.
- * @throw exception if the file is not found in any directory.
- */
-static string findFile(const TiXmlElement *desc, const vector<string> paths, const string &file)
-{
-    for (unsigned int i = 0; i < paths.size(); ++i) {
-        string path = paths[i] + '/' + file;
-        FILE *f;
-        fopen(&f, path.c_str(), "rb");
-        if (f != NULL) {
-            fclose(f);
-            return path;
-        }
-    }
-    if (Logger::ERROR_LOGGER != NULL) {
-        Resource::log(Logger::ERROR_LOGGER, desc, desc, "Cannot find '" + string(file) + "' file");
-    }
-    throw exception();
-}
-
-/**
- * Loads the content of a file.
- *
- * @param file the name of a file.
- * @param[out] size returns the size of the file's content in bytes.
- * @return the file's content.
- */
-static unsigned char *loadFile(const string &file, unsigned int &size)
-{
-    ifstream fs(file.c_str(), ios::binary);
-    fs.seekg(0, ios::end);
-    size = fs.tellg();
-    unsigned char *data = new unsigned char[size + 1];
-    fs.seekg(0);
-    fs.read((char*) data, size);
-    fs.close();
-    data[size] = 0;
-    if (Logger::INFO_LOGGER != NULL) {
-        Logger::INFO_LOGGER->log("RESOURCE", "Loaded file '" + file + "'");
-    }
-    return data;
-}
-
-/**
- * Computes the last modification time of the given file.
- *
- * @param name a fie name.
- * @param[out] t returns the last modification time of the given file.
- */
-static void getTimeStamp(const string &name, time_t &t)
-{
-#ifdef _MSC_VER
-    FILETIME ftWrite;
-    HANDLE hFile = CreateFile((LPCTSTR )name.c_str(), 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-    if (hFile != INVALID_HANDLE_VALUE){
-        if (GetFileTime(hFile, NULL, NULL, &ftWrite)) {
-            CloseHandle(hFile);
-            LARGE_INTEGER li;
-            li.LowPart =  ftWrite.dwLowDateTime;
-            li.HighPart = ftWrite.dwHighDateTime;
-            t = li.QuadPart / __int64(10000000);
-        }
-    }
-#else
-    int fd = open(name.c_str(), O_RDONLY);
-    if (fd != -1) {
-        struct stat stats;
-        fstat(fd, &stats);
-        t = stats.st_mtime;
-        close(fd);
-    }
-#endif
-}
-
-/**
- * Loads the ASCII part of a shader %resource, i.e. the shader source code.
- *
- * @param desc the XML part of a shader ResourceDescriptor.
- * @param paths the directories where the shader source files must be looked for.
- * @param path a file containing (a part of the) shader source code.
- * @param data the content of the 'path' file.
- * @param[in,out] size the size of the content of the 'path' file and, after the
- *      method's execution, the size of the returned data.
- * @param[in,out] stamps the last modification time of the file(s) that contain
- *      the shader source code, or an empty vector if these files are not known
- *      yet. These modification times are updated by this method if they have
- *      changed. Each element of this vector contains a file name and its last
- *      modification time.
- * @throw exception if a problem occurs.
- */
-static unsigned char* loadShaderData(TiXmlElement *desc, const vector<string> &paths,
-        const string &path, unsigned char *data, unsigned int &size, vector< pair<string, time_t> > &stamps)
-{
-    time_t t = 0;
-    getTimeStamp(path, t);
-    stamps.push_back(make_pair(path, t));
-    if (strstr((char*) data, "#include") == NULL) {
-        // if there is no #include directive in 'data' then we can directly return
-        return data;
-    }
-    // otherwise we must load the referenced files and substitute their content;
-    // the result will be placed in the 'result' string
-    string result;
-    bool comment = false;
-    bool lineComment = false;
-    unsigned int i = 0;
-    // we parse the file to find the #include that are not inside comments
-    while (i < size) {
-        if (!comment) { // if we are not inside a comment
-            if (i + 1 < size) {
-                if (data[i] == '/' && data[i + 1] == '*') {
-                    // if we find a '/*' then we now are in a comment
-                    result.append((char*) data, i, 2);
-                    comment = true;
-                    lineComment = false;
-                    i += 2;
-                    continue;
-                } else if (data[i] == '/' && data[i + 1] == '/') {
-                    // likewise if we find a '//'
-                    result.append((char*) data, i, 2);
-                    comment = true;
-                    lineComment = true;
-                    i += 2;
-                    continue;
-                }
-            }
-            if (i + 8 <= size && strncmp((char*) data + i, "#include", 8) == 0) {
-                // if we find a #include
-                char* s = strchr((char*) data + i, '\"');
-                if (s != NULL) {
-                    char *e = strchr(s + 1, '\"');
-                    if (e != NULL) {
-                        // we first extract the referenced file name
-                        string inc = string(s + 1, e - s - 1);
-                        string incFile;
-                        try {
-                            // then we find the absolute name of this file
-                            incFile = findFile(desc, paths, inc);
-                        } catch (...) {
-                            delete[] data;
-                            throw exception();
-                        }
-                        unsigned int incSize;
-                        // we can then load the content of the referenced file
-                        unsigned char* incData = loadFile(incFile, incSize);
-                        // and then analyze its content with a recursive call
-                        // to process the #include directives that this file may
-                        // in turn contain
-                        unsigned char* incShader = loadShaderData(desc, paths, incFile, incData, incSize, stamps);
-                        // finally we append this processed content to the
-                        // result data, instead of the #include directive itself
-                        result.append((char*) incShader);
-                        delete[] incShader;
-
-                        i = (e - (char*) data) + 1;
-                        continue;
-                    }
-                }
-            }
-        } else {
-            if (lineComment) { // if we are in a line comment
-                if (data[i] == '\n') { // and find a newline we exit the comment
-                    result.append((char*) data, i++, 1);
-                    comment = false;
-                    continue;
-                }
-            } else if (i + 1 < size && data[i] == '*' && data[i + 1] == '/') {
-                // likewise, if we find a '*/' in a block comment, we exit it
-                result.append((char*) data, i, 2);
-                comment = false;
-                i += 2;
-                continue;
-            }
-        }
-        result.append((char*) data, i++, 1);
-    }
-    delete[] data;
-    size = result.size();
-    data = new unsigned char[size + 1];
-    memcpy(data, result.c_str(), size + 1);
-    return data;
-}
-
-/**
- * Loads the binary part of a texture %resource.
- *
- * @param desc the XML part of the texture %resource descriptor.
- * @param path the absolute name of the file containing the texture image.
- * @param data the encoded image data (in PNG, PJG, etc format).
- * @param[in,out] size the size of the encoded image data and, after the
- *      method's execution, the size of the returned data.
- * @param[in,out] stamps the last modification time of the file that contain the
- *      texture image, or an empty vector if this file is not loaded yet. This
- *      modification time is updated by this method if it has changed. Each
- *      element of this vector contains a file name and its last modification
- *      time.
- */
-static unsigned char* loadTextureData(TiXmlElement *desc, const string &path,
-        unsigned char *data, unsigned int &size, vector< pair<string, time_t> > &stamps)
-{
-    unsigned char* trailer = data + size - 5 * sizeof(int);
-    unsigned char *result = NULL;
-    int w;
-    int h = 1;
-    int d = 0;
-    int channels;
-    bool raw = ((unsigned int*) trailer)[0] == 0xCAFEBABE;
-    bool hdr = stbi_is_hdr_from_memory(data, size) > 0;
-    if (raw) { // if the data ends with '0xCAFEBABE' w h d c
-        // then it is a raw file containing w*h*c floats (h multiple of d)
-        w = ((int*) trailer)[1]; // texture width
-        h = ((int*) trailer)[2]; // texture height (ignored for 1D textures)
-        d = ((int*) trailer)[3]; // texture depth (0 for 2D textures)
-        channels = ((int*) trailer)[4]; // number of channels per pixel (1..4)
-        result = data;
-        if (d > 0) {
-            desc->SetAttribute("depth", d);
-        }
-    } else if (hdr) { // file in radiance HDR file format
-        result = (unsigned char*) stbi_loadf_from_memory(data, size, &w, &h, &channels, 0);
-        delete[] data;
-    } else { // file in PNG, JPG or other LDR formats supported by stbi library
-        result = stbi_load_from_memory(data, size, &w, &h, &channels, 0);
-        delete[] data;
-    }
-    if (result == NULL) {
-        if (Logger::ERROR_LOGGER != NULL) {
-            Logger::ERROR_LOGGER->log("RESOURCE", "Cannot load texture file '" + path + "'");
-        }
-        throw exception();
-    }
-
-    desc->SetAttribute("width", w);
-    if (desc->Attribute("height") == NULL) {
-        desc->SetAttribute("height", h);
-    }
-    if (channels == 1) {
-        if (desc->Attribute("format") == NULL) {
-            desc->SetAttribute("format", "RED");
-        }
-    } else if (channels == 2) {
-        if (desc->Attribute("format") == NULL) {
-            desc->SetAttribute("format", "RG");
-        }
-    } else if (channels == 3) {
-        if (desc->Attribute("format") == NULL) {
-            desc->SetAttribute("format", "RGB");
-        }
-    } else if (channels == 4) {
-        if (desc->Attribute("format") == NULL) {
-            desc->SetAttribute("format", "RGBA");
-        }
-    } else {
-        if (raw) {
-            delete[] data;
-        } else {
-            stbi_image_free(result);
-        }
-        if (Logger::ERROR_LOGGER != NULL) {
-            Logger::ERROR_LOGGER->log("RESOURCE", "Unsupported texture format '" + path + "'");
-        }
-        throw exception();
-    }
-    if (raw || hdr) {
-        desc->SetAttribute("type", "FLOAT");
-    } else {
-        desc->SetAttribute("type", "UNSIGNED_BYTE");
-    }
-
-    int lineSize = w * channels * (raw || hdr ? sizeof(float) : 1);
-    size = lineSize * h;
-
-    unsigned char* flippedResult;
-
-    if (raw) {
-        flippedResult = result;
-    } else {
-        // all formats except 'raw' store the image from top to bottom
-        // while OpenGL requires a bottom to top layout; so we revert the
-        // order of lines here to get a good orientation in OpenGL
-        flippedResult = new unsigned char[lineSize * h];
-        int srcOffset = 0;
-        int dstOffset = lineSize * (h - 1);
-        for (int i = 0; i < h; ++i) {
-            memcpy(flippedResult + dstOffset, result + srcOffset, lineSize);
-            srcOffset += lineSize;
-            dstOffset -= lineSize;
-        }
-        stbi_image_free(result);
-    }
-
-    time_t t = 0;
-    getTimeStamp(path, t);
-    stamps.push_back(make_pair(path, t));
-
-    return flippedResult;
-}
-
-/**
  * A ResourceDescriptor that also stores a set of last modification times.
  */
 class XMLResourceDescriptor : public ResourceDescriptor
@@ -614,6 +310,64 @@ ptr<ResourceDescriptor> XMLResourceLoader::reloadResource(const string &name, pt
     return NULL;
 }
 
+string XMLResourceLoader::findFile(const TiXmlElement *desc, const vector<string> paths, const string &file)
+{
+    for (unsigned int i = 0; i < paths.size(); ++i) {
+        string path = paths[i] + '/' + file;
+        FILE *f;
+        fopen(&f, path.c_str(), "rb");
+        if (f != NULL) {
+            fclose(f);
+            return path;
+        }
+    }
+    if (Logger::ERROR_LOGGER != NULL && desc != NULL) {
+        Resource::log(Logger::ERROR_LOGGER, desc, desc, "Cannot find '" + string(file) + "' file");
+    }
+    throw exception();
+}
+
+unsigned char *XMLResourceLoader::loadFile(const string &file, unsigned int &size)
+{
+    ifstream fs(file.c_str(), ios::binary);
+    fs.seekg(0, ios::end);
+    size = fs.tellg();
+    unsigned char *data = new unsigned char[size + 1];
+    fs.seekg(0);
+    fs.read((char*) data, size);
+    fs.close();
+    data[size] = 0;
+    if (Logger::INFO_LOGGER != NULL) {
+        Logger::INFO_LOGGER->log("RESOURCE", "Loaded file '" + file + "'");
+    }
+    return data;
+}
+
+void XMLResourceLoader::getTimeStamp(const string &name, time_t &t)
+{
+#ifdef _MSC_VER
+    FILETIME ftWrite;
+    HANDLE hFile = CreateFile((LPCTSTR )name.c_str(), 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    if (hFile != INVALID_HANDLE_VALUE){
+        if (GetFileTime(hFile, NULL, NULL, &ftWrite)) {
+            CloseHandle(hFile);
+            LARGE_INTEGER li;
+            li.LowPart =  ftWrite.dwLowDateTime;
+            li.HighPart = ftWrite.dwHighDateTime;
+            t = li.QuadPart / __int64(10000000);
+        }
+    }
+#else
+    int fd = open(name.c_str(), O_RDONLY);
+    if (fd != -1) {
+        struct stat stats;
+        fstat(fd, &stats);
+        t = stats.st_mtime;
+        close(fd);
+    }
+#endif
+}
+
 TiXmlElement *XMLResourceLoader::findDescriptor(const string &name, time_t &t, bool log)
 {
     // we first look in the archive files
@@ -647,13 +401,19 @@ TiXmlElement *XMLResourceLoader::findDescriptor(const string &name, time_t &t, b
             } else {
                 t = u;
             }
+            unsigned int size = 0;
+            unsigned char *data = loadFile(n, size);
             TiXmlDocument doc(n);
-            if (doc.LoadFile()) {
+            if (doc.Parse((const char*) data)) {
                 if (Logger::INFO_LOGGER != NULL) {
                     Logger::INFO_LOGGER->log("RESOURCE", "Loaded file '" + n + "'");
                 }
+                delete[] data;
                 return doc.RootElement()->Clone()->ToElement();
             } else {
+                if (data != NULL) {
+                    delete[] data;
+                }
                 if (Logger::ERROR_LOGGER != NULL) {
                     Logger::ERROR_LOGGER->log("RESOURCE", "Syntax error in '" + n + "'");
                 }
@@ -737,9 +497,12 @@ TiXmlDocument *XMLResourceLoader::loadArchive(const string &name, time_t &t)
             return i->second.first;
         }
     }
+    unsigned int size = 0;
+    unsigned char *data = loadFile(name, size);
     // then we try to load the archive file
     TiXmlDocument *doc = new TiXmlDocument(name);
-    if (doc->LoadFile()) {
+    if (doc->Parse((const char*) data)) {
+        delete[] data;
         if (Logger::INFO_LOGGER != NULL) {
             Logger::INFO_LOGGER->log("RESOURCE", "Loaded file '" + name + "'");
         }
@@ -753,6 +516,9 @@ TiXmlDocument *XMLResourceLoader::loadArchive(const string &name, time_t &t)
         cache[name] = make_pair(doc, t);
         return doc;
     } else {
+        if (data != NULL) {
+            delete[] data;
+        }
         if (Logger::ERROR_LOGGER != NULL) {
             Logger::ERROR_LOGGER->log("RESOURCE", "File not found or syntax error in '" + name + "'");
         }
@@ -781,15 +547,10 @@ unsigned char* XMLResourceLoader::loadData(TiXmlElement *desc, unsigned int &siz
         const char* file = desc->Attribute("source");
         if (file == NULL && strcmp(desc->Value(), "program") == 0) {
             str = string(desc->Attribute("name")) + ".bin";
-            for (unsigned int i = 0; i < paths.size(); ++i) {
-                string path = paths[i] + '/' + str;
-                FILE *f;
-                fopen(&f, path.c_str(), "rb");
-                if (f != NULL) {
-                    fclose(f);
-                    file = str.c_str();
-                    break;
-                }
+            try {
+                findFile(NULL, paths, str);
+                file = str.c_str();
+            } catch (...) {
             }
             if (file == NULL) {
                 return NULL;
@@ -941,6 +702,200 @@ unsigned char* XMLResourceLoader::loadData(TiXmlElement *desc, unsigned int &siz
         }
     }
     return NULL;
+}
+
+unsigned char* XMLResourceLoader::loadShaderData(TiXmlElement *desc, const vector<string> &paths,
+        const string &path, unsigned char *data, unsigned int &size, vector< pair<string, time_t> > &stamps)
+{
+    time_t t = 0;
+    getTimeStamp(path, t);
+    stamps.push_back(make_pair(path, t));
+    if (strstr((char*) data, "#include") == NULL) {
+        // if there is no #include directive in 'data' then we can directly return
+        return data;
+    }
+    // otherwise we must load the referenced files and substitute their content;
+    // the result will be placed in the 'result' string
+    string result;
+    bool comment = false;
+    bool lineComment = false;
+    unsigned int i = 0;
+    // we parse the file to find the #include that are not inside comments
+    while (i < size) {
+        if (!comment) { // if we are not inside a comment
+            if (i + 1 < size) {
+                if (data[i] == '/' && data[i + 1] == '*') {
+                    // if we find a '/*' then we now are in a comment
+                    result.append((char*) data, i, 2);
+                    comment = true;
+                    lineComment = false;
+                    i += 2;
+                    continue;
+                } else if (data[i] == '/' && data[i + 1] == '/') {
+                    // likewise if we find a '//'
+                    result.append((char*) data, i, 2);
+                    comment = true;
+                    lineComment = true;
+                    i += 2;
+                    continue;
+                }
+            }
+            if (i + 8 <= size && strncmp((char*) data + i, "#include", 8) == 0) {
+                // if we find a #include
+                char* s = strchr((char*) data + i, '\"');
+                if (s != NULL) {
+                    char *e = strchr(s + 1, '\"');
+                    if (e != NULL) {
+                        // we first extract the referenced file name
+                        string inc = string(s + 1, e - s - 1);
+                        string incFile;
+                        try {
+                            // then we find the absolute name of this file
+                            incFile = findFile(desc, paths, inc);
+                        } catch (...) {
+                            delete[] data;
+                            throw exception();
+                        }
+                        unsigned int incSize;
+                        // we can then load the content of the referenced file
+                        unsigned char* incData = loadFile(incFile, incSize);
+                        // and then analyze its content with a recursive call
+                        // to process the #include directives that this file may
+                        // in turn contain
+                        unsigned char* incShader = loadShaderData(desc, paths, incFile, incData, incSize, stamps);
+                        // finally we append this processed content to the
+                        // result data, instead of the #include directive itself
+                        result.append((char*) incShader);
+                        delete[] incShader;
+
+                        i = (e - (char*) data) + 1;
+                        continue;
+                    }
+                }
+            }
+        } else {
+            if (lineComment) { // if we are in a line comment
+                if (data[i] == '\n') { // and find a newline we exit the comment
+                    result.append((char*) data, i++, 1);
+                    comment = false;
+                    continue;
+                }
+            } else if (i + 1 < size && data[i] == '*' && data[i + 1] == '/') {
+                // likewise, if we find a '*/' in a block comment, we exit it
+                result.append((char*) data, i, 2);
+                comment = false;
+                i += 2;
+                continue;
+            }
+        }
+        result.append((char*) data, i++, 1);
+    }
+    delete[] data;
+    size = result.size();
+    data = new unsigned char[size + 1];
+    memcpy(data, result.c_str(), size + 1);
+    return data;
+}
+
+unsigned char* XMLResourceLoader::loadTextureData(TiXmlElement *desc, const string &path,
+        unsigned char *data, unsigned int &size, vector< pair<string, time_t> > &stamps)
+{
+    unsigned char* trailer = data + size - 5 * sizeof(int);
+    unsigned char *result = NULL;
+    int w;
+    int h = 1;
+    int d = 0;
+    int channels;
+    bool raw = ((unsigned int*) trailer)[0] == 0xCAFEBABE;
+    bool hdr = stbi_is_hdr_from_memory(data, size) > 0;
+    if (raw) { // if the data ends with '0xCAFEBABE' w h d c
+        // then it is a raw file containing w*h*c floats (h multiple of d)
+        w = ((int*) trailer)[1]; // texture width
+        h = ((int*) trailer)[2]; // texture height (ignored for 1D textures)
+        d = ((int*) trailer)[3]; // texture depth (0 for 2D textures)
+        channels = ((int*) trailer)[4]; // number of channels per pixel (1..4)
+        result = data;
+        if (d > 0) {
+            desc->SetAttribute("depth", d);
+        }
+    } else if (hdr) { // file in radiance HDR file format
+        result = (unsigned char*) stbi_loadf_from_memory(data, size, &w, &h, &channels, 0);
+        delete[] data;
+    } else { // file in PNG, JPG or other LDR formats supported by stbi library
+        result = stbi_load_from_memory(data, size, &w, &h, &channels, 0);
+        delete[] data;
+    }
+    if (result == NULL) {
+        if (Logger::ERROR_LOGGER != NULL) {
+            Logger::ERROR_LOGGER->log("RESOURCE", "Cannot load texture file '" + path + "'");
+        }
+        throw exception();
+    }
+
+    desc->SetAttribute("width", w);
+    if (desc->Attribute("height") == NULL) {
+        desc->SetAttribute("height", h);
+    }
+    if (channels == 1) {
+        if (desc->Attribute("format") == NULL) {
+            desc->SetAttribute("format", "RED");
+        }
+    } else if (channels == 2) {
+        if (desc->Attribute("format") == NULL) {
+            desc->SetAttribute("format", "RG");
+        }
+    } else if (channels == 3) {
+        if (desc->Attribute("format") == NULL) {
+            desc->SetAttribute("format", "RGB");
+        }
+    } else if (channels == 4) {
+        if (desc->Attribute("format") == NULL) {
+            desc->SetAttribute("format", "RGBA");
+        }
+    } else {
+        if (raw) {
+            delete[] data;
+        } else {
+            stbi_image_free(result);
+        }
+        if (Logger::ERROR_LOGGER != NULL) {
+            Logger::ERROR_LOGGER->log("RESOURCE", "Unsupported texture format '" + path + "'");
+        }
+        throw exception();
+    }
+    if (raw || hdr) {
+        desc->SetAttribute("type", "FLOAT");
+    } else {
+        desc->SetAttribute("type", "UNSIGNED_BYTE");
+    }
+
+    int lineSize = w * channels * (raw || hdr ? sizeof(float) : 1);
+    size = lineSize * h;
+
+    unsigned char* flippedResult;
+
+    if (raw) {
+        flippedResult = result;
+    } else {
+        // all formats except 'raw' store the image from top to bottom
+        // while OpenGL requires a bottom to top layout; so we revert the
+        // order of lines here to get a good orientation in OpenGL
+        flippedResult = new unsigned char[lineSize * h];
+        int srcOffset = 0;
+        int dstOffset = lineSize * (h - 1);
+        for (int i = 0; i < h; ++i) {
+            memcpy(flippedResult + dstOffset, result + srcOffset, lineSize);
+            srcOffset += lineSize;
+            dstOffset -= lineSize;
+        }
+        stbi_image_free(result);
+    }
+
+    time_t t = 0;
+    getTimeStamp(path, t);
+    stamps.push_back(make_pair(path, t));
+
+    return flippedResult;
 }
 
 }
