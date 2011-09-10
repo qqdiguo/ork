@@ -133,6 +133,14 @@ public:
      */
     void addAttributeBuffer(int index, int size, int vertexsize, AttributeType type, bool norm);
 
+     /**
+     * Adds a vertex attribute buffer to this mesh. This method does not rely
+     * on any storage assumption.
+     *
+     * @param buffer a vertex attribute buffer.
+     */
+    void addAttributeBuffer(ptr<AttributeBuffer> buffer);
+
     /**
      * Sets the indices array buffer of this mesh.
      */

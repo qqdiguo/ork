@@ -84,6 +84,11 @@ void MeshBuffers::addAttributeBuffer(int index, int size, int vertexsize, Attrib
     attributeBuffers.push_back(a);
 }
 
+void MeshBuffers::addAttributeBuffer(ptr<AttributeBuffer> buffer)
+{
+    attributeBuffers.push_back(buffer);
+}
+
 void MeshBuffers::setIndicesBuffer(ptr<AttributeBuffer> indices)
 {
     indicesBuffer = indices;
