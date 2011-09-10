@@ -32,17 +32,17 @@ namespace ork
 {
 
 AttributeBuffer::AttributeBuffer(int index, int size, AttributeType t, bool norm, ptr<Buffer> b, int stride, int offset, int divisor) :
-        Object("AttributeBuffer"), index(index), size(size), type(t), I(false), L(false), norm(norm), b(b), stride(stride), offset(offset), divisor(0)
+        Object("AttributeBuffer"), index(index), size(size), type(t), I(false), L(false), norm(norm), b(b), stride(stride), offset(offset), divisor(divisor)
 {
 }
 
 AttributeBuffer::AttributeBuffer(int index, int size, AttributeType t, ptr<Buffer> b, int stride, int offset, int divisor) :
-        Object("AttributeBuffer"), index(index), size(size), type(t), I(true), L(false), norm(false), b(b), stride(stride), offset(offset), divisor(0)
+        Object("AttributeBuffer"), index(index), size(size), type(t), I(true), L(false), norm(false), b(b), stride(stride), offset(offset), divisor(divisor)
 {
 }
 
 AttributeBuffer::AttributeBuffer(int index, int size, ptr<Buffer> b, int stride, int offset, int divisor) :
-        Object("AttributeBuffer"), index(index), size(size), type(A64F), I(true), L(true), norm(false), b(b), stride(stride), offset(offset), divisor(0)
+        Object("AttributeBuffer"), index(index), size(size), type(A64F), I(true), L(true), norm(false), b(b), stride(stride), offset(offset), divisor(divisor)
 {
 }
 
