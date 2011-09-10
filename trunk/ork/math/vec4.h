@@ -487,4 +487,13 @@ const vec4<type> vec4<type>::UNIT_W(0, 0, 0, 1);
 
 }
 
+/**
+ * Returns the product of this vector and of the given scalar.
+ */
+template <typename scalarType, typename vecType>
+inline ork::vec4<vecType> operator*(const scalarType scalar, const ork::vec4<vecType> &v)
+{
+  return v * static_cast<vecType>(scalar);
+}
+
 #endif

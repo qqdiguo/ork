@@ -92,7 +92,12 @@ public:
     /**
      * Returns the row of this matrix whose index is given.
      */
-    type* operator[](int iRow) const;
+    const type* operator[](int iRow) const;
+
+    /**
+     * Returns the row of this matrix whose index is given (read-write).
+     */
+    type* operator[](int iRow);
 
     /**
      * Returns the column of this matrix whose index is given.
@@ -274,9 +279,15 @@ inline const type* mat3<type>::coefficients() const
 }
 
 template <typename type>
-inline type* mat3<type>::operator[](int iRow) const
+inline const type* mat3<type>::operator[](int iRow) const
 {
-    return (type*)m[iRow];
+    return m[iRow];
+}
+
+template <typename type>
+inline type* mat3<type>::operator[](int iRow)
+{
+    return m[iRow];
 }
 
 template <typename type>
@@ -505,6 +516,15 @@ const mat3<type> mat3<type>::IDENTITY(1, 0, 0,
                                       0, 1, 0,
                                       0, 0, 1);
 
+}
+
+/**
+ * Returns the product of this matrix and of the given scalar.
+ */
+template <typename scalarType, typename matType>
+inline ork::mat3<matType> operator*(const scalarType scalar, const ork::mat3<matType> &m)
+{
+  return m * static_cast<matType>(scalar);
 }
 
 #endif

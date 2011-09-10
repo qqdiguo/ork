@@ -100,6 +100,11 @@ public:
     const type* operator[](int iRow) const;
 
     /**
+     * Returns the row of this matrix whose index is given (read-write).
+     */
+    type *operator[](int iRow);
+
+    /**
      * Assigns the given matrix to this matrix.
      */
     void operator=(const mat3<type>& m3);
@@ -328,6 +333,11 @@ inline const type* mat4<type>::operator[](int iRow) const
     return m[iRow];
 }
 
+template <typename type>
+inline type* mat4<type>::operator[](int iRow)
+{
+    return m[iRow];
+}
 
 template <typename type>
 inline void mat4<type>::operator=(const mat3<type>& m3)
@@ -664,6 +674,15 @@ const mat4<type> mat4<type>::IDENTITY(
     0, 0, 1, 0,
     0, 0, 0, 1);
 
+}
+
+/**
+ * Returns the product of this matrix and of the given scalar.
+ */
+template <typename scalarType, typename matType>
+inline ork::mat4<matType> operator*(const scalarType scalar, const ork::mat4<matType> &m)
+{
+  return m * static_cast<matType>(scalar);
 }
 
 #endif

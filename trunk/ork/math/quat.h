@@ -95,6 +95,11 @@ public:
     quat(const vec3<type>& to, const vec3<type>& from);
 
     /**
+     * Create a normalized quaternion from a 3x3 rotation matrix.
+     */
+    explicit quat(const mat3<type> &m);
+
+    /**
      * Multiply by another quaternion (replace a 3x3 rotation matrix multiplication).
      */
     quat operator*(const quat &a) const;
@@ -133,6 +138,16 @@ public:
      * Returns the correponding 4x4 rotation matrix.
      */
     mat4<type> toMat4() const;
+
+    /**
+     * Returns the axis.
+     */
+    vec3<type> getAxis() const;
+
+    /**
+     * Returns the angle.
+     */
+    type getAngle() const;
 
     static const quat ONE;
 };
@@ -222,6 +237,49 @@ quat<type>::quat(const vec3<type>& to, const vec3<type>& from)
     }
 }
 
+template <typename type>
+quat<type>::quat(const mat3<type> &m)
+{
+    type tr = m[0][0] + m[1][1] + m[2][2] + 1;
+
+    if (tr > 0) {
+        type s = 0.5 / sqrt(tr);
+        w = 0.25 / s;
+        x = (m[2][1] - m[1][2] ) * s;
+        y = (m[0][2] - m[2][0] ) * s;
+        z = (m[1][0] - m[0][1] ) * s;
+    } else {
+        if (m[1][1] > m[0][0] && m[2][2] <= m[1][1] ) {
+            type s = sqrt((m[1][1] - (m[2][2] +m[0][0] )) + 1.0);
+            y = s * 0.5;
+            if (s != 0.0) {
+                s = 0.5 / s;
+            }
+            z = (m[1][2] +m[2][1] ) * s;
+            x = (m[0][1] +m[1][0] ) * s;
+            w = (m[0][2] -m[2][0] ) * s;
+        } else if ((m[1][1] <= m[0][0]  && m[2][2] > m[0][0] ) || (m[2][2]  > m[1][1] )) {
+            type s = sqrt((m[2][2] - (m[0][0] + m[1][1] )) + 1);
+            z = s * 0.5;
+            if (s != 0.0) {
+                s = 0.5 / s;
+            }
+            x = (m[2][0] + m[0][2] ) * s;
+            y = (m[1][2] + m[2][1] ) * s;
+            z = (m[1][0] - m[0][1] ) * s;
+        } else {
+            type s = sqrt((m[0][0] - (m[1][1] + m[2][2] )) + 1);
+            x = s * 0.5;
+            if (s != 0.0) {
+                s = 0.5 / s;
+            }
+            y = (m[0][1] + m[1][0] ) * s;
+            z = (m[2][0] + m[0][2] ) * s;
+            w = (m[2][1] - m[1][2] ) * s;
+        }
+    }
+}
+
 // operations
 
 template <typename type>
@@ -291,6 +349,18 @@ template <typename type>
 mat4<type> quat<type>::toMat4() const
 {
     return mat4<type>(toMat3());
+}
+
+template <typename type>
+vec3<type> quat<type>::getAxis() const
+{
+    return vec3<type>(x,y,z).normalize();
+}
+
+template <typename type>
+type quat<type>::getAngle() const
+{
+    return 2 * acos(w / length());
 }
 
 template <typename type>

@@ -491,4 +491,13 @@ const vec3<type> vec3<type>::UNIT_Z(0, 0, 1);
 
 }
 
+/**
+ * Returns the product of this vector and of the given scalar.
+ */
+template <typename scalarType, typename vecType>
+inline ork::vec3<vecType> operator*(const scalarType scalar, const ork::vec3<vecType> &v)
+{
+  return v * static_cast<vecType>(scalar);
+}
+
 #endif

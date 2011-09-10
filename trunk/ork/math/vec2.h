@@ -459,6 +459,15 @@ const vec2<type> vec2<type>::UNIT_Y(0, 1);
 
 }
 
+/**
+ * Returns the product of this vector and of the given scalar.
+ */
+template <typename scalarType, typename vecType>
+inline ork::vec2<vecType> operator*(const scalarType scalar, const ork::vec2<vecType> &v)
+{
+    return v * static_cast<vecType>(scalar);
+}
+
 #undef PREDICATE_BOOL_FUNCTION
 
 #endif
