@@ -73,7 +73,7 @@ map<char*,int>* Object::counts = NULL;
 map<char*, set<Object*>* >* Object::instances = NULL;
 #endif
 
-#ifdef USED_SHARED_PTR
+#ifdef USE_SHARED_PTR
 Object::Object(const char *type)
 #else
 Object::Object(const char *type) : references(0)

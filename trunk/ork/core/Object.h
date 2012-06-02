@@ -224,7 +224,7 @@ private:
     char *type;
 #endif
 
-#ifndef USED_SHARED_PTR
+#ifndef USE_SHARED_PTR
     /**
      * The number of references to this object.
      */
