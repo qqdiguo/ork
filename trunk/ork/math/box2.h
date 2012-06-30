@@ -30,8 +30,6 @@
 #include "pmath.h"
 #include "ork/math/vec2.h"
 
-using namespace std;
-
 namespace ork
 {
 

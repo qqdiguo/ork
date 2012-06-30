@@ -34,8 +34,6 @@
 // defined somewhere and the min() getter
 #undef min
 
-using namespace std;
-
 namespace ork
 {
 
@@ -332,7 +330,7 @@ private:
      * map associates the shared sampler id and the corresponding number of
      * Sampler object to each possible value for the sampler parameters.
      */
-    static map<Sampler::Parameters, pair<GLuint, unsigned int> > INSTANCES;
+    static std::map<Sampler::Parameters, std::pair<GLuint, unsigned int> > INSTANCES;
 };
 
 }

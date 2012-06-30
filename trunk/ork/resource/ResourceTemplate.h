@@ -53,7 +53,7 @@ public:
      * @param desc the descriptor of this %resource.
      */
     ResourceTemplate(ptr<ResourceManager> manager,
-            const string &name, ptr<ResourceDescriptor> desc);
+            const std::string &name, ptr<ResourceDescriptor> desc);
 
     /**
      * Returns the template parameter o.
@@ -94,7 +94,7 @@ protected:
 };
 
 template<int o, class C>
-ResourceTemplate<o, C>::ResourceTemplate(ptr<ResourceManager> manager, const string &name, ptr<ResourceDescriptor> desc) :
+ResourceTemplate<o, C>::ResourceTemplate(ptr<ResourceManager> manager, const std::string &name, ptr<ResourceDescriptor> desc) :
     C(), Resource(manager, name, desc)
 {
 }
@@ -113,8 +113,8 @@ bool ResourceTemplate<o, C>::prepareUpdate()
         try {
             // creates a new resource using this new descriptor
             oldValue = ResourceFactory::getInstance()->create(Resource::manager, Resource::name, newDesc).template cast<C>();
-        } catch (exception& e) {
-            Logger::ERROR_LOGGER->log("RESSOURCE", string(e.what()));
+        } catch (std::exception& e) {
+            Logger::ERROR_LOGGER->log("RESSOURCE", std::string(e.what()));
         } catch (...) {
             // dont't do that, throw a regular exception please
             assert(false);

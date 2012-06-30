@@ -58,7 +58,7 @@ public:
         /**
          * Returns the window name.
          */
-        string name() const;
+        std::string name() const;
 
         /**
          * Returns the window width.
@@ -105,7 +105,7 @@ public:
          *
          * @param name the window name.
          */
-        Parameters &name(const string name);
+        Parameters &name(const std::string name);
 
         /**
          * Sets the window size.
@@ -153,7 +153,7 @@ public:
         Parameters &multiSample(bool multiSample = true);
 
     private:
-        string _name;
+        std::string _name;
 
         int _width;
 

@@ -61,12 +61,12 @@ protected:
          * The first part of this qualified name. The first part is optional.
          * It can be "this", "$v" or any scene node flag.
          */
-        string target;
+        std::string target;
 
         /**
          * The second part of this qualified name.
          */
-        string name;
+        std::string name;
 
         /**
          * Creates an empty qualified name.
@@ -79,7 +79,7 @@ protected:
          * @param n a qualified name of the form <i>target</i>.<i>name</i> or
          *      <i>name</i>.
          */
-        QualifiedName(const string &n);
+        QualifiedName(const std::string &n);
 
         /**
          * Returns the SceneNode designated by this qualified name.

@@ -51,13 +51,13 @@ public:
         /**
          * Creates a new File with the given file name.
          */
-        File(const string &name);
+        File(const std::string &name);
 
     private:
         /**
          * The stream used to write in this file.
          */
-        fstream stream;
+        std::fstream stream;
 
         /**
          * The file size just after the penultimate flush has been done.
@@ -102,7 +102,7 @@ public:
      * @param out the File to which messages must be logged.
      * @param next the logger to which messages must be forwarded after logging by this logger.
      */
-    FileLogger(const string &type, File *out, ptr<Logger> next = NULL);
+    FileLogger(const std::string &type, File *out, ptr<Logger> next = NULL);
 
     /**
      * Destroys this logger.
@@ -112,7 +112,7 @@ public:
     /**
      * Writes the given message to the file used by this logger.
      */
-    virtual void log(const string &topic, const string &msg);
+    virtual void log(const std::string &topic, const std::string &msg);
 
     /**
      * Flushes the buffer of the file used by this logger.

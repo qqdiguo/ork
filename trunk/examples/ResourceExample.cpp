@@ -31,6 +31,7 @@
 
 #include "examples/Main.h"
 
+using namespace std;
 using namespace ork;
 
 class ResourceExample : public GlutWindow

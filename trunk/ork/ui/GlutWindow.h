@@ -69,7 +69,7 @@ private:
     /**
      * The Window instances. Maps window id to Window instances.
      */
-    static map<int, GlutWindow*> INSTANCES;
+    static std::map<int, GlutWindow*> INSTANCES;
 
     /**
      * The id of this window.

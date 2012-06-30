@@ -30,8 +30,6 @@
 #include "ork/render/GPUBuffer.h"
 #include "ork/render/MeshBuffers.h"
 
-using namespace std;
-
 namespace ork
 {
 

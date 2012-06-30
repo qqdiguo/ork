@@ -30,6 +30,8 @@
 #include "ork/core/Logger.h"
 #include "ork/render/FrameBuffer.h"
 
+using namespace std;
+
 // glMapBuffer and glUnmapBuffer seem inefficient.
 // This option avoids theses calls by using a copy of
 // the buffer data on CPU.

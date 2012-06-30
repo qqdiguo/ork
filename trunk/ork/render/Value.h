@@ -34,8 +34,6 @@
 #include "ork/render/Texture.h"
 #include "ork/render/GPUBuffer.h"
 
-using namespace std;
-
 namespace ork
 {
 
@@ -59,18 +57,18 @@ public:
     /**
      * Returns the name of this value.
      */
-    string getName() const;
+    std::string getName() const;
 
 protected:
     /**
      * The name of this value.
      */
-    string name;
+    std::string name;
 
     /**
      * Creates an uninitialized value.
      */
-    Value(const char *type, const string &name);
+    Value(const char *type, const std::string &name);
 };
 
 // ----------------------------------------------------------------------------
@@ -86,14 +84,14 @@ public:
     /**
      * Creates an uninitialized Value1.
      */
-    Value1(const string &name) : Value(V, name)
+    Value1(const std::string &name) : Value(V, name)
     {
     }
 
     /**
      * Creates a Value1.
      */
-    Value1(const string &name, T value) : Value(V, name), value(value)
+    Value1(const std::string &name, T value) : Value(V, name), value(value)
     {
     }
 
@@ -187,14 +185,14 @@ public:
     /**
      * Creates an uninitialized Value2.
      */
-    Value2(const string &name) : Value(V, name)
+    Value2(const std::string &name) : Value(V, name)
     {
     }
 
     /**
      * Creates a Value2.
      */
-    Value2(const string &name, const vec2<T> &value) : Value(V, name), value(value)
+    Value2(const std::string &name, const vec2<T> &value) : Value(V, name), value(value)
     {
     }
 
@@ -288,14 +286,14 @@ public:
     /**
      * Creates an uninitialized Value3.
      */
-    Value3(const string &name) : Value(V, name)
+    Value3(const std::string &name) : Value(V, name)
     {
     }
 
     /**
      * Creates a Value3.
      */
-    Value3(const string &name, const vec3<T> &value) : Value(V, name), value(value)
+    Value3(const std::string &name, const vec3<T> &value) : Value(V, name), value(value)
     {
     }
 
@@ -389,14 +387,14 @@ public:
     /**
      * Creates an uninitialized Value4.
      */
-    Value4(const string &name) : Value(V, name)
+    Value4(const std::string &name) : Value(V, name)
     {
     }
 
     /**
      * Creates a Value4.
      */
-    Value4(const string &name, const vec4<T> &value) : Value(V, name), value(value)
+    Value4(const std::string &name, const vec4<T> &value) : Value(V, name), value(value)
     {
     }
 
@@ -490,14 +488,14 @@ public:
     /**
      * Creates an uninitialized ValueMatrix.
      */
-    ValueMatrix(const string &name) : Value(V, name)
+    ValueMatrix(const std::string &name) : Value(V, name)
     {
     }
 
     /**
      * Creates a ValueMatrix.
      */
-    ValueMatrix(const string &name, const T* value) : Value(V, name)
+    ValueMatrix(const std::string &name, const T* value) : Value(V, name)
     {
         set(value);
     }
@@ -557,14 +555,14 @@ public:
     /**
      * Creates an uninitialized ValueMatrix3.
      */
-    ValueMatrix3(const string &name) : ValueMatrix<U, T, 3, 3, V>(name)
+    ValueMatrix3(const std::string &name) : ValueMatrix<U, T, 3, 3, V>(name)
     {
     }
 
     /**
      * Creates a ValueMatrix3.
      */
-    ValueMatrix3(const string &name, const mat3<T> &value) : ValueMatrix<U, T, 3, 3, V>(name)
+    ValueMatrix3(const std::string &name, const mat3<T> &value) : ValueMatrix<U, T, 3, 3, V>(name)
     {
         setMatrix(value);
     }
@@ -599,14 +597,14 @@ public:
     /**
      * Creates an uninitialized ValueMatrix4.
      */
-    ValueMatrix4(const string &name) : ValueMatrix<U, T, 4, 4, V>(name)
+    ValueMatrix4(const std::string &name) : ValueMatrix<U, T, 4, 4, V>(name)
     {
     }
 
     /**
      * Creates a ValueMatrix4.
      */
-    ValueMatrix4(const string &name, const mat4<T> &value) : ValueMatrix<U, T, 4, 4, V>(name)
+    ValueMatrix4(const std::string &name, const mat4<T> &value) : ValueMatrix<U, T, 4, 4, V>(name)
     {
         setMatrix(value);
     }
@@ -786,12 +784,12 @@ public:
     /**
      * Creates an uninitialized ValueSampler.
      */
-    ValueSampler(UniformType type, const string &name);
+    ValueSampler(UniformType type, const std::string &name);
 
     /**
      * Creates a ValueSampler.
      */
-    ValueSampler(UniformType type, const string &name, ptr<Texture> value);
+    ValueSampler(UniformType type, const std::string &name, ptr<Texture> value);
 
     /**
      * Deletes this ValueSampler.
@@ -836,12 +834,12 @@ public:
     /**
      * Creates an uninitialized ValueSubroutine.
      */
-    ValueSubroutine(Stage stage, const string &name);
+    ValueSubroutine(Stage stage, const std::string &name);
 
     /**
      * Creates a ValueSubroutine.
      */
-    ValueSubroutine(Stage stage, const string &name, const string &value);
+    ValueSubroutine(Stage stage, const std::string &name, const std::string &value);
 
     /**
      * Deletes this ValueSubroutine.
@@ -858,14 +856,14 @@ public:
     /**
      * Returns the current value of this ValueSubroutine.
      */
-    string get() const;
+    std::string get() const;
 
     /**
      * Sets the value of this uniform.
      *
      * @param value the new value for this ValueSubroutine.
      */
-    void set(const string &value);
+    void set(const std::string &value);
 
 private:
     /**
@@ -881,7 +879,7 @@ private:
     /**
      * The current value of this ValueSubroutine.
      */
-    string value;
+    std::string value;
 };
 
 }

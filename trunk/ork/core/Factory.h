@@ -28,8 +28,6 @@
 
 #include "ork/core/Object.h"
 
-using namespace std;
-
 namespace ork
 {
 
@@ -83,7 +81,7 @@ private:
      * keys. Each object has a reference counter used to automatically destroy
      * objects when they are no longer used.
      */
-    map< K, pair<C, int> > values;
+    std::map< K, std::pair<C, int> > values;
 };
 
 template <typename K, typename C>
@@ -96,7 +94,7 @@ C Factory<K, C>::get(K key)
 {
     C result;
     int uses;
-    typename  map< K, pair<C, int> >::iterator i = values.find(key);
+    typename  std::map< K, std::pair<C, int> >::iterator i = values.find(key);
     if (i == values.end()) {
         // if the objet does not exist yet, we create it
         result = ctor(key);
@@ -106,14 +104,14 @@ C Factory<K, C>::get(K key)
         result = i->second.first;
         uses = i->second.second + 1;
     }
-    values.insert(make_pair(key, make_pair(result, uses)));
+    values.insert(std::make_pair(key, std::make_pair(result, uses)));
     return result;
 }
 
 template <typename K, typename C>
 void Factory<K, C>::put(K key)
 {
-    typename map< K, pair<C, int> >::iterator i = values.find(key);
+    typename std::map< K, std::pair<C, int> >::iterator i = values.find(key);
     if (i != values.end()) {
         C value = i->second.first;
         int uses = i->second.second - 1;
@@ -123,7 +121,7 @@ void Factory<K, C>::put(K key)
             // smart pointers
             values.erase(i);
         } else {
-            values.insert(make_pair(key, make_pair(value, uses)));
+            values.insert(std::make_pair(key, std::make_pair(value, uses)));
         }
     }
 }

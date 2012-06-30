@@ -28,8 +28,6 @@
 
 #include "ork/render/Sampler.h"
 
-using namespace std;
-
 namespace ork
 {
 
@@ -265,7 +263,7 @@ protected:
      * @return the texture unit to which the texture has been bound, or -1
      *      if the binding failed (all units already used by the programs).
      */
-    GLint bindToTextureUnit(ptr<Sampler> s, const vector<GLuint> &programIds) const;
+    GLint bindToTextureUnit(ptr<Sampler> s, const std::vector<GLuint> &programIds) const;
 
     /**
      * Binds this texture to a texture unit. If there is a texture unit
@@ -308,12 +306,12 @@ private:
      * There is one possible binding per sampler object (a texture can be
      * bound to several units with different sampler objects).
      */
-    mutable map<GLuint, GLuint> currentTextureUnits;
+    mutable std::map<GLuint, GLuint> currentTextureUnits;
 
     /**
      * Identifiers of the programs that use this texture.
      */
-    mutable vector<GLuint> programIds;
+    mutable std::vector<GLuint> programIds;
 
     /**
      * Adds the given program as a user of this texture.
@@ -328,7 +326,7 @@ private:
     /**
      * Returns true if one of the given programs uses this texture.
      */
-    bool isUsedBy(const vector<GLuint> &programIds) const;
+    bool isUsedBy(const std::vector<GLuint> &programIds) const;
 
     /**
      * Returns the actual maximum number of texture units.

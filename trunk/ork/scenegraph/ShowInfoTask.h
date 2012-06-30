@@ -67,7 +67,7 @@ public:
      * @param topic the topic of the information.
      * @param info an information message.
      */
-    static void setInfo(const string &topic, const string &info);
+    static void setInfo(const std::string &topic, const std::string &info);
 
 protected:
     /**
@@ -78,7 +78,7 @@ protected:
     /**
      * The current information messages, associated with their topic.
      */
-    static map<string, string> infos;
+    static std::map<std::string, std::string> infos;
 
     /**
      * The program use to draw characters.
@@ -142,7 +142,7 @@ protected:
      * @param color the color of this line of text, in RGBA8 format.
      * @param s the line of text to display.
      */
-    virtual void drawLine(const vec4f &vp, float xs, float ys, int color, const string &s);
+    virtual void drawLine(const vec4f &vp, float xs, float ys, int color, const std::string &s);
 
     /**
      * Draws the framerate and the information messages.
@@ -190,7 +190,7 @@ private:
         virtual bool run();
 
     protected:
-        virtual const type_info *getTypeInfo();
+        virtual const std::type_info *getTypeInfo();
 
     private:
         /**

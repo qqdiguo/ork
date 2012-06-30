@@ -30,8 +30,6 @@
 #include "ork/math/vec4.h"
 #include "ork/render/AttributeBuffer.h"
 
-using namespace std;
-
 namespace ork
 {
 
@@ -354,7 +352,7 @@ protected:
     /**
      * The AttributeBuffer of this mesh.
      */
-    vector< ptr<AttributeBuffer> > attributeBuffers;
+    std::vector< ptr<AttributeBuffer> > attributeBuffers;
 
 private:
     /**

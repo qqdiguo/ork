@@ -31,8 +31,6 @@
 
 #include "ork/core/Object.h"
 
-using namespace std;
-
 namespace ork
 {
 
@@ -135,7 +133,7 @@ public:
      *      avoid initializing several times the same task (for tasks that
      *      belong to several task graphs).
      */
-    virtual void init(set<Task*> &initialized);
+    virtual void init(std::set<Task*> &initialized);
 
     /**
      * Sets the execution context for this task. All tasks that share the same
@@ -251,21 +249,21 @@ public:
 protected:
     unsigned int completionDate; ///< time at which this task was completed.
 
-    vector<TaskListener*> listeners; ///< the listeners of this tasks.
+    std::vector<TaskListener*> listeners; ///< the listeners of this tasks.
 
     /**
      * Returns the type of this task. This type is used to group the execution
      * time statistics of tasks of the same type.
      */
-    virtual const type_info *getTypeInfo();
+    virtual const std::type_info *getTypeInfo();
 
 private:
     /**
-     * Sort operator for type_info objects.
+     * Sort operator forstd::type_info objects.
      */
-    struct TypeInfoSort : public less<type_info*>
+    struct TypeInfoSort : public std::less<std::type_info*>
     {
-        bool operator()(const type_info *x, const type_info *y) const;
+        bool operator()(const std::type_info *x, const std::type_info *y) const;
     };
 
     /**
@@ -302,9 +300,9 @@ private:
 
     /**
      * The execution time statistics for each task type. Maps TaskStatistics to
-     * type_info objects.
+     *std::type_info objects.
      */
-    static map<type_info const*, TaskStatistics*, TypeInfoSort> statistics;
+    static std::map<std::type_info const*, TaskStatistics*, TypeInfoSort> statistics;
 };
 
 /**

@@ -27,6 +27,8 @@
 #include "ork/taskgraph/TaskGraph.h"
 #include "ork/scenegraph/SceneManager.h"
 
+using namespace std;
+
 namespace ork
 {
 

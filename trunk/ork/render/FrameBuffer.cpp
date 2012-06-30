@@ -36,6 +36,8 @@
 #include "ork/render/Module.h"
 #include "ork/render/Texture.h"
 
+using namespace std;
+
 inline void glEnable(GLenum p, bool b)
 {
     if (b) {

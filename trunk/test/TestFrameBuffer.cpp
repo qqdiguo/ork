@@ -25,6 +25,7 @@
 
 #include "ork/render/FrameBuffer.h"
 
+using namespace std;
 using namespace ork;
 
 const string LAYER_INSTANCING = "\
@@ -65,14 +66,14 @@ const char* FRAGMENT_SHADER_FLOAT = "\
 const char* DRAW_INSTANCING = "\
     #ifdef _VERTEX_\n\
     layout(location=0) in vec4 pos;\n\
-    out int instance;\n\
+    out flat int instance;\n\
     void main() { gl_Position = pos; instance = gl_InstanceID; }\n\
     #endif\n\
     #ifdef _GEOMETRY_\n\
     layout(triangles) in;\n\
     layout(triangle_strip, max_vertices = 3) out;\n\
     in vec4 pos[];\n\
-    in int instance[];\n\
+    in flat int instance[];\n\
     void main() {\n\
         gl_Layer = instance[0];\n\
         gl_Position = gl_in[0].gl_Position;\n\

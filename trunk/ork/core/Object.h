@@ -48,8 +48,6 @@
 #define NULL 0
 #endif
 
-using namespace std;
-
 // ---------------------------------------------------------------------------
 // Static and dynamic assertions
 // ---------------------------------------------------------------------------
@@ -131,7 +129,7 @@ public:
     /**
      * Returns a set containing all instances of a class, or NULL is non was created.
      */
-    static set<Object*>* findAllInstances(const char* className);
+    static std::set<Object*>* findAllInstances(const char* className);
 #endif
 
 protected:
@@ -240,7 +238,7 @@ private:
     /**
      * The number of objects currently allocated in memory, for each class.
      */
-    static map<char*, int> *counts;
+    static std::map<char*, int> *counts;
 #endif
 
 #ifdef KEEP_OBJECT_REFERENCES

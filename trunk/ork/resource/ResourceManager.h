@@ -75,7 +75,7 @@ public:
      * @return the %resource corresponding to the given name, or NULL if the %resource is not
      *      found.
      */
-    ptr<Object> loadResource(const string &name);
+    ptr<Object> loadResource(const std::string &name);
 
     /**
      * Loads the given %resource. This method first loads its descriptor with
@@ -140,7 +140,7 @@ private:
      * names to %resource instances (together with their update order - see
      * Resource#getUpdateOrder).
      */
-    map<string, pair<int, Resource*> > resources;
+    std::map<std::string, std::pair<int, Resource*> > resources;
 
     /**
      * The resources currently managed by this manager. This map contains both
@@ -148,19 +148,19 @@ private:
      * names (together with their update order - see Resource#getUpdateOrder) to
      * %resource instances.
      */
-    map<pair<int, string>, Resource*> resourceOrder;
+    std::map<std::pair<int, std::string>, Resource*> resourceOrder;
 
     /**
      * The cache of unused resources. This map maps %resource instances to
      * positions in the sorted list of unused resources #unusedResourcesOrder.
      */
-    map<Resource*, list<Resource*>::iterator> unusedResources;
+    std::map<Resource*, std::list<Resource*>::iterator> unusedResources;
 
     /**
      * The unused resources, sorted by date of last use. This list is used to
      * implement a LRU cache.
      */
-    list<Resource*> unusedResourcesOrder;
+    std::list<Resource*> unusedResourcesOrder;
 
     /**
      * The maximum number of unused resources that can be stored in cache.

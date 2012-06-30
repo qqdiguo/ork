@@ -50,7 +50,7 @@ public:
     /**
      * An iterator over a map of SceneNode.
      */
-    typedef MultiMapIterator<string, ptr<SceneNode> > NodeIterator;
+    typedef MultiMapIterator<std::string, ptr<SceneNode> > NodeIterator;
 
     /**
      * Creates an empty SceneManager.
@@ -84,33 +84,33 @@ public:
      *
      * @param node a SceneNode flag that identifies the camera node.
      */
-    void setCameraNode(const string &node);
+    void setCameraNode(const std::string &node);
 
     /**
      * Returns the name of the camera node method to be called to draw the scene.
      */
-    string getCameraMethod();
+    std::string getCameraMethod();
 
     /**
      * Sets the name of the camera node method to be called to draw the scene.
      *
      * @param method a method name.
      */
-    void setCameraMethod(const string &method);
+    void setCameraMethod(const std::string &method);
 
     /**
      * Returns the nodes of the scene graph that have the given flag.
      *
      * @param flag a SceneNode flag.
      */
-    NodeIterator getNodes(const string &flag);
+    NodeIterator getNodes(const std::string &flag);
 
     /**
      * Returns the SceneNode currently bound to the given loop variable.
      *
      * @param name a loop variable.
      */
-    ptr<SceneNode> getNodeVar(const string &name);
+    ptr<SceneNode> getNodeVar(const std::string &name);
 
     /**
      * Sets the node currently bound to the given loop variable.
@@ -118,7 +118,7 @@ public:
      * @param name a loop variable.
      * @param node the new node bound to this loop variable.
      */
-    void setNodeVar(const string &name, ptr<SceneNode> node);
+    void setNodeVar(const std::string &name, ptr<SceneNode> node);
 
     /**
      * Returns the ResourceManager used to manage the resources of the scene
@@ -291,12 +291,12 @@ private:
     /**
      * The flag that identifies the camera node in the scene graph.
      */
-    string cameraNode;
+    std::string cameraNode;
 
     /**
      * The name of the camera node method to be called to draw the scene.
      */
-    string cameraMethod;
+    std::string cameraMethod;
 
     /**
      * The last task or task graph that was used to draw the scene.
@@ -306,12 +306,12 @@ private:
     /**
      * A multimap that associates to each flag all the nodes having this flag.
      */
-    multimap<string, ptr<SceneNode> > nodeMap;
+    std::multimap<std::string, ptr<SceneNode> > nodeMap;
 
     /**
      * A map that associates to each loop variable its current value.
      */
-    map<string, ptr<SceneNode> > nodeVariables;
+    std::map<std::string, ptr<SceneNode> > nodeVariables;
 
     /**
      * The ResourceManager that manages the resources of the scene graph.

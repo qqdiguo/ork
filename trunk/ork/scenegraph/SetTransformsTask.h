@@ -66,7 +66,7 @@ public:
      * @param wd the vec3 uniform to be set to the world coordinates
      *      of the unit z vector of the local frame.
      */
-    SetTransformsTask(const string &screen, QualifiedName m,
+    SetTransformsTask(const std::string &screen, QualifiedName m,
         const char *t, const char *ltow, const char *ltos,
         const char *ctow, const char *ctos, const char *stoc,
         const char *wtos, const char *wp, const char *wd);
@@ -89,7 +89,7 @@ protected:
      *
      * See #SetTransformsTask.
      */
-    void init(const string &screen, QualifiedName m,
+    void init(const std::string &screen, QualifiedName m,
         const char *t, const char *ltow, const char *ltos,
         const char *ctow, const char *ctos, const char *stoc,
         const char *wtos, const char *wp, const char *wd);

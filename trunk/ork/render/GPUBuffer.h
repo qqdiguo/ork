@@ -154,7 +154,7 @@ private:
     /**
      * Identifiers of the programs that use this buffer as a uniform block.
      */
-    mutable vector<GLuint> programIds;
+    mutable std::vector<GLuint> programIds;
 
     /**
      * Adds the given program as a user of this buffer as a uniform block.
@@ -169,7 +169,7 @@ private:
     /**
      * Returns true if one of the given programs uses this buffer as a uniform block.
      */
-    bool isUsedBy(const vector<GLuint> &programIds) const;
+    bool isUsedBy(const std::vector<GLuint> &programIds) const;
 
     /**
      * Binds this buffer to a uniform block binding unit not currently used
@@ -183,7 +183,7 @@ private:
      *      bound, or -1 if no unit was available (meaning that the program
      *      uses too much uniform blocks).
      */
-    GLint bindToUniformBufferUnit(const vector<GLuint> &programIds) const;
+    GLint bindToUniformBufferUnit(const std::vector<GLuint> &programIds) const;
 
     friend class UniformBufferUnit;
 

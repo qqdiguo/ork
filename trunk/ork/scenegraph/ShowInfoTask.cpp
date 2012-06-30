@@ -27,6 +27,8 @@
 #include "ork/resource/ResourceTemplate.h"
 #include "ork/scenegraph/SceneManager.h"
 
+using namespace std;
+
 namespace ork
 {
 

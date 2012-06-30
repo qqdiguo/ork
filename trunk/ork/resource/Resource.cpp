@@ -25,6 +25,8 @@
 
 #include "ork/resource/ResourceManager.h"
 
+using namespace std;
+
 namespace ork
 {
 

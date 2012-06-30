@@ -64,7 +64,7 @@ public:
     /**
      * Creates a new logger of the given type (debug, info, warning, etc).
      */
-    Logger(const string &type);
+    Logger(const std::string &type);
 
     /**
      * Destroys this logger.
@@ -77,19 +77,19 @@ public:
      * least one topic is selected by this method, only messages whose topic
      * has been selected by this method will be logged.
      */
-    void addTopic(const string &topic);
+    void addTopic(const std::string &topic);
 
     /**
      * Returns true if messages of the given topic are logged by this logger.
      */
-    bool hasTopic(const string &topic);
+    bool hasTopic(const std::string &topic);
 
     /**
      * Logs a message given by its topic and its content. The default
      * implementation of this method sends the message to the standard error
      * output stream cerr.
      */
-    virtual void log(const string &topic, const string &msg);
+    virtual void log(const std::string &topic, const std::string &msg);
 
     /**
      * Formatted logging for more usability.
@@ -111,13 +111,13 @@ protected:
     /**
      * The type of this logger (debug, info, warning, error, etc).
      */
-    const string type;
+    const std::string type;
 
     /**
      * The topics handled by this logger, separated by semi-columns.
      * An empty string means that all topics are handled.
      */
-    string topics;
+    std::string topics;
 
     /**
      * A mutex to access this logger from multiple threads.

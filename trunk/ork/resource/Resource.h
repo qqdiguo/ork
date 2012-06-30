@@ -57,7 +57,7 @@ public:
      * @param desc the descriptor of this %resource.
      */
     Resource(ptr<ResourceManager> manager,
-            const string &name, ptr<ResourceDescriptor> desc);
+            const std::string &name, ptr<ResourceDescriptor> desc);
 
     /**
      * Deletes this %resource.
@@ -67,7 +67,7 @@ public:
     /**
      * Returns the name of this %resource.
      */
-    virtual string getName();
+    virtual std::string getName();
 
     /**
      * Returns the update order of this %resource. In order to be updated
@@ -120,7 +120,7 @@ public:
      *      by params.
      */
     static void checkParameters(const ptr<ResourceDescriptor> desc,
-            const TiXmlElement *e, const string &params);
+            const TiXmlElement *e, const std::string &params);
 
     /**
      * Utility method to get the int value of an XML element attribute.
@@ -132,7 +132,7 @@ public:
      * @throw exception if the attribute is missing or has a wrong format.
      */
     static void getIntParameter(const ptr<ResourceDescriptor> desc,
-            const TiXmlElement *e, const string &name, int *i);
+            const TiXmlElement *e, const std::string &name, int *i);
 
     /**
      * Utility method to get the float value of an XML element attribute.
@@ -145,7 +145,7 @@ public:
      * @return false is the attribute is missing.
      */
     static bool getFloatParameter(const ptr<ResourceDescriptor> desc,
-            const TiXmlElement *e, const string &name, float *value);
+            const TiXmlElement *e, const std::string &name, float *value);
 
     /**
      * Utility method to get the value of an XML element attribute.
@@ -156,7 +156,7 @@ public:
      * @throw exception if the attribute is missing.
      * @return the attribute's value.
      */
-    static string getParameter(ptr<ResourceDescriptor> desc,
+    static std::string getParameter(ptr<ResourceDescriptor> desc,
             const TiXmlElement *e, const char* name);
 
     /**
@@ -168,7 +168,7 @@ public:
      * @param msg the message to be logged.
      */
     static void log(ptr<Logger> logger, ptr<ResourceDescriptor> desc,
-            const TiXmlElement *e, const string &msg);
+            const TiXmlElement *e, const std::string &msg);
 
     /**
      * Logs a message related to a %resource.
@@ -179,7 +179,7 @@ public:
      * @param msg the message to be logged.
      */
     static void log(ptr<Logger> logger, const TiXmlElement *desc,
-            const TiXmlElement *e, const string &msg);
+            const TiXmlElement *e, const std::string &msg);
 
 protected:
     /**
@@ -191,7 +191,7 @@ protected:
     /**
      * The name of this %resource.
      */
-    const string name;
+    const std::string name;
 
     /**
      * The descriptor of this %resource.

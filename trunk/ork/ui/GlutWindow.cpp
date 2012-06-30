@@ -47,6 +47,8 @@
 #define CALLBACK
 #endif
 
+using namespace std;
+
 namespace ork
 {
 

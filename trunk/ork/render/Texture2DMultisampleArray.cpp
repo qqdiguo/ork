@@ -29,6 +29,8 @@
 
 #include "ork/render/FrameBuffer.h"
 
+using namespace std;
+
 namespace ork
 {
 

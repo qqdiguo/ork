@@ -29,8 +29,6 @@
 #include "ork/core/Iterator.h"
 #include "ork/taskgraph/Task.h"
 
-using namespace std;
-
 namespace ork
 {
 
@@ -71,7 +69,7 @@ public:
     /**
      * Calls init recursively on all sub tasks of this task graph.
      */
-    virtual void init(set<Task*> &initialized);
+    virtual void init(std::set<Task*> &initialized);
 
     /**
      * Calls #setIsDone recursively on all sub tasks of this task graph.
@@ -163,7 +161,7 @@ public:
      * @param src a sub task of this graph.
      * @param[out] deletedDependencies the dependencies that src had.
      */
-    void removeAndGetDependencies(ptr<Task> src, set< ptr<Task> >& deletedDependencies);
+    void removeAndGetDependencies(ptr<Task> src, std::set< ptr<Task> >& deletedDependencies);
 
     /**
      * Removes all the dependencies between the sub tasks of this task graph.
@@ -192,27 +190,27 @@ protected:
     void cleanup();
 
 private:
-    set< ptr<Task> > allTasks; ///< all the tasks of this graph
+    std::set< ptr<Task> > allTasks; ///< all the tasks of this graph
 
-    set< ptr<Task> > firstTasks; ///< the tasks without predecessors
+    std::set< ptr<Task> > firstTasks; ///< the tasks without predecessors
 
-    set< ptr<Task> > lastTasks; ///< the tasks without successors
+    std::set< ptr<Task> > lastTasks; ///< the tasks without successors
 
-    set< ptr<Task> > flattenedFirstTasks; ///< the primitive tasks without predecessors
+    std::set< ptr<Task> > flattenedFirstTasks; ///< the primitive tasks without predecessors
 
-    set< ptr<Task> > flattenedLastTasks; ///< the primitive tasks without successors
+    std::set< ptr<Task> > flattenedLastTasks; ///< the primitive tasks without successors
 
     /**
      * The predecessors of the sub tasks of this graph.
      * Maps each task to its set of predecessors.
      */
-    map< ptr<Task>, set< ptr<Task> > > dependencies;
+    std::map< ptr<Task>, std::set< ptr<Task> > > dependencies;
 
     /**
      * The successors of the sub tasks of this graph.
      * Maps each task to its set of successors.
      */
-    map< ptr<Task>, set< ptr<Task> > > inverseDependencies;
+    std::map< ptr<Task>, std::set< ptr<Task> > > inverseDependencies;
 
     friend class MultithreadScheduler;
 };

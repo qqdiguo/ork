@@ -23,6 +23,8 @@
 
 #include "ork/render/Value.h"
 
+using namespace std;
+
 namespace ork
 {
 

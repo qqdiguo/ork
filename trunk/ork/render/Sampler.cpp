@@ -28,6 +28,8 @@
 #include "ork/math/vec4.h"
 #include "ork/render/Texture.h"
 
+using namespace std;
+
 namespace ork
 {
 

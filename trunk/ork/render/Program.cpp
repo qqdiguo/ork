@@ -29,6 +29,8 @@
 #include "ork/resource/ResourceTemplate.h"
 #include "ork/render/FrameBuffer.h"
 
+using namespace std;
+
 #define GL_DOUBLE_MAT2x3 0x8F49
 #define GL_DOUBLE_MAT2x4 0x8F4A
 #define GL_DOUBLE_MAT3x2 0x8F4B

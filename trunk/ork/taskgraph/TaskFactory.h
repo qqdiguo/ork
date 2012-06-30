@@ -26,8 +26,6 @@
 
 #include "ork/taskgraph/Task.h"
 
-using namespace std;
-
 namespace ork
 {
 

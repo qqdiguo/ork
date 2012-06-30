@@ -300,7 +300,7 @@ private:
     /**
      * The 'subtasks' to do in this task.
      */
-    vector<Runnable*> runnables;
+    std::vector<Runnable*> runnables;
 
     /**
      * Runs each 'subtask' in #runnables.

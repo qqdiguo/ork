@@ -29,6 +29,8 @@
 #include <cstdarg>
 #include <cstdio>
 
+using namespace std;
+
 namespace ork
 {
 

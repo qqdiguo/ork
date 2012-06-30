@@ -42,6 +42,8 @@
 #include <unistd.h>
 #endif
 
+using namespace std;
+
 // if defined, prefecth threads work only on tasks for future frames
 // otherwise they can also execute tasks for the current frame, in parallel
 // with main thread

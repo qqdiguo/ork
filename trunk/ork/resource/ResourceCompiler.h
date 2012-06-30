@@ -44,7 +44,7 @@ namespace ork
 class MyResourceLoader : public CompiledResourceLoader
 {
 public:
-    MyResourceLoader(const string &resourceDataFile) :
+    MyResourceLoader(const std::string &resourceDataFile) :
         CompiledResourceLoader(resourceDataFile)
     {
 #include "resourceFile"
@@ -65,7 +65,7 @@ public:
      * @param resourceDataFile the file that will contain the data of the
      *      loaded resources.
      */
-    ResourceCompiler(const string &resourceFile, const string &resourceDataFile);
+    ResourceCompiler(const std::string &resourceFile, const std::string &resourceDataFile);
 
     /**
      * Deletes this ResourceCompiler.
@@ -79,7 +79,7 @@ public:
      * @return the path of this resource.
      * @throw exception if the resource is not found.
      */
-    virtual string findResource(const string &name);
+    virtual std::string findResource(const std::string &name);
 
     /**
      * Loads the ResourceDescriptor of the given name.
@@ -88,18 +88,18 @@ public:
      * @return the ResourceDescriptor of the given name, or NULL if the %resource
      *      is not found.
      */
-    virtual ptr<ResourceDescriptor> loadResource(const string &name);
+    virtual ptr<ResourceDescriptor> loadResource(const std::string &name);
 
 private:
     /**
      * The stream to write into the resourceFile file.
      */
-    ofstream out;
+    std::ofstream out;
 
     /**
      * The stream to write into the resourceDataFile file.
      */
-    ofstream dout;
+    std::ofstream dout;
 
     /**
      * The number of bytes currently written into dout.

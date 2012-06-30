@@ -33,8 +33,6 @@
 #include "ork/render/Texture.h"
 #include "ork/render/Value.h"
 
-using namespace std;
-
 namespace ork
 {
 
@@ -149,7 +147,7 @@ public:
     /**
      * Returns the programs that use this Module.
      */
-    const set<Program*> &getUsers() const;
+    const std::set<Program*> &getUsers() const;
 
     /**
      * Sets the format to use when a Program using this module is
@@ -168,7 +166,7 @@ public:
      *
      * @param name the name of an output varying variable to record.
      */
-    void addFeedbackVarying(const string &name);
+    void addFeedbackVarying(const std::string &name);
 
     /**
      * Adds an initial value for the given uniform variable.
@@ -228,7 +226,7 @@ private:
     /**
      * The Program instances that use this Module.
      */
-    set<Program*> users;
+    std::set<Program*> users;
 
     /**
      * The id of the vertex shader part of this shader.
@@ -265,12 +263,12 @@ private:
      * The output varying variables of this module that must be recorded in
      * transform feedback mode.
      */
-    vector<string> feedbackVaryings;
+    std::vector<std::string> feedbackVaryings;
 
     /**
      * The initial values for the uniforms of the shaders of this module.
      */
-    map<string, ptr<Value> > initialValues;
+    std::map<std::string, ptr<Value> > initialValues;
 
     /**
      * Checks if a shader part has been correctly compiled.

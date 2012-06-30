@@ -27,8 +27,6 @@
 #include <set>
 #include <map>
 
-using namespace std;
-
 namespace ork
 {
 
@@ -48,7 +46,7 @@ public:
     /**
      * Creates a set iterator for the given set.
      */
-    SetIterator(set<type> &c);
+    SetIterator(std::set<type> &c);
 
     /**
      * Returns the size of the set for which this iterator has been created.
@@ -75,17 +73,17 @@ private:
     /**
      * The current iterator position.
      */
-    typename set<type>::iterator i;
+    typename std::set<type>::iterator i;
 
     /**
      * The iterator position corresponding to the end of the set.
      */
-    typename set<type>::iterator end;
+    typename std::set<type>::iterator end;
 
     /**
      * The empty set used for creating empty iterators.
      */
-    static set<type> emptySet;
+    static std::set<type> emptySet;
 };
 
 /**
@@ -104,7 +102,7 @@ public:
     /**
      * Creates a map iterator for the given map.
      */
-    MapIterator(map<key, type> &c);
+    MapIterator(std::map<key, type> &c);
 
     /**
      * Returns the size of the map for which this iterator has been created.
@@ -139,17 +137,17 @@ private:
     /**
      * The current iterator position.
      */
-    typename map<key,type>::iterator i;
+    typename std::map<key,type>::iterator i;
 
     /**
      * The iterator position corresponding to the end of the map.
      */
-    typename map<key,type>::iterator end;
+    typename std::map<key,type>::iterator end;
 
     /**
      * The empty map used for creating empty iterators.
      */
-    static map<key,type> emptyMap;
+    static std::map<key,type> emptyMap;
 };
 
 /**
@@ -168,13 +166,13 @@ public:
     /**
      * Creates a multimap iterator for the given multimap.
      */
-    MultiMapIterator(multimap<key, type> &c);
+    MultiMapIterator(std::multimap<key, type> &c);
 
     /**
      * Creates a multimap iterator for the values associated with the given key
      * in the given multimap.
      */
-    MultiMapIterator(key k, multimap<key, type> &c);
+    MultiMapIterator(key k, std::multimap<key, type> &c);
 
     /**
      * Returns the size of the multimap for which this iterator has been created.
@@ -207,17 +205,17 @@ private:
     /**
      * The current iterator position.
      */
-    typename multimap<key,type>::iterator i;
+    typename std::multimap<key,type>::iterator i;
 
     /**
      * The iterator position corresponding to the end of the multimap.
      */
-    typename multimap<key,type>::iterator end;
+    typename std::multimap<key,type>::iterator end;
 
     /**
      * The empty multimap used for creating empty iterators.
      */
-    static multimap<key,type> emptyMap;
+    static std::multimap<key,type> emptyMap;
 };
 
 template <typename type>
@@ -226,7 +224,7 @@ SetIterator<type>::SetIterator() : n(0), i(emptySet.begin()), end(emptySet.end()
 }
 
 template <typename type>
-SetIterator<type>::SetIterator(set<type> &c) : n((unsigned int)c.size()), i(c.begin()), end(c.end())
+SetIterator<type>::SetIterator(std::set<type> &c) : n((unsigned int)c.size()), i(c.begin()), end(c.end())
 {
 }
 
@@ -249,7 +247,7 @@ type SetIterator<type>::next()
 }
 
 template <typename type>
-set<type> SetIterator<type>::emptySet;
+std::set<type> SetIterator<type>::emptySet;
 
 template <typename key, typename type>
 MapIterator<key, type>::MapIterator() : n(0), i(emptyMap.begin()), end(emptyMap.end())
@@ -257,7 +255,7 @@ MapIterator<key, type>::MapIterator() : n(0), i(emptyMap.begin()), end(emptyMap.
 }
 
 template <typename key, typename type>
-MapIterator<key, type>::MapIterator(map<key, type> &c) : n((unsigned int)c.size()), i(c.begin()), end(c.end())
+MapIterator<key, type>::MapIterator(std::map<key, type> &c) : n((unsigned int)c.size()), i(c.begin()), end(c.end())
 {
 }
 
@@ -287,7 +285,7 @@ type MapIterator<key, type>::next(key &k)
 }
 
 template <typename key, typename type>
-map<key,type> MapIterator<key, type>::emptyMap;
+std::map<key,type> MapIterator<key, type>::emptyMap;
 
 template <typename key, typename type>
 MultiMapIterator<key, type>::MultiMapIterator() : n(0), i(emptyMap.begin()), end(emptyMap.end())
@@ -295,14 +293,14 @@ MultiMapIterator<key, type>::MultiMapIterator() : n(0), i(emptyMap.begin()), end
 }
 
 template <typename key, typename type>
-MultiMapIterator<key, type>::MultiMapIterator(multimap<key, type> &c) : n(c.size()), i(c.begin()), end(c.end())
+MultiMapIterator<key, type>::MultiMapIterator(std::multimap<key, type> &c) : n(c.size()), i(c.begin()), end(c.end())
 {
 }
 
 template <typename key, typename type>
-MultiMapIterator<key, type>::MultiMapIterator(key k, multimap<key, type> &c)
+MultiMapIterator<key, type>::MultiMapIterator(key k, std::multimap<key, type> &c)
 {
-    std::pair<typename multimap<key, type>::iterator, typename multimap<key, type>::iterator> p;
+    std::pair<typename std::multimap<key, type>::iterator, typename std::multimap<key, type>::iterator> p;
     p = c.equal_range(k);
     n = (unsigned int) c.count(k);
     i = p.first;
@@ -335,7 +333,7 @@ type MultiMapIterator<key, type>::next(key &k)
 }
 
 template <typename key, typename type>
-multimap<key,type> MultiMapIterator<key, type>::emptyMap;
+std::multimap<key,type> MultiMapIterator<key, type>::emptyMap;
 
 }
 

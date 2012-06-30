@@ -57,12 +57,12 @@ public:
     /**
      * Adds a search path where ResourceDescriptor can be looked for.
      */
-    void addPath(const string &path);
+    void addPath(const std::string &path);
 
     /**
      * Adds an XML archive file where ResourceDescriptor can be looked for.
      */
-    void addArchive(const string &archive);
+    void addArchive(const std::string &archive);
 
     /**
      * Returns the path of the resource of the given name.
@@ -71,7 +71,7 @@ public:
      * @return the path of this resource.
      * @throw exception if the resource is not found.
      */
-    virtual string findResource(const string &name);
+    virtual std::string findResource(const std::string &name);
 
     /**
      * Loads the ResourceDescriptor of the given name.
@@ -80,7 +80,7 @@ public:
      * @return the ResourceDescriptor of the given name, or NULL if the %resource
      *      is not found.
      */
-    virtual ptr<ResourceDescriptor> loadResource(const string &name);
+    virtual ptr<ResourceDescriptor> loadResource(const std::string &name);
 
     /**
      * Reloads the ResourceDescriptor of the given name.
@@ -90,7 +90,7 @@ public:
      * @return the new value of this ResourceDescriptor, or NULL if this value
      *      has not changed on disk.
      */
-    virtual ptr<ResourceDescriptor> reloadResource(const string &name, ptr<ResourceDescriptor> currentValue);
+    virtual ptr<ResourceDescriptor> reloadResource(const std::string &name, ptr<ResourceDescriptor> currentValue);
 
 protected:
     /**
@@ -102,7 +102,7 @@ protected:
      * @return the absolute file name of the file.
      * @throw exception if the file is not found in any directory.
      */
-    virtual string findFile(const TiXmlElement *desc, const vector<string> paths, const string &file);
+    virtual std::string findFile(const TiXmlElement *desc, const std::vector<std::string> paths, const std::string &file);
 
     /**
      * Loads the content of a file.
@@ -111,7 +111,7 @@ protected:
      * @param[out] size returns the size of the file's content in bytes.
      * @return the file's content.
      */
-    virtual unsigned char *loadFile(const string &file, unsigned int &size);
+    virtual unsigned char *loadFile(const std::string &file, unsigned int &size);
 
     /**
      * Computes the last modification time of the given file.
@@ -119,24 +119,24 @@ protected:
      * @param name a fie name.
      * @param[out] t returns the last modification time of the given file.
      */
-    virtual void getTimeStamp(const string &name, time_t &t);
+    virtual void getTimeStamp(const std::string &name, time_t &t);
 
 private:
     /**
      * The directories where individual ResourceDescriptor files can be looked for.
      */
-    vector<string> paths;
+    std::vector<std::string> paths;
 
     /**
      * The archives where other ResourceDescriptor files can be looked for.
      */
-    vector<string> archives;
+    std::vector<std::string> archives;
 
     /**
      * A cache of the archive files. Maps archive file names to archive content
      * and last modification time on disk.
      */
-    map<string, pair<TiXmlDocument*, time_t> > cache;
+    std::map<std::string, std::pair<TiXmlDocument*, time_t> > cache;
 
     /**
      * Returns the XML part of the ResourceDescriptor of the given name. This
@@ -152,7 +152,7 @@ private:
      *      if the last modification time is still equal to t or if the %resource
      *      is not found.
      */
-    TiXmlElement *findDescriptor(const string &name, time_t &t, bool log = true);
+    TiXmlElement *findDescriptor(const std::string &name, time_t &t, bool log = true);
 
     /**
      * Returns the XML part of the ResourceDescriptor of the given name. This
@@ -163,19 +163,19 @@ private:
      * @return the XML part of the ResourceDescriptor, or NULL if the archive
      *      file does not contain this %resource descriptor.
      */
-    static TiXmlElement *findDescriptor(const TiXmlDocument *archive, const string &name);
+    static TiXmlElement *findDescriptor(const TiXmlDocument *archive, const std::string &name);
 
     /**
      * Builds the XML part of texture %resource descriptors for the special textures
      * 'renderbuffer-X-Y'. The XML part is generated from the %resource name.
      */
-    static TiXmlElement *buildTextureDescriptor(const string &name);
+    static TiXmlElement *buildTextureDescriptor(const std::string &name);
 
     /**
      * Builds the XML part of program %resource descriptors. The XML part is
      * generated from the %resource name of the form "shader1;shader2;shader3;...".
      */
-    static TiXmlElement *buildProgramDescriptor(const string &name);
+    static TiXmlElement *buildProgramDescriptor(const std::string &name);
 
     /**
      * Loads the archive file of the given name.
@@ -185,7 +185,7 @@ private:
      * @return the archive file of the given name, or NULL if this file is not
      *      found.
      */
-    TiXmlDocument *loadArchive(const string &name, time_t &t);
+    TiXmlDocument *loadArchive(const std::string &name, time_t &t);
 
     /**
      * Loads the ASCII or binary part of a ResourceDescriptor.
@@ -202,7 +202,7 @@ private:
      *      if the last modification times are still equal to the given
      *      modification times.
      */
-    unsigned char* loadData(TiXmlElement *e, unsigned int &size, vector< pair<string, time_t> > &stamps);
+    unsigned char* loadData(TiXmlElement *e, unsigned int &size, std::vector< std::pair<std::string, time_t> > &stamps);
 
     /**
      * Loads the ASCII part of a shader %resource, i.e. the shader source code.
@@ -220,8 +220,8 @@ private:
      *      modification time.
      * @throw exception if a problem occurs.
      */
-    unsigned char* loadShaderData(TiXmlElement *desc, const vector<string> &paths,
-            const string &path, unsigned char *data, unsigned int &size, vector< pair<string, time_t> > &stamps);
+    unsigned char* loadShaderData(TiXmlElement *desc, const std::vector<std::string> &paths,
+            const std::string &path, unsigned char *data, unsigned int &size, std::vector< std::pair<std::string, time_t> > &stamps);
 
     /**
      * Loads the binary part of a texture %resource.
@@ -237,8 +237,8 @@ private:
      *      element of this vector contains a file name and its last modification
      *      time.
      */
-    unsigned char* loadTextureData(TiXmlElement *desc, const string &path,
-            unsigned char *data, unsigned int &size, vector< pair<string, time_t> > &stamps);
+    unsigned char* loadTextureData(TiXmlElement *desc, const std::string &path,
+            unsigned char *data, unsigned int &size, std::vector< std::pair<std::string, time_t> > &stamps);
 };
 
 }

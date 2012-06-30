@@ -46,7 +46,7 @@ public:
      * @param parallel true the apply the loop to all scene nodes in parallel.
      * @param subtask the task that must be executed on each SceneNode.
      */
-    LoopTask(const string &var, const string &flag, bool cull, bool parallel, ptr<TaskFactory> subtask);
+    LoopTask(const std::string &var, const std::string &flag, bool cull, bool parallel, ptr<TaskFactory> subtask);
 
     /**
      * Deletes this LoopTask.
@@ -71,7 +71,7 @@ protected:
      * @param parallel true the apply the loop to all scene nodes in parallel.
      * @param subtask the task that must be executed on each SceneNode.
      */
-    void init(const string &var, const string &flag, bool cull, bool parallel, ptr<TaskFactory> subtask);
+    void init(const std::string &var, const std::string &flag, bool cull, bool parallel, ptr<TaskFactory> subtask);
 
     /**
      * Swaps this LoopTask with the given one.
@@ -84,12 +84,12 @@ private:
     /**
      * The loop variable name.
      */
-    string var;
+    std::string var;
 
     /**
      * The flag thatt specifies the scene nodes to which the loop must be applied.
      */
-    string flag;
+    std::string flag;
 
     /**
      * True to apply the loop to all scene nodes in parallel.

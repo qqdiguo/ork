@@ -41,7 +41,7 @@ public:
      *
      * @param subtasks the tasks that must be composed into a sequence.
      */
-    SequenceTask(const vector< ptr<TaskFactory> > &subtasks);
+    SequenceTask(const std::vector< ptr<TaskFactory> > &subtasks);
 
     /**
      * Deletes this SequenceTask.
@@ -61,7 +61,7 @@ protected:
      *
      * @param subtasks the tasks that must be composed into a sequence.
      */
-    void init(const vector< ptr<TaskFactory> > &subtasks);
+    void init(const std::vector< ptr<TaskFactory> > &subtasks);
 
     /**
      * Swaps this SequenceTask with another one.
@@ -74,7 +74,7 @@ private:
     /**
      * The tasks that are composed sequentially by this task.
      */
-    vector< ptr<TaskFactory> > subtasks;
+    std::vector< ptr<TaskFactory> > subtasks;
 };
 
 }

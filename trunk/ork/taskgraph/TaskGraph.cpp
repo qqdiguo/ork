@@ -23,6 +23,8 @@
 
 #include "ork/taskgraph/TaskGraph.h"
 
+using namespace std;
+
 namespace ork
 {
 

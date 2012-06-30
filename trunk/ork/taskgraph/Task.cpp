@@ -31,6 +31,8 @@
 
 #include <pthread.h>
 
+using namespace std;
+
 namespace ork
 {
 

@@ -28,6 +28,8 @@
 #include "ork/scenegraph/SceneManager.h"
 #include "ork/scenegraph/SequenceTask.h"
 
+using namespace std;
+
 namespace ork
 {
 

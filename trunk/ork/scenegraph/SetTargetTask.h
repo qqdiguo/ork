@@ -73,7 +73,7 @@ public:
      * @param autoResize true to automatically resize the target textures to
      *      the default framebuffer viewport size.
      */
-    SetTargetTask(const vector<Target> &targets, bool autoResize);
+    SetTargetTask(const std::vector<Target> &targets, bool autoResize);
 
     /**
      * Deletes this SetTargetTask.
@@ -95,7 +95,7 @@ protected:
      * @param autoResize true to automatically resize the target textures to
      *      the default framebuffer viewport size.
      */
-    void init(const vector<Target> &targets, bool autoResize);
+    void init(const std::vector<Target> &targets, bool autoResize);
 
     /**
      * Swaps this SetTargetTask with the given one.
@@ -113,7 +113,7 @@ private:
     /**
      * The framebuffer attachments to be set.
      */
-    vector<Target> targets;
+    std::vector<Target> targets;
 
     /**
      * True to automatically resize the target textures to the default
@@ -140,7 +140,7 @@ private:
         /**
          * The textures to be set to the framebuffer attachment points.
          */
-        vector< ptr<Texture> > textures;
+        std::vector< ptr<Texture> > textures;
 
         /**
          * Creates a new SetTargetTask::Impl.
@@ -149,7 +149,7 @@ private:
          * @param textures the textures to be set to the framebuffer attachment
          *      points.
          */
-        Impl(ptr<SetTargetTask> source, vector< ptr<Texture> > textures);
+        Impl(ptr<SetTargetTask> source, std::vector< ptr<Texture> > textures);
 
         /**
          * Deletes this SetTargetTask::Impl.

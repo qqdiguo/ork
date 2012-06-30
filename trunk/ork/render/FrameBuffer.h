@@ -45,8 +45,6 @@
 #include "ork/render/TextureRectangle.h"
 #include "ork/render/TransformFeedback.h"
 
-using namespace std;
-
 namespace ork
 {
 
@@ -1535,7 +1533,7 @@ private:
         {
         }
 
-        map< void*, ptr<FrameBuffer> > buffers;
+        std::map< void*, ptr<FrameBuffer> > buffers;
     };
 
     /**

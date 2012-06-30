@@ -122,7 +122,7 @@ public:
      * @param line the line of text.
      * @param height the height of output text in pixels
      */
-    vec2f getSize(const string &line, float height) const;
+    vec2f getSize(const std::string &line, float height) const;
 
     /**
      * Add a given line of text in a given Mesh and returns the final
@@ -136,7 +136,7 @@ public:
      * @param color color of this line of text (in RGBA8 format).
      * @param textMesh the mesh to write into.
      */
-    vec2f addLine(const vec4f &viewport, float xs, float ys, const string &line, float height,
+    vec2f addLine(const vec4f &viewport, float xs, float ys, const std::string &line, float height,
             int color, ptr< Mesh<Vertex, unsigned int> > textMesh);
 
     /**
@@ -151,7 +151,7 @@ public:
      * @param color color of this line of text (in RGBA8 format).
      * @param textMesh the mesh to write into.
      */
-    vec2f addCenteredLine(const vec4f &viewport, float xs, float ys, const string &line, float height,
+    vec2f addCenteredLine(const vec4f &viewport, float xs, float ys, const std::string &line, float height,
             int color, ptr< Mesh<Vertex, unsigned int> > textMesh);
 
 protected:

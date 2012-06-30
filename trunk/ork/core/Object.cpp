@@ -30,6 +30,8 @@
 
 #include "ork/core/Logger.h"
 
+using namespace std;
+
 void fopen(FILE **f, const char* fileName, const char *mode)
 {
 #ifdef _MSC_VER

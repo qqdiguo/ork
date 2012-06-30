@@ -30,6 +30,8 @@
 #include "ork/render/FrameBuffer.h"
 #include "ork/resource/ResourceTemplate.h"
 
+using namespace std;
+
 namespace ork
 {
 

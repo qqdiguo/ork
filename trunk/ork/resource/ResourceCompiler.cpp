@@ -23,6 +23,8 @@
 
 #include "ork/resource/ResourceCompiler.h"
 
+using namespace std;
+
 namespace ork
 {
 

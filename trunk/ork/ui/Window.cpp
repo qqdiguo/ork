@@ -23,6 +23,8 @@
 
 #include "ork/ui/Window.h"
 
+using namespace std;
+
 namespace ork
 {
 

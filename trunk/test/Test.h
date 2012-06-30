@@ -27,18 +27,16 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 typedef void (*testFunction)();
 
 class TestSuite
 {
 public:
-    vector<testFunction> tests;
+    std::vector<testFunction> tests;
 
-    vector<string> testNames;
+    std::vector<std::string> testNames;
 
-    vector<int> testVersions;
+    std::vector<int> testVersions;
 
     static TestSuite *getInstance();
 

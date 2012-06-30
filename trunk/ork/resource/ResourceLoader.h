@@ -55,7 +55,7 @@ public:
      * @return the path of this resource.
      * @throw exception if the resource is not found.
      */
-    virtual string findResource(const string &name) = 0;
+    virtual std::string findResource(const std::string &name) = 0;
 
     /**
      * Loads the ResourceDescriptor of the given name.
@@ -64,7 +64,7 @@ public:
      * @return the ResourceDescriptor of the given name, or NULL if the %resource
      *      is not found.
      */
-    virtual ptr<ResourceDescriptor> loadResource(const string &name) = 0;
+    virtual ptr<ResourceDescriptor> loadResource(const std::string &name) = 0;
 
     /**
      * Reloads the ResourceDescriptor of the given name.
@@ -74,7 +74,7 @@ public:
      * @return the new value of this ResourceDescriptor, or NULL if this value
      *      has not changed.
      */
-    virtual ptr<ResourceDescriptor> reloadResource(const string &name, ptr<ResourceDescriptor> currentValue) = 0;
+    virtual ptr<ResourceDescriptor> reloadResource(const std::string &name, ptr<ResourceDescriptor> currentValue) = 0;
 };
 
 }

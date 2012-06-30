@@ -29,8 +29,6 @@
 
 #include "ork/math/vec3.h"
 
-using namespace std;
-
 namespace ork
 {
 
