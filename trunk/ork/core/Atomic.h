@@ -24,6 +24,10 @@
 #ifndef _ATOMIC_H_
 #define _ATOMIC_H_
 
+#if defined(_MSC_VER) // MSVC
+#include <intrin.h>
+#endif
+
 namespace ork
 {
 
@@ -71,12 +75,9 @@ static FORCE_INLINE int atomic_decrement(int volatile * pw)
 
 #elif defined(_MSC_VER) // MSVC
 
-#include <intrin.h>
-
 #define atomic_exchange_and_add(pw,dv) _InterlockedExchangeAdd((volatile long*)(pw),(dv))
 #define atomic_increment(pw) (_InterlockedIncrement((volatile long*)(pw)))
 #define atomic_decrement(pw) (_InterlockedDecrement((volatile long*)(pw))+1)
-
 #elif defined(__GNUC__) // GCC
 
 #define atomic_exchange_and_add(pw,dv) __sync_fetch_and_add((volatile long*)(pw), dv)
