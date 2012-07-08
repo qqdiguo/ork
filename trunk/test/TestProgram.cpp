@@ -26,6 +26,7 @@
 #include "ork/render/FrameBuffer.h"
 
 using namespace ork;
+using namespace std;
 
 ptr<FrameBuffer> getFrameBuffer(RenderBuffer::RenderBufferFormat f, int w, int h);
 
