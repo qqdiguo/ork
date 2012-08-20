@@ -33,6 +33,7 @@
 #else
 #include <sys/stat.h>
 #include <sys/fcntl.h>
+#include <sys/unistd.h>
 #endif
 
 #include "stbi/stb_image.h"
