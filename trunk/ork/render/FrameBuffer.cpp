@@ -1563,7 +1563,7 @@ void FrameBuffer::set()
         if (drawBufferCount == 1) {
             glDrawBuffer(getBuffer(drawBuffers[0]));
         } else {
-            GLenum drawBufs[4];
+            GLenum drawBufs[8];
             for (int i = 0; i < drawBufferCount; ++i) {
                 drawBufs[i] = getBuffer(drawBuffers[i]);
             }
